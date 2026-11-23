@@ -1,0 +1,8 @@
+# The 2026-11-14 bake-off models through mlx-audio. Use a separate venv: .cache/.venv-bakeoff.
+mlx==0.32.4
+mlx-metal==0.32.4
+mlx-audio==0.6.5
+transformers==5.23.0
+huggingface-hub==2.4.0
+numpy==2.4.6
+soundfile==0.14.0

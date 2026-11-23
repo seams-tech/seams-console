@@ -354,3 +354,57 @@ npx wrangler dev --remote --config "$bench/workers-ai-probe/wrangler.jsonc" --po
 reference and transcript). Moonshine Medium Streaming has no Japanese model.
 Moonshine's Japanese models use the non-commercial Moonshine Community
 License.
+
+## Bake-off of newer open models — 2026-11-14
+
+Satyr Plan 82 asked if a newer open model beats Whisper turbo on this bench. Three
+models above Whisper on the Open ASR Leaderboard ran through mlx-audio 0.6.5
+(`MlxAudio` in `run_model.py`, venv from `requirements-bakeoff.txt`) on Apple
+M4 Pro, macOS 15.7.1, one run at a time. Full tables:
+[`reports/stt-bench-2026-11-14-bakeoff.md`](reports/stt-bench-2026-11-14-bakeoff.md).
+
+| Measure | Whisper turbo | Qwen3-ASR 1.7B bf16 | Granite Speech 4.1 2B | Parakeet TDT 0.6B v3 |
+| --- | --- | --- | --- | --- |
+| English bakery dictation WER with the shop vocabulary, clean / 10 / 5 / 0 dB | 5.8% / 6.4% / 6.6% / 9.7% | 4.8% / 4.6% / 5.4% / 6.9% | 5.9% / 6.2% / 6.6% / 8.9% | no vocabulary |
+| Same, no vocabulary | 8.8% / 9.4% / 10.4% / 13.2% | 8.9% / 9.2% / 10.0% / 12.0% | 11.8% / 12.5% / 13.5% / 15.8% | 11.7% / 12.3% / 13.2% / 16.1% |
+| Key-term recall with vocabulary, clean / 0 dB | 86.9% / 83.7% | 89.8% / 87.8% | 86.7% / 83.6% | – |
+| FLEURS English WER, clean / 10 / 5 / 0 dB | 4.8% / 5.1% / 6.2% / 10.2% | 3.7% / 4.2% / 4.5% / 7.3% | 10.4% / 10.6% / 11.2% / 13.8% | 4.6% / 5.4% / 6.4% / 10.4% |
+| Correct approval phrase accepted, second bank, clean / 10 / 5 / 0 dB | 97.9% / 94.4% / 86.8% / 81.9% | 95.8% / 88.9% / 88.9% / 78.5% | 100% / 95.8% / 93.1% / 76.4% | 95.8% / 88.2% / 84.0% / 74.3% |
+| Near miss, unrelated sentence or other phrase accepted, `strict` | 0 | 0 | 0 | 0 |
+| Japanese bakery dictation CER with vocabulary, clean / 10 / 5 / 0 dB | 2.8% / 4.2% / 4.1% / 6.4% | 3.9% / 3.4% / 3.0% / 4.6% | – | no Japanese |
+| FLEURS Japanese CER, clean / 0 dB | 4.2% / 6.5% | 5.9% / 8.2% | 7.4% / 11.1% | no Japanese |
+| Median time per dictation utterance with vocabulary | 0.44 s | 0.43 s | 0.50 s | 0.05 s (no vocabulary) |
+| Median time per approval phrase | 0.42 s | 0.20 s | 0.26 s | 0.04 s |
+| Model files / peak GPU memory | 1.6 GB / 2.5 GB | 4.1 GB / 5.1 GB | 4.9 GB / 6.7 GB | 2.5 GB / 2.8 GB |
+
+Findings:
+
+- Qwen3-ASR 1.7B with the shop vocabulary as hotwords makes 26% fewer English
+  dictation errors than Whisper with its prompt, averaged over 10, 5 and 0 dB
+  (17% clean, 18% at 5 dB), and 23–29% fewer on human read speech, at the same
+  speed. It accepted no near miss.
+- Qwen3-ASR accepts the correct approval phrase less often at 10 and 0 dB. Its
+  refusals are "yuan" for "yen" (40 of 2,640 approval transcripts; 1 of 1,800
+  dictation transcripts with vocabulary) and "stop" for "stock". The strict
+  match refused them, so they cost a repeat, not a wrong approval.
+- In Japanese, Qwen3-ASR with vocabulary is better than Whisper in noise and
+  worse clean; without vocabulary it is worse on FLEURS. The Japanese bakery
+  set has one voice and 15 sentences.
+- Granite helps only with the vocabulary, and its FLEURS errors are high.
+  Parakeet is ten times faster but worse on bakery names and numbers, and it
+  takes no vocabulary.
+- Cohere Transcribe 2B did not run: both public MLX conversions
+  (`mlx-community/cohere-transcribe-03-2026-mlx-8bit`,
+  `beshkenadze/cohere-transcribe-03-2026-mlx-fp16`) produced unrelated text,
+  and the original weights need acceptance of Cohere's terms. Apple
+  SpeechAnalyzer needs macOS 26.
+
+Limits: the same as above. Synthetic voices, read speech and mixed noise; no
+person at a bench.
+
+Noise-only clips ran later on Satyr's own bench (`scripts/shop-voice/confidence-bench.py`,
+Plan 82, same day). On every noise clip, Qwen3-ASR read its whole hotword list
+back, with more confidence than any real command. The Platform's list check
+drops that readback: 0 of 105 held-out noise clips passed, against 1 of 105 for
+Whisper, and no good command was lost. A readback costs up to 2.8 s with 55
+terms, so a service must stop the decoding early when the output repeats the list.

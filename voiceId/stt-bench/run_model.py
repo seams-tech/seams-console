@@ -33,7 +33,24 @@ VOXTRAL_MODELS = {
                                  "fdebf7b2af834a1db4b8a3c99ab7480b333adf9e"),
     "voxtral-mini-3b-bf16": ("mlx-community/Voxtral-Mini-3B-2507-bf16", "ab69f21c8e2c52b05335bf282898e141c8c42477"),
 }
-MODELS = ("whisper-large-v3-turbo", *MOONSHINE_MODELS, *VOXTRAL_MODELS)
+# The 2026-11-14 bake-off: models above Whisper on the Open ASR Leaderboard, through mlx-audio 0.6.5.
+# Each entry: repository, revision, languages, the language value for each, and whether it takes hotwords.
+# mlx-audio reads the model family from the folder name, which is a revision here, so it is given.
+MLX_AUDIO_MODELS = {
+    "parakeet-tdt-0.6b-v3": ("mlx-community/parakeet-tdt-0.6b-v3", "ed2b7e8c15f9aaa0b5772e2efb986255eaef7e15",
+                             {"en": None}, False),
+    "qwen3-asr-1.7b-bf16": ("mlx-community/Qwen3-ASR-1.7B-bf16", "e1f6c266914abc5a46e8756e02580f834a6cf8a7",
+                            {"en": "English", "ja": "Japanese"}, True),
+    "qwen3-asr-1.7b-8bit": ("mlx-community/Qwen3-ASR-1.7B-8bit", "a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+                            {"en": "English", "ja": "Japanese"}, True),
+    "cohere-transcribe-8bit": ("mlx-community/cohere-transcribe-03-2026-mlx-8bit",
+                               "a0acb7f93cd32d82c4fbf801b6d8fb39d20c509f", {"en": "en", "ja": "ja"}, False),
+    "cohere-transcribe-fp16": ("beshkenadze/cohere-transcribe-03-2026-mlx-fp16",
+                               "06bbe0d853a93cbbf7c1f40cffccd4c5481459ef", {"en": "en", "ja": "ja"}, False),
+    "granite-speech-4.1-2b": ("ibm-granite/granite-speech-4.1-2b", "823ca793aa49925d4eb2e758709b7f2c98513e8e",
+                              {"en": "en", "ja": "ja"}, True),
+}
+MODELS = ("whisper-large-v3-turbo", *MOONSHINE_MODELS, *VOXTRAL_MODELS, *MLX_AUDIO_MODELS)
 
 
 def tree_files(root: Path) -> list[dict]:
@@ -131,6 +148,46 @@ class Voxtral:
         return int(self._mx.get_peak_memory())
 
 
+class MlxAudio:
+    """The bake-off models through mlx-audio 0.6.5. Run them with .cache/.venv-bakeoff.
+
+    Each takes the whole utterance with temperature 0. Qwen3-ASR and Granite take the shop vocabulary as
+    hotwords; Parakeet and Cohere take none, so their vocabulary runs do not exist.
+    """
+
+    def __init__(self, cache: Path, name: str) -> None:
+        import mlx.core as mx
+        from huggingface_hub import snapshot_download
+        from mlx_audio.stt.utils import load
+
+        repo, revision, self._languages, self._hotwords = MLX_AUDIO_MODELS[name]
+        family = name.split("-")[0].replace("qwen3", "qwen3_asr").replace("cohere", "cohere_asr").replace(
+            "granite", "granite_speech")
+        self._mx = mx
+        self.root = Path(snapshot_download(repo, revision=revision, cache_dir=cache / "hf"))
+        # The Cohere conversion keeps its files in one subfolder.
+        weights = self.root / "mlx-int8" if (self.root / "mlx-int8").is_dir() else self.root
+        self._model = load(str(weights), model_type=family)
+        self.identity = {"repo": repo, "revision": revision, "runtime": "mlx-audio 0.6.5",
+                         "files": tree_files(self.root)}
+
+    def transcribe(self, samples: np.ndarray, language: str, vocabulary: tuple[str, ...] | None) -> str:
+        if language not in self._languages:
+            raise SystemExit(f"this model has no {language}")
+        if vocabulary and not self._hotwords:
+            raise SystemExit("this model takes no vocabulary")
+        options: dict = {}
+        if self._languages[language] is not None:
+            options["language"] = self._languages[language]
+        if vocabulary:
+            options["hotwords"] = list(vocabulary)
+        result = self._model.generate(self._mx.array(samples), **options)
+        return result.text.strip()
+
+    def peak_bytes(self) -> int:
+        return int(self._mx.get_peak_memory())
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", choices=MODELS, required=True)
@@ -167,6 +224,8 @@ def main() -> None:
         model = Whisper(cache, args.whisper_revision)
     elif args.model in VOXTRAL_MODELS:
         model = Voxtral(cache, args.model, args.delay_ms)
+    elif args.model in MLX_AUDIO_MODELS:
+        model = MlxAudio(cache, args.model)
     else:
         model = Moonshine(cache, MOONSHINE_MODELS[args.model], args.language)
     load_seconds = time.perf_counter() - started
