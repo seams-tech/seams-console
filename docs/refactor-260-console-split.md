@@ -149,11 +149,11 @@ Done on 2026-11-20:
 Remaining: nothing in this plan. Steps 1 to 8 are done; step 9 is void, because
 `purin-labs/purin-monorepo` is a new repository. Other owners keep these items:
 
-| Item                                            | Owner                            | Next step                                                   |
-| ----------------------------------------------- | -------------------------------- | ----------------------------------------------------------- |
-| Stripe billing in Pantry                        | Pantry Plan 95                   | Its step 6, in the Pantry repository                        |
-| One Console for both networks (open question 4) | Decided 2026-11-26; new plan     | Plan and build it; `test.console.seams.sh` stays until then |
-| Speak-to-Sign demo in the old account           | Decided 2026-11-26; Refactor 200 | Move it to `seamsadmin` from `seams-tech/speak-to-sign`     |
+| Item                                            | Owner                                                           | Next step                                                   |
+| ----------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- |
+| Stripe billing in Pantry                        | Pantry Plan 95                                                  | Its step 6, in the Pantry repository                        |
+| One Console for both networks (open question 4) | Decided 2026-11-26; [Refactor 261](refactor-261-one-console.md) | Plan and build it; `test.console.seams.sh` stays until then |
+| Speak-to-Sign demo in the old account           | Decided 2026-11-26; Refactor 200                                | Move it to `seamsadmin` from `seams-tech/speak-to-sign`     |
 
 The CHECK constraints that list `'satyr'` or a Pantry meter stay, because SQLite cannot
 change them in place (migration 0119). No code writes those values.
@@ -473,7 +473,8 @@ repository.
      `expectedConsoleOrigin` in `scripts/deployment-targets.mjs` keeps the testnet origin.
      The Console data model already maps an environment to a network
      (`networkForConsoleEnvironmentId`). Both lanes run in `seamsadmin`, so the testnet
-     Gateways can bind the mainnet Console Worker. The work is its own plan: it decides the
+     Gateways can bind the mainnet Console Worker. The work is its own plan
+     ([Refactor 261](refactor-261-one-console.md)): it decides the
      testnet tenant and the data of `seams-console-testnet-sin`, then retires
      `seams-sdk-d1-console-testnet` and `test.console.seams.sh`.
 5. Decided (owner, 2026-11-20): Pantry keeps the old Console Worker `seams-sdk-d1-console`,
