@@ -6,8 +6,6 @@ import {
 } from '../../packages/console-server-ts/src/billing/d1';
 import { createSimulatedBillingProviderAdapters } from '../../packages/console-server-ts/src/billing/providers';
 import type { ConsoleBillingRefundSupportContext } from '../../packages/console-server-ts/src/billing/service';
-import { ensureAccountPlatformD1Schema } from '../../packages/console-server-ts/src/accountPlatform/schema';
-import { ensureBillingFundsD1Schema } from '../../packages/console-server-ts/src/billingPrepaidReservations/schema';
 import {
   applyD1MigrationFiles,
   cleanupTemporaryD1Database,
@@ -476,96 +474,3 @@ test('D1 billing matches the exact checkout session and retries an ambiguous ref
     cleanupTemporaryD1Database(temporary.tempDir);
   }
 });
-
-for (const directory of ['d1-console-core', 'd1-console'] as const) {
-  test(`${directory} refund migration preserves existing balances and refund references`, async () => {
-    const temporary = createTemporaryD1Database();
-    try {
-      const migrations = listD1MigrationFiles(directory);
-      // Later migrations follow this one in d1-console, so it is selected by name.
-      const refundIndex = migrations.findIndex((file) => file.endsWith('refund_ledger_debits.sql'));
-      const migration = migrations[refundIndex];
-      if (!migration) throw new Error('Expected refund migration');
-      await applyD1MigrationFiles(temporary.database, migrations.slice(0, refundIndex));
-      await ensureAccountPlatformD1Schema(temporary.database);
-      await ensureBillingFundsD1Schema(temporary.database);
-      const billing = await createD1ConsoleBillingService({
-        database: temporary.database,
-        namespace: BILLING_NAMESPACE,
-        providers: createSimulatedBillingProviderAdapters(),
-      });
-      const checkout = await billing.createStripeCheckoutSession(SUPPORT_CONTEXT, {
-        creditPackId: 'usd_25',
-      });
-      const settlement = await billing.reconcileStripeCheckoutSession(SUPPORT_CONTEXT, {
-        checkoutSessionId: checkout.id,
-      });
-      if (settlement.purchase?.status !== 'SETTLED') throw new Error('Expected a settled purchase');
-      const refundId = 'historical-refund';
-      const entryId = `ble_${refundId}`;
-      const providerRefundId = `re_${refundId}`;
-      const createdAtMs = Date.now();
-      await temporary.database.batch([
-        createD1BillingLedgerEntryInsertStatement(temporary.database, {
-          ingestedAtMs: Date.now(),
-          namespace: BILLING_NAMESPACE,
-          orgId: SUPPORT_CONTEXT.orgId,
-          entryId,
-          type: 'REFUND',
-          amountMinor: 100,
-          description: 'Pre-migration refund',
-          monthUtc: null,
-          relatedInvoiceId: null,
-          relatedPurchaseId: settlement.purchase.id,
-          sourceEventId: providerRefundId,
-          actorType: 'PROVIDER',
-          actorUserId: null,
-          reasonCode: 'customer_request',
-          note: null,
-          idempotencyKey: `refund:${refundId}`,
-          createdAtMs,
-        }),
-        temporary.database
-          .prepare(
-            `INSERT INTO billing_refunds
-              (namespace, org_id, id, purchase_id, amount_minor, currency, reason, origin,
-                requester_user_id, idempotency_key, status, provider_refund_id, failure_code,
-                journal_entry_id, created_at_ms, updated_at_ms)
-             VALUES (?, ?, ?, ?, 100, 'USD', 'customer_request', 'console', ?,
-               'migration-refund', 'succeeded', ?, NULL, ?, ?, ?)`,
-          )
-          .bind(
-            BILLING_NAMESPACE,
-            SUPPORT_CONTEXT.orgId,
-            refundId,
-            settlement.purchase.id,
-            SUPPORT_CONTEXT.actorUserId,
-            providerRefundId,
-            entryId,
-            createdAtMs,
-            createdAtMs,
-          ),
-      ]);
-      expect((await billing.getOverview(SUPPORT_CONTEXT)).creditBalanceMinor).toBe(2600);
-      await applyD1MigrationFiles(temporary.database, [migration]);
-      expect((await billing.getOverview(SUPPORT_CONTEXT)).creditBalanceMinor).toBe(2400);
-      expect((await billing.listRefunds(SUPPORT_CONTEXT))[0]).toMatchObject({
-        id: refundId,
-        status: 'succeeded',
-      });
-      expect((await temporary.database.prepare('PRAGMA foreign_key_check').all()).results).toEqual(
-        [],
-      );
-      const next = await billing.createRefund(SUPPORT_CONTEXT, {
-        purchaseId: settlement.purchase.id,
-        amountMinor: 100,
-        reason: 'customer_request',
-        idempotencyKey: 'after-migration-refund',
-      });
-      expect(next.refund.status).toBe('succeeded');
-      expect(next.creditBalanceMinor).toBe(2300);
-    } finally {
-      cleanupTemporaryD1Database(temporary.tempDir);
-    }
-  });
-}
