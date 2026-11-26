@@ -153,7 +153,7 @@ Remaining: nothing in this plan. Steps 1 to 8 are done; step 9 is void, because
 | ----------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- |
 | Stripe billing in Pantry                        | Pantry Plan 95                                                  | Its step 6, in the Pantry repository                        |
 | One Console for both networks (open question 4) | Decided 2026-11-26; [Refactor 261](refactor-261-one-console.md) | Plan and build it; `test.console.seams.sh` stays until then |
-| Speak-to-Sign demo in the old account           | Decided 2026-11-26; Refactor 200                                | Move it to `seamsadmin` from `seams-tech/speak-to-sign`     |
+| Speak-to-Sign demo Wallet                       | Moved to `seamsadmin` 2026-11-26; Refactor 200                  | A Seams project and key for `speak-to-sign-8kf.pages.dev`   |
 
 The CHECK constraints that list `'satyr'` or a Pantry meter stay, because SQLite cannot
 change them in place (migration 0119). No code writes those values.
