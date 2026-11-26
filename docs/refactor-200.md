@@ -215,7 +215,16 @@ Open:
   longer resolves; the Worker `seams-shop` became `purin-shop` in the Purin plan.
 - The Speak-to-Sign demo was not migrated. Its Worker `seams-voice-intents-x-refresh` and
   the KV `seams-voice-intents-x-cache` were deleted with Wave 2. Pages `speak-to-sign` and the
-  KV `speak-to-sign-faucet-limits` stay in the source account until the owner decides.
+  KV `speak-to-sign-faucet-limits` stay in the source account for now.
+  - Decided (owner, 2026-11-26): move the demo to `seamsadmin`. Facts on 2026-11-26: its
+    source is `seams-tech/speak-to-sign` (`demo/frontend`, Pages with Functions; the
+    Worker in `demo/x-refresh-worker`). The project has no custom domain, only
+    `speak-to-sign.pages.dev`, and 25 deployments; the last one is `d186267`. Its Functions
+    need the secrets and settings that the comments of `demo/frontend/wrangler.toml` list,
+    and the KV bindings `FAUCET_LIMITS` and `X_CACHE`. The `X_CACHE` namespace is deleted,
+    so the X posts route has no cache until the move. Cloudflare cannot read a Pages secret
+    back: take each value from its local store or issue it again. The old project holds the
+    host `speak-to-sign.pages.dev`; check which host a new project gets before the move.
 - Purin account move: `purin.io` can move from 2026-11-27. The Purin account needs the
   Workers Paid plan and an API token first.
 

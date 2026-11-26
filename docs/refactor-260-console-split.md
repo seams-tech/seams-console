@@ -149,11 +149,11 @@ Done on 2026-11-20:
 Remaining: nothing in this plan. Steps 1 to 8 are done; step 9 is void, because
 `purin-labs/purin-monorepo` is a new repository. Other owners keep these items:
 
-| Item                                                    | Owner                | Next step                                          |
-| ------------------------------------------------------- | -------------------- | -------------------------------------------------- |
-| Stripe billing in Pantry                                | Pantry Plan 95       | Its step 6, in the Pantry repository               |
-| One Console for both networks (open question 4)         | Owner                | Decide; `test.console.seams.sh` stays until then   |
-| Pages `speak-to-sign`, KV `speak-to-sign-faucet-limits` | Owner (Refactor 200) | Decide their account; they stay in the old account |
+| Item                                            | Owner                            | Next step                                                   |
+| ----------------------------------------------- | -------------------------------- | ----------------------------------------------------------- |
+| Stripe billing in Pantry                        | Pantry Plan 95                   | Its step 6, in the Pantry repository                        |
+| One Console for both networks (open question 4) | Decided 2026-11-26; new plan     | Plan and build it; `test.console.seams.sh` stays until then |
+| Speak-to-Sign demo in the old account           | Decided 2026-11-26; Refactor 200 | Move it to `seamsadmin` from `seams-tech/speak-to-sign`     |
 
 The CHECK constraints that list `'satyr'` or a Pantry meter stay, because SQLite cannot
 change them in place (migration 0119). No code writes those values.
@@ -253,7 +253,7 @@ local Wallet pages use it.
 | Console API              | `seams.sh/console/*`             | `console.seams.sh/console/*` (question 3) |
 | Platform Console         | `account.seams.sh` (temporary)   | none                                      |
 | `/account-platform/v1/*` | route on `seams.sh`, answers 404 | none                                      |
-| Testnet Console backend  | `test.console.seams.sh`          | kept until the owner decides (question 4) |
+| Testnet Console backend  | `test.console.seams.sh`          | none: `console.seams.sh` (question 4)     |
 
 Moving the Console API to `console.seams.sh` changes these values, all rendered in
 `packages/wallet-console-server-ts/scripts/render-d1-gateway-config.mjs`:
@@ -462,8 +462,20 @@ repository.
    step 5. The step-up RP ID stays `seams.sh`, so the step-up passkeys stay valid.
 4. Decided (owner, 2026-11-20): keep `test.console.seams.sh`, the separate Console Worker
    and database of the production testnet lane, until the split ends. Then decide whether
-   one Console serves both networks. The split ended on 2026-11-26, so this decision is
-   open for the owner.
+   one Console serves both networks.
+   - Decided (owner, 2026-11-26): one Console serves both networks. The navbar toggle of
+     the Console selects the network. Facts on 2026-11-26: the production frontend gives
+     each network its own Console URL (`VITE_TESTNET_CONSOLE_BASE_URL` is
+     `test.console.seams.sh`, set in `runConsoleOperation` of `scripts/deploy-surface.mjs`),
+     so a person has separate accounts, organisations and billing on each network. Each
+     lane's Gateways bind that lane's Console Worker as `WALLET_CONSOLE`
+     (`consoleWorkerNameFor` in `render-d1-gateway-config.mjs`), and
+     `expectedConsoleOrigin` in `scripts/deployment-targets.mjs` keeps the testnet origin.
+     The Console data model already maps an environment to a network
+     (`networkForConsoleEnvironmentId`). Both lanes run in `seamsadmin`, so the testnet
+     Gateways can bind the mainnet Console Worker. The work is its own plan: it decides the
+     testnet tenant and the data of `seams-console-testnet-sin`, then retires
+     `seams-sdk-d1-console-testnet` and `test.console.seams.sh`.
 5. Decided (owner, 2026-11-20): Pantry keeps the old Console Worker `seams-sdk-d1-console`,
    and what it binds, in the old Cloudflare account until its own accounts exist (order
    step 2). The Refactor 200 cutover does not wait for Pantry.
