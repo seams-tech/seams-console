@@ -24,7 +24,8 @@ const SUPPORT_CONTEXT: ConsoleBillingRefundSupportContext = {
 
 const BILLING_NAMESPACE = 'billing-d1-refund-test';
 
-async function seedBillingEmailOwners(
+/** Checkout opens a payer only for an active organization; two owners receive billing email. */
+async function seedBillingOrganization(
   database: Parameters<typeof createD1ConsoleBillingService>[0]['database'],
 ): Promise<void> {
   const createdAtMs = Date.parse('2026-03-19T00:00:00.000Z');
@@ -126,7 +127,7 @@ test('D1 billing reconstructs balanced credit and persists provider-backed refun
   const temporary = createTemporaryD1Database();
   try {
     await applyD1MigrationFiles(temporary.database, listD1MigrationFiles('d1-console-core'));
-    await seedBillingEmailOwners(temporary.database);
+    await seedBillingOrganization(temporary.database);
     const billing = await createD1ConsoleBillingService({
       database: temporary.database,
       namespace: BILLING_NAMESPACE,
@@ -286,12 +287,13 @@ test('D1 billing reserves refund capacity before awaiting Stripe', async () => {
   const firstRefundGate = Promise.withResolvers<void>();
   try {
     await applyD1MigrationFiles(temporary.database, listD1MigrationFiles('d1-console-core'));
+    await seedBillingOrganization(temporary.database);
     const defaults = createSimulatedBillingProviderAdapters();
     const firstRefundStarted = Promise.withResolvers<void>();
     let refundAttempts = 0;
     const billing = await createD1ConsoleBillingService({
       database: temporary.database,
-      namespace: 'billing-d1-concurrent-refund-test',
+      namespace: BILLING_NAMESPACE,
       now: () => new Date('2026-03-20T00:00:00.000Z'),
       providers: {
         stripe: {
@@ -352,11 +354,12 @@ test('D1 billing matches the exact checkout session and retries an ambiguous ref
   const temporary = createTemporaryD1Database();
   try {
     await applyD1MigrationFiles(temporary.database, listD1MigrationFiles('d1-console-core'));
+    await seedBillingOrganization(temporary.database);
     const defaults = createSimulatedBillingProviderAdapters();
     let refundAttempts = 0;
     const billing = await createD1ConsoleBillingService({
       database: temporary.database,
-      namespace: 'billing-d1-provider-retry-test',
+      namespace: BILLING_NAMESPACE,
       now: () => new Date('2026-03-20T00:00:00.000Z'),
       providers: {
         stripe: {
