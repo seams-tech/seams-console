@@ -200,16 +200,22 @@ Open:
   projects and 3 containers are deleted in the source account. The record is the private file
   `.artifacts/cloudflare-account-migration-20261120/retirement-list.md`. The idle watchbook
   tunnel is deleted too. The `watchbook-analytics` bucket is deleted too (2026-11-21, after its
-  expiry rule emptied it), so 12 R2 buckets are gone and 7 stay. The old `seams.sh` zone (status Moved) stays: it holds a route and
-  a custom domain of the kept Console and Gateway, and Cloudflare removes a moved zone itself.
-- Phase 7, Wave 2 waits for Pantry: `seams-sdk-d1-console`, its database, the mainnet
-  Gateways and Wallet Runtimes it binds, and the mainnet Router roles, private databases and
-  backup buckets that those reach.
+  expiry rule emptied it), so 12 R2 buckets are gone and 7 stay.
+- Phase 7, Wave 2 is done (2026-11-22). After Pantry Plan 95 step 5, the Pantry session
+  deleted the old Seams stack in the source account with the owner's yes (Pantry Plan 93,
+  "Follow-up results", Pantry `5ce9e228`). It first checked that no outside caller used the
+  stack after 2026-11-21 08:00 UTC. Deleted: 15 Workers (`router-ab-*`, `seams-sdk-d1-*`,
+  `seams-voice-intents-x-refresh`), 8 D1 databases, the `router-ab` and `outlayer1`
+  buckets, the KV `seams-voice-intents-x-cache` and the custom domain `api.wallet.seams.sh`.
+  On 2026-11-23 it also deleted the old `seams.sh` zone record (status Moved). Checked on
+  2026-11-26 with Wrangler: the source account has 11 Workers (`hadimar-*`, `pantry*`,
+  `purin-shop`), and none binds a Seams Worker; its D1 databases and R2 buckets are Pantry
+  and `hadimar` only. See Refactor 260, "Progress".
 - The owner deleted the `seams.tokyo` zone on purpose (2026-11-20). `shop.seams.tokyo` no
-  longer resolves; the Worker `seams-shop` stays for the Purin plan.
-- The Speak-to-Sign demo was not migrated: Pages `speak-to-sign`, Worker
-  `seams-voice-intents-x-refresh` and two KV namespaces stay in the source account until
-  the owner decides.
+  longer resolves; the Worker `seams-shop` became `purin-shop` in the Purin plan.
+- The Speak-to-Sign demo was not migrated. Its Worker `seams-voice-intents-x-refresh` and
+  the KV `seams-voice-intents-x-cache` were deleted with Wave 2. Pages `speak-to-sign` and the
+  KV `speak-to-sign-faucet-limits` stay in the source account until the owner decides.
 - Purin account move: `purin.io` can move from 2026-11-27. The Purin account needs the
   Workers Paid plan and an API token first.
 
