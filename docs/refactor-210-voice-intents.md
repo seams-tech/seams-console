@@ -61,9 +61,9 @@ Those sections stay as the record of the first design.
   owner pays the gas, and core signs once for each verdict. On `step_up`, core
   asks for a fresh approval with the session's own method. A cold session needs
   an unlock first.
-- **Step-up.** The policy step can only tighten a decision. One stub rule
-  stands in for the policy engine of Refactor 225: a payment above 10 NEAR
-  needs a passkey.
+- **Step-up.** The policy step can only tighten a decision. One stub rule is
+  the only rule: a payment above 10 NEAR needs a passkey. The policy engine of
+  Refactor 225 was retired unbuilt on 2026-11-26.
 - **Enrollment.** The owner signs one NEP-413 message with a full-access key
   of the owner account. The verifier checks the signature and reads the key
   over NEAR RPC. The template key is `template:v3:<owner>`.
@@ -1213,11 +1213,16 @@ multisig is not built.
 ## 14. Follow-up phase: Seams-hosted Speak-to-Sign on Cloudflare
 
 Status: the owner decided this direction on 2026-11-08. It is a follow-up
-phase after the hackathon. Nothing is built.
+phase after the hackathon. Nothing in this plan is built. From 2026-11-19 to
+2026-11-24 a separate library, SaySo, was built outside this plan (a local
+repository, not on GitHub). It differs from 14.2: it signs its own verdict
+format `sayso_verdict_v1`, has no NEAR code, and uses Deepgram Nova-3 on
+Workers AI for the transcript. The Wallet does not use it.
 
-The hackathon chains OutLayer, NEAR AI Whisper, Phala/ReDimNet and Jev
-([Refactor 225](https://github.com/seams-tech/seams-wallet/blob/main/docs/refactor-225-jev-policy-engine.md)).
-That chain stays for the hackathon. Later, the chain becomes optional, and
+The hackathon chains OutLayer, NEAR AI Whisper and Phala/ReDimNet. Jev on NEAR
+AI was planned for the policy step
+([Refactor 225](https://github.com/seams-tech/seams-wallet/blob/61bf248cf/docs/refactor-225-jev-policy-engine.md));
+the owner retired that plan unbuilt on 2026-11-26. That chain stays for the hackathon. Later, the chain becomes optional, and
 Seams provides a version that it hosts fully on Cloudflare.
 
 ### 14.1 Components
@@ -1228,7 +1233,7 @@ Seams provides a version that it hosts fully on Cloudflare.
 | Speaker check             | ReDimNet in a Phala dstack CVM                    | ReDimNet on Cloudflare: Workers AI custom model, a Container, or Worker WASM |
 | Transcript                | Whisper large-v3 on NEAR AI                       | Whisper on Workers AI (earlier numbers: branch `archive/voiceid-stt-bench`)  |
 | Words against transaction | `spoken-intent`                                   | `spoken-intent` (same crate, WASM build)                                     |
-| Policy                    | Jev on NEAR AI, called from the OutLayer verifier | Jev called from the Seams route                                              |
+| Policy                    | The stub rule in the OutLayer verifier            | The same stub rule in the Seams route                                        |
 | Template and used audio   | OutLayer storage                                  | Seams storage (D1 or a Durable Object)                                       |
 | Verdict signing key       | OutLayer project-bound key                        | A Seams-held key in a Cloudflare secret                                      |
 
