@@ -62,6 +62,20 @@ Done on 2026-11-21:
   `staging` and `production` environments, and the env scripts no longer write them
   (`5e71da5b`); the repository `seams-tech/seams-console-mirror` is deleted.
 
+- Step 5, the Pantry part (`24ff0b61`): Pantry Plan 95 steps 1–4 landed on Pantry `dev`
+  (`3c85e71c`, `d192c4d2`, `310231fa`, `396278ef`), so nothing in Pantry calls this Console.
+  The Console lost the `satyr` service, the `SatyrAccountPlatform` entrypoint and the
+  Pantry-only ingress, provisioning, release and cron, the Pantry routes, meters, prices and
+  isolated test pricing, the `PANTRY_*`, `SATYR_*` and `ACCOUNT_PROVISION_*` deploy values,
+  the dashboard labels, and the Pantry-only tests. Migration 0119 (core 0022) deletes every
+  Pantry row and keeps three Pantry-only tables (`satyr_service_bindings`,
+  `billing_jev_hours`, `billing_isolated_test_accounts`), because the old Worker reads them
+  between the migration and the Worker deploy. The frontend deployed before the backend,
+  because the old dashboard expects two services. Staging (frontend `44870149735`, backend
+  `44870254840`) and production mainnet (merge `d2aada7f`, frontend `44871173228`, backend
+  `44871323708`) passed. The production testnet Console still runs the old code until its
+  placement question is settled.
+
 Done on 2026-11-20:
 
 - The owner decisions under "Decision", and open questions 1 to 6.
@@ -88,20 +102,14 @@ Remaining:
 | Step (see "Order")                   | Owner              | Waits for                                     |
 | ------------------------------------ | ------------------ | --------------------------------------------- |
 | 2. Keep Pantry's old Console Workers | This plan (Wave 2) | Plan 95 step 5, then the owner's confirmation |
-| 3. Pantry's own accounts             | Pantry Plan 95     | Steps 2 to 4 (in test), then the step 5 gate  |
-| 5. Remove the Pantry service         | This plan          | Plan 95 step 4 (see below)                    |
+| 3. Pantry's own accounts             | Pantry Plan 95     | Step 5 release and gate (own session)         |
+| Drop the 3 Pantry tables             | This plan          | Every lane runs `24ff0b61` (testnet blocked)  |
+| Pantry secrets in Console envs       | Owner confirms     | Nothing                                       |
 | Testnet deploy of `4ab30f88`         | Owner              | The Deriver B D1 placement (HKG, not SIN)     |
 
 Steps 4, 6, 7 and 8 are done; step 9 is void, because `purin-labs/purin-monorepo` is a new
 repository. Refactor 200's migration session is archived, so Wave 2 and the placement
 question have no other owner.
-
-- Step 5 waits for Plan 95 step 4, not only for the production Pantry: Pantry local
-  development binds this checkout's `seams-sdk-d1-local` (`pnpm router`), and its E2E
-  fixture Worker is built here (`tests/helpers/buildSharedAccountPlatformWorker.mjs`).
-  Pantry production binds the old Console Worker in the old account and does not see code
-  changes here. Pantry CI checks out `purin-labs/monorepo` at `3a05ce4`; the redirect keeps
-  that working until Plan 95 step 4 deletes the step.
 
 ## Decision
 
