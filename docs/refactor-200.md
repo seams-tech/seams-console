@@ -235,10 +235,11 @@ Open:
   - Deleted with the owner's yes: the Pages project `speak-to-sign` and the KV
     `speak-to-sign-faucet-limits` in the source account. `speak-to-sign.pages.dev` is gone.
     The refresh Worker stays deleted, for a lower X cost (owner).
-  - Open: the demo's Wallet does not work. Its Seams project `proj_mv5fzezy_4ztf60` is not
-    in the staging Console after the fresh start, and the demo pins `@seams/wallet` 0.72.0
-    while the three sign hosts run 0.76.0. A new project needs a publishable key that allows
-    the new host.
+  - Not needed (owner, 2026-11-26): the demo's Wallet, `/api/voice-verify` and the X posts
+    route. The owner stopped the Phala, OutLayer and X API funding, so their credits run
+    out. The Wallet does not work: its Seams project `proj_mv5fzezy_4ztf60` is not in the
+    staging Console after the fresh start, and the demo pins `@seams/wallet` 0.72.0 while
+    the three sign hosts run 0.76.0. No work on these parts is planned.
 - Purin account move: `purin.io` can move from 2026-11-27. The Purin account needs the
   Workers Paid plan and an API token first.
 
