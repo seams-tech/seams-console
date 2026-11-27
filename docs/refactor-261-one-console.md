@@ -2,10 +2,10 @@
 
 Status: plan, written on 2026-11-26. On 2026-11-27 the owner approved it with the seven
 recommended answers in "Owner decisions". Steps 1 to 7 and decision 4 (the deletion of the
-mainnet organisation "Seams") are done, and step 8 is done except two checks that need the
-owner (see "Progress"). Step 9 can start on 2026-11-28 after 02:30 UTC.
-Each push, production deploy, secret change and deletion still waits for the owner's yes at
-its step.
+mainnet organisation "Seams") are done, and step 8 is done; the owner skipped its two checks
+that need a passkey or a Google sign-in (see "Progress"). Step 9 can start on 2026-11-28 after
+02:30 UTC. Each push, production deploy, secret change and deletion still waits for the
+owner's yes at its step.
 
 ## Progress
 
@@ -30,10 +30,10 @@ Step 8, checks on 2026-11-27:
 - Requests to `test.console.seams.sh` from 2026-11-26 03:00 to 2026-11-27 03:00 UTC (zone
   analytics): the two testnet deploy runs of 2026-11-26, scanner probes (404), and one
   `readyz` of these checks. The old Worker's other invocations are its cron.
-- Not done here: a wallet registration on testnet and the dashboard switch for the owner of
-  "Seams Wallets II". The demo registers with a passkey or Google, and that organisation's
-  owner signs in with Google; both need the owner. "Seams Wallets II" is the only
-  organisation now, so the GitHub identity has none.
+- Skipped by the owner on 2026-11-27 ("Skip them"): a wallet registration on testnet and the
+  dashboard switch for the owner of "Seams Wallets II". The demo registers with a passkey or
+  Google, and that organisation's owner signs in with Google; both need the owner. "Seams
+  Wallets II" is the only organisation now, so the GitHub identity has none.
 
 Step 9 can start on 2026-11-28 after 02:30 UTC, if the host has no request but scanner probes
 in that day.
