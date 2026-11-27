@@ -1,12 +1,42 @@
 # Refactor 261 — One Console for both networks
 
 Status: plan, written on 2026-11-26. On 2026-11-27 the owner approved it with the seven
-recommended answers in "Owner decisions". Steps 1 to 6 and decision 4 (the deletion of the
-mainnet organisation "Seams") are done (see "Progress"). Step 7 (production testnet) is next.
+recommended answers in "Owner decisions". Steps 1 to 7 and decision 4 (the deletion of the
+mainnet organisation "Seams") are done, and step 8 is done except two checks that need the
+owner (see "Progress"). Step 9 can start on 2026-11-28 after 02:30 UTC.
 Each push, production deploy, secret change and deletion still waits for the owner's yes at
 its step.
 
 ## Progress
+
+Step 7, done on 2026-11-27 (owner: "Yes, run step 7"): production testnet run
+`45927624709` from `main` (`376856c2`) passed every job in 10 minutes: the role Workers, the
+Wallet Runtimes and Gateways, the activation through `console.seams.sh`, and the production
+frontend. The testnet Wallet was unavailable from the Runtime deploy (02:23 UTC) to the end of
+the activation (02:26 UTC).
+
+Step 8, checks on 2026-11-27:
+
+- Every testnet Gateway and Wallet Runtime matches the rendered config: `WALLET_CONSOLE` is
+  `seams-sdk-d1-console` with the entrypoint `TestnetWalletLane`, and the namespace is
+  `seams-production`.
+- The shared database has both active bindings: `production-mainnet` on
+  `proj_65be6ecba1ff48d6a7294f0db59964ca:prod` and `production-testnet` on `…:dev`. The
+  cutover created the `dev` tenant root with the testnet grant key.
+- `test.api.seams.sh/.well-known/seams-tenant-deployment.json` names the `dev` environment, a
+  new publishable key and `development_testnet_v1`; `api.seams.sh` still names `prod`. The
+  testnet Gateway reads its binding from the shared Console through the testnet entrypoint,
+  so this answer proves that path.
+- Requests to `test.console.seams.sh` from 2026-11-26 03:00 to 2026-11-27 03:00 UTC (zone
+  analytics): the two testnet deploy runs of 2026-11-26, scanner probes (404), and one
+  `readyz` of these checks. The old Worker's other invocations are its cron.
+- Not done here: a wallet registration on testnet and the dashboard switch for the owner of
+  "Seams Wallets II". The demo registers with a passkey or Google, and that organisation's
+  owner signs in with Google; both need the owner. "Seams Wallets II" is the only
+  organisation now, so the GitHub identity has none.
+
+Step 9 can start on 2026-11-28 after 02:30 UTC, if the host has no request but scanner probes
+in that day.
 
 Step 6, done on 2026-11-27 (owner: "do all 3 parts of step 6"):
 
