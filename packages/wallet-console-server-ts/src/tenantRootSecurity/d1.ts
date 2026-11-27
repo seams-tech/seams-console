@@ -1,3 +1,4 @@
+import { environmentKeySqlFilter, type LaneEnvironmentKeys } from '../walletLanes/environmentKeys';
 import {
   d1ChangedRows,
   queryD1One,
@@ -505,11 +506,30 @@ export function createD1TenantRootOperationStoreV1(
 export interface D1TenantRootOperationResumptionStoreOptionsV1 {
   readonly database: D1DatabaseLike;
   readonly namespace: string;
+  /** The lane whose control plane replays the operations (Refactor 261). */
+  readonly environmentKeys: LaneEnvironmentKeys;
 }
 
 export interface TenantRootOperationResumptionStoreV1 {
   listPending(limit: number): Promise<readonly TenantRootPendingOperationV1[]>;
 }
+
+/* An operation names its tenant root by identity digest only. The root's environment is in
+   its creation grant, or in its restore state when the root was restored. */
+const OPERATION_LANE_FILTER = `AND (EXISTS (
+            SELECT 1 FROM tenant_root_creation_grants AS grant_row
+             WHERE grant_row.namespace = operation.namespace
+               AND grant_row.identity_digest_b64u = operation.identity_digest_b64u
+               AND ${environmentKeySqlFilter('grant_row.env_id', 'grant_row.project_id', '?4')})
+          OR EXISTS (
+            SELECT 1 FROM tenant_root_security_restore_state AS restore_row
+             WHERE restore_row.namespace = operation.namespace
+               AND restore_row.identity_digest_b64u = operation.identity_digest_b64u
+               AND ${environmentKeySqlFilter(
+                 "json_extract(restore_row.identity_json, '$.envId')",
+                 "json_extract(restore_row.identity_json, '$.projectId')",
+                 '?4',
+               )}))`;
 
 export function createD1TenantRootOperationResumptionStoreV1(
   options: D1TenantRootOperationResumptionStoreOptionsV1,
@@ -519,19 +539,28 @@ export function createD1TenantRootOperationResumptionStoreV1(
       if (!Number.isSafeInteger(limit) || limit < 1 || limit > 1000) {
         throw new Error('tenant-root operation resumption limit must be between 1 and 1000');
       }
-      const result = await options.database
-        .prepare(
-          `SELECT org_id, identity_digest_b64u, custody_lineage_b64u,
-                  ${OPERATIONS_COLUMNS}
-             FROM tenant_root_security_operations
-            WHERE namespace = ?1
-              AND operation_kind = ?2
-              AND status = 'pending'
-            ORDER BY updated_at_ms ASC, created_at_ms ASC
-            LIMIT ?3`,
-        )
-        .bind(options.namespace, TENANT_ROOT_OPERATION_KIND_ROTATION_V1, limit)
-        .all<D1Row>();
+      const keys = options.environmentKeys;
+      const statement = options.database.prepare(
+        `SELECT org_id, identity_digest_b64u, custody_lineage_b64u,
+                ${OPERATIONS_COLUMNS}
+           FROM tenant_root_security_operations AS operation
+          WHERE namespace = ?1
+            AND operation_kind = ?2
+            AND status = 'pending'
+            ${keys.admitsAll ? '' : OPERATION_LANE_FILTER}
+          ORDER BY updated_at_ms ASC, created_at_ms ASC
+          LIMIT ?3`,
+      );
+      const result = await (
+        keys.admitsAll
+          ? statement.bind(options.namespace, TENANT_ROOT_OPERATION_KIND_ROTATION_V1, limit)
+          : statement.bind(
+              options.namespace,
+              TENANT_ROOT_OPERATION_KIND_ROTATION_V1,
+              limit,
+              keys.toSqlParameter(),
+            )
+      ).all<D1Row>();
       return (result.results ?? []).map(
         (row): TenantRootPendingOperationV1 => ({
           orgId: requiredScopeText(row.org_id, 'org id'),

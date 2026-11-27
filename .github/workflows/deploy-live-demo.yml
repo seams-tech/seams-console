@@ -64,17 +64,8 @@ jobs:
     steps:
       - run: echo "Production live-demo deployment authorized"
 
-  # The Console binds every regional Gateway and Wallet Runtime, so it
-  # deploys after the backend has created them.
-  deploy_console:
-    name: Deploy Console control plane
-    needs: [authorize, deploy_wallet_system]
-    uses: ./.github/workflows/deploy-console-backend.yml
-    with:
-      lane: production-testnet
-      prepare_only: ${{ inputs.prepare_only }}
-    secrets: inherit
-
+  # The production mainnet Console serves this lane (Refactor 261): the mainnet run deploys
+  # it, and its testnet entrypoint must exist before these Gateways and Runtimes bind it.
   deploy_wallet_system:
     name: Deploy live-demo runtime surfaces
     needs: authorize
@@ -85,7 +76,7 @@ jobs:
 
   cutover:
     name: Activate live-demo tenant binding
-    needs: [validate, deploy_console, deploy_wallet_system]
+    needs: [validate, deploy_wallet_system]
     if: ${{ !inputs.prepare_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 15

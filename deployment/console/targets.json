@@ -20,26 +20,6 @@
         "secrets": ["STRIPE_API_SK"]
       }
     },
-    "production-testnet": {
-      "environment": "production-testnet-console",
-      "origin": "https://test.console.seams.sh",
-      "siteOrigin": "https://seams.sh",
-      "workerName": "seams-sdk-d1-console-testnet",
-      "platformSupportEmails": ["n6378056@gmail.com"],
-      "placementRegion": "aws:ap-southeast-1",
-      "database": {
-        "name": "seams-console-testnet-sin",
-        "id": "8700ed4b-8b26-41f1-97a0-a5fd40e32c34"
-      },
-      "emailDelivery": {
-        "kind": "resend",
-        "fromAddress": "info@purin.io"
-      },
-      "billing": {
-        "enabled": true,
-        "secrets": ["STRIPE_API_SK"]
-      }
-    },
     "production-mainnet": {
       "environment": "production-console",
       "origin": "https://console.seams.sh",
@@ -51,6 +31,10 @@
         "name": "seams-console",
         "id": "f6e040fb-5d39-4120-804b-92d60e5b5818"
       },
+      "walletLanes": [
+        { "lane": "production-mainnet", "environmentKeys": ["prod"] },
+        { "lane": "production-testnet", "environmentKeys": ["dev", "staging"] }
+      ],
       "emailDelivery": {
         "kind": "resend",
         "fromAddress": "info@purin.io"

@@ -34,6 +34,10 @@ if (child.status !== 0) process.exit(child.status ?? 1);
 
 function resolveWorkflow(selectedAuthority, selectedLaneId) {
   if (selectedAuthority !== 'console' && selectedAuthority !== 'wallet-system') printUsageAndExit();
+  if (selectedAuthority === 'console' && selectedLaneId === 'production-testnet') {
+    // Refactor 261: the production mainnet Console serves production testnet.
+    throw new Error('production-testnet has no Console of its own; use --lane production-mainnet');
+  }
   return {
     'staging-testnet': 'deploy-staging-backend.yml',
     'production-testnet': 'deploy-live-demo.yml',

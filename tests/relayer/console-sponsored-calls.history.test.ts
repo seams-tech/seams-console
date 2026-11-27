@@ -37,7 +37,7 @@ function now(): Date {
 
 async function createHistoryBillingFixture() {
   const temporary = createTemporaryD1Database();
-  await applyD1MigrationFiles(temporary.database, listD1MigrationFiles('d1-console-core'));
+  await applyD1MigrationFiles(temporary.database, listD1MigrationFiles('d1-console'));
   const core = await createCloudflareD1AccountServiceBundle({
     database: temporary.database,
     namespace,

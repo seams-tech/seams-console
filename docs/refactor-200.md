@@ -200,16 +200,46 @@ Open:
   projects and 3 containers are deleted in the source account. The record is the private file
   `.artifacts/cloudflare-account-migration-20261120/retirement-list.md`. The idle watchbook
   tunnel is deleted too. The `watchbook-analytics` bucket is deleted too (2026-11-21, after its
-  expiry rule emptied it), so 12 R2 buckets are gone and 7 stay. The old `seams.sh` zone (status Moved) stays: it holds a route and
-  a custom domain of the kept Console and Gateway, and Cloudflare removes a moved zone itself.
-- Phase 7, Wave 2 waits for Pantry: `seams-sdk-d1-console`, its database, the mainnet
-  Gateways and Wallet Runtimes it binds, and the mainnet Router roles, private databases and
-  backup buckets that those reach.
+  expiry rule emptied it), so 12 R2 buckets are gone and 7 stay.
+- Phase 7, Wave 2 is done (2026-11-22). After Pantry Plan 95 step 5, the Pantry session
+  deleted the old Seams stack in the source account with the owner's yes (Pantry Plan 93,
+  "Follow-up results", Pantry `5ce9e228`). It first checked that no outside caller used the
+  stack after 2026-11-21 08:00 UTC. Deleted: 15 Workers (`router-ab-*`, `seams-sdk-d1-*`,
+  `seams-voice-intents-x-refresh`), 8 D1 databases, the `router-ab` and `outlayer1`
+  buckets, the KV `seams-voice-intents-x-cache` and the custom domain `api.wallet.seams.sh`.
+  On 2026-11-23 it also deleted the old `seams.sh` zone record (status Moved). Checked on
+  2026-11-26 with Wrangler: the source account has 11 Workers (`hadimar-*`, `pantry*`,
+  `purin-shop`), and none binds a Seams Worker; its D1 databases and R2 buckets are Pantry
+  and `hadimar` only. See Refactor 260, "Progress".
 - The owner deleted the `seams.tokyo` zone on purpose (2026-11-20). `shop.seams.tokyo` no
-  longer resolves; the Worker `seams-shop` stays for the Purin plan.
-- The Speak-to-Sign demo was not migrated: Pages `speak-to-sign`, Worker
-  `seams-voice-intents-x-refresh` and two KV namespaces stay in the source account until
-  the owner decides.
+  longer resolves; the Worker `seams-shop` became `purin-shop` in the Purin plan.
+- The Speak-to-Sign demo moved to `seamsadmin` on 2026-11-26 (owner decision of the same
+  day). Its Worker `seams-voice-intents-x-refresh` and the KV `seams-voice-intents-x-cache`
+  were deleted with Wave 2 before the move.
+  - New in `seamsadmin`: the Pages project `speak-to-sign` on
+    `https://speak-to-sign-8kf.pages.dev`, and the KV namespaces `speak-to-sign-faucet-limits`
+    (`3410ee1f…`) and `seams-voice-intents-x-cache` (`f54a18bb…`). Cloudflare gave the host a
+    3-character suffix, as for every Pages project of this account. The production
+    deployment `692d54f0` is `seams-tech/speak-to-sign` `dev` at `924d83d`. That commit
+    and `16bf2dd` (its deployed state) put the new host, the new KV ids and the account in
+    that repository.
+  - Secrets: 12 of the 13 old secrets came from `demo/frontend/.dev.vars` of the
+    speak-to-sign checkout (each one checked against its service) and from the staging
+    `speakToSignVerifier` in `deployment/wallet-system/targets.json`.
+    `VOICE_OUTLAYER_PAYMENT_KEY` has no local copy. The owner chose to deploy without it, so
+    `/api/voice-verify` answers 503 until the key is set. The GitHub environment
+    `staging-gateway` and the Worker `seams-sdk-d1-gateway-staging` still hold it.
+  - Checked on 2026-11-26: `/`, `/multisig/`, `/api/near-ai-status`, `/api/x/eligible-posts`
+    (the second call came from `X_CACHE` in 0.1 s), `/api/faucet` (it passes its key and
+    KV checks) and `/api/voice-command` (JEV answered).
+  - Deleted with the owner's yes: the Pages project `speak-to-sign` and the KV
+    `speak-to-sign-faucet-limits` in the source account. `speak-to-sign.pages.dev` is gone.
+    The refresh Worker stays deleted, for a lower X cost (owner).
+  - Not needed (owner, 2026-11-26): the demo's Wallet, `/api/voice-verify` and the X posts
+    route. The owner stopped the Phala, OutLayer and X API funding, so their credits run
+    out. The Wallet does not work: its Seams project `proj_mv5fzezy_4ztf60` is not in the
+    staging Console after the fresh start, and the demo pins `@seams/wallet` 0.72.0 while
+    the three sign hosts run 0.76.0. No work on these parts is planned.
 - Purin account move: `purin.io` can move from 2026-11-27. The Purin account needs the
   Workers Paid plan and an API token first.
 

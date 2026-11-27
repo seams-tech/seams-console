@@ -3,6 +3,10 @@ import React from 'react';
 // Console-owned runtime state. This replaces the seams-site frontendRuntime
 // for the extracted Console application: deployment endpoints and network
 // selection only — no SeamsWebProvider, no Wallet SDK configuration.
+//
+// One Console serves every network (Refactor 261): the networks share the Console base URL
+// and its session, and differ in their Gateway and hosted wallet. The selected environment
+// tells the Console which network's Wallet lane serves a request.
 
 export type ConsoleNetwork = 'testnet' | 'mainnet';
 
@@ -30,10 +34,7 @@ function deploymentFor(network: ConsoleNetwork): ConsoleDeployment {
     trimmedEnv(env[`VITE_${prefix}RELAYER_URL`]) ||
     trimmedEnv(env.VITE_RELAYER_URL) ||
     windowOrigin();
-  const consoleBaseUrl =
-    trimmedEnv(env[`VITE_${prefix}CONSOLE_BASE_URL`]) ||
-    trimmedEnv(env.VITE_CONSOLE_BASE_URL) ||
-    relayerUrl;
+  const consoleBaseUrl = trimmedEnv(env.VITE_CONSOLE_BASE_URL) || relayerUrl;
   const walletOrigin =
     trimmedEnv(env[`VITE_${prefix}WALLET_ORIGIN`]) ||
     trimmedEnv(env.VITE_WALLET_ORIGIN) ||
@@ -43,7 +44,7 @@ function deploymentFor(network: ConsoleNetwork): ConsoleDeployment {
 
 function availableNetworks(): readonly ConsoleNetwork[] {
   const env = import.meta.env;
-  return trimmedEnv(env.VITE_MAINNET_CONSOLE_BASE_URL) || trimmedEnv(env.VITE_MAINNET_RELAYER_URL)
+  return trimmedEnv(env.VITE_MAINNET_RELAYER_URL)
     ? (['testnet', 'mainnet'] as const)
     : (['testnet'] as const);
 }

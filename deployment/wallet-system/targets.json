@@ -287,7 +287,7 @@
         "resources": {
           "gateway": {
             "workerName": "seams-sdk-d1-gateway-testnet",
-            "consoleD1Name": "seams-console-testnet-sin"
+            "consoleD1Name": "seams-console"
           },
           "router": {
             "workerName": "router-ab-mpc-router-testnet",
@@ -367,8 +367,8 @@
               "workerName": "seams-sdk-d1-gateway-testnet",
               "ingressRegion": "APAC",
               "consoleD1": {
-                "name": "seams-console-testnet-sin",
-                "id": "8700ed4b-8b26-41f1-97a0-a5fd40e32c34"
+                "name": "seams-console",
+                "id": "f6e040fb-5d39-4120-804b-92d60e5b5818"
               },
               "regions": {
                 "US": {
@@ -410,10 +410,10 @@
               }
             },
             "tenant": {
-              "namespace": "seams-production-testnet",
-              "orgId": "org_d9zox3del842",
-              "projectId": "proj_a5abea28f6564993b19ba75b5140a44a",
-              "environmentId": "proj_a5abea28f6564993b19ba75b5140a44a:dev"
+              "namespace": "seams-production",
+              "orgId": "org_bqzydcm176nt",
+              "projectId": "proj_65be6ecba1ff48d6a7294f0db59964ca",
+              "environmentId": "proj_65be6ecba1ff48d6a7294f0db59964ca:dev"
             },
             "origins": {
               "gateway": "https://test.api.seams.sh",

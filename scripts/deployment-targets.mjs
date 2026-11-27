@@ -29,11 +29,10 @@ const BACKEND_LANE_IDS = Object.freeze([
   'production-testnet',
   'production-mainnet',
 ]);
-const CONSOLE_LANE_IDS = Object.freeze([
-  'staging-testnet',
-  'production-testnet',
-  'production-mainnet',
-]);
+/* A Console target is keyed by the backend lane that owns it. Since Refactor 261 the
+   production mainnet Console also serves the production testnet lane (`walletLanes`). */
+const CONSOLE_LANE_IDS = Object.freeze(['staging-testnet', 'production-mainnet']);
+const CONSOLE_ENVIRONMENT_KEYS = Object.freeze(['dev', 'staging', 'prod']);
 const FRONTEND_SITE_IDS = Object.freeze(['staging', 'production']);
 const CONSOLE_FRONTEND_SITE_IDS = Object.freeze(['staging', 'production']);
 export const PUBLIC_WALLET_DOCS_ORIGIN = 'https://docs.seams.sh';
@@ -113,7 +112,7 @@ export function readConsoleFrontendSite(siteId) {
   if (!CONSOLE_FRONTEND_SITE_IDS.includes(siteId))
     throw new Error('frontend site must be staging or production');
   const document = readJsonDocument(DEFAULT_CONSOLE_TARGETS_PATH);
-  const lanes = parseConsoleTargets(document);
+  parseConsoleTargets(document);
   const frontends = requireObject(document.frontends, 'Console frontends');
   requireExactKeys(frontends, CONSOLE_FRONTEND_SITE_IDS, 'Console frontends');
   const site = requireObject(frontends[siteId], `Console frontends.${siteId}`);
@@ -122,13 +121,6 @@ export function readConsoleFrontendSite(siteId) {
   requireExactKeys(site, keys, 'Console frontend');
   return Object.freeze({
     id: siteId,
-    accountOrigins:
-      siteId === 'staging'
-        ? [{ network: 'testnet', origin: lanes['staging-testnet'].origin }]
-        : [
-            { network: 'testnet', origin: lanes['production-testnet'].origin },
-            { network: 'mainnet', origin: lanes['production-mainnet'].origin },
-          ],
     branch: requireString(site.branch, 'Console frontend branch'),
     walletConsoleOrigin: requireHttpsOrigin(site.walletConsoleOrigin, 'Wallet Console origin'),
     formerWalletConsoleOrigins: parseFormerOrigins(
@@ -225,6 +217,7 @@ function parseConsoleTarget(value, laneId) {
   ];
   if (Object.hasOwn(target, 'placementRegion')) keys.push('placementRegion');
   if (Object.hasOwn(target, 'platformSupportEmails')) keys.push('platformSupportEmails');
+  if (Object.hasOwn(target, 'walletLanes')) keys.push('walletLanes');
   requireExactKeys(target, keys, targetPath);
   const database = requireObject(target.database, targetPath + '.database');
   requireExactKeys(database, ['name', 'id'], targetPath + '.database');
@@ -271,7 +264,59 @@ function parseConsoleTarget(value, laneId) {
       owner: 'console',
       secrets: parseSecretNames(billing.secrets, targetPath + '.billing.secrets'),
     }),
+    walletLanes: Object.hasOwn(target, 'walletLanes')
+      ? parseConsoleWalletLanes(target.walletLanes, laneId, targetPath + '.walletLanes')
+      : null,
   });
+}
+
+/* The Wallet lanes of a Console that serves more than one (Refactor 261). The first is the
+   owner lane; the network of an environment decides its lane, so no key has two lanes. A
+   Console without the list serves only its owner lane, with every environment. */
+function parseConsoleWalletLanes(value, ownerLaneId, pathName) {
+  if (!Array.isArray(value) || value.length < 2) {
+    throw new Error(pathName + ' must list the owner lane and at least one other lane');
+  }
+  const lanes = value.map((entry, index) => {
+    const entryPath = pathName + '[' + index + ']';
+    const lane = requireObject(entry, entryPath);
+    requireExactKeys(lane, ['lane', 'environmentKeys'], entryPath);
+    const laneId = requireString(lane.lane, entryPath + '.lane');
+    if (!BACKEND_LANE_IDS.includes(laneId)) throw new Error(entryPath + '.lane is unknown');
+    if (!Array.isArray(lane.environmentKeys) || lane.environmentKeys.length === 0) {
+      throw new Error(entryPath + '.environmentKeys must be a non-empty list');
+    }
+    for (const key of lane.environmentKeys) {
+      if (!CONSOLE_ENVIRONMENT_KEYS.includes(key)) {
+        throw new Error(entryPath + '.environmentKeys must contain only dev, staging and prod');
+      }
+    }
+    return Object.freeze({
+      laneId,
+      environmentKeys: Object.freeze(unique(lane.environmentKeys, entryPath + '.environmentKeys')),
+    });
+  });
+  if (lanes[0].laneId !== ownerLaneId) throw new Error(pathName + '[0] must be ' + ownerLaneId);
+  assertUnique(
+    lanes.map((lane) => lane.laneId),
+    pathName + ' lanes',
+  );
+  assertUnique(
+    lanes.flatMap((lane) => lane.environmentKeys),
+    pathName + ' environment keys',
+  );
+  return Object.freeze(lanes);
+}
+
+/* The Console that serves a backend lane: its own, or the Console that lists it. */
+function consoleTargetForLane(consoleTargets, laneId) {
+  if (consoleTargets[laneId]) return consoleTargets[laneId];
+  const serving = Object.values(consoleTargets).filter((target) =>
+    target.walletLanes?.some((lane) => lane.laneId === laneId),
+  );
+  if (serving.length !== 1)
+    throw new Error('backend lane ' + laneId + ' needs exactly one Console');
+  return serving[0];
 }
 
 // Platform support accounts reach the audited Platform billing tools (support
@@ -309,8 +354,8 @@ function composeDeploymentTargets(walletRoot, consoleTargets) {
     staging: walletRoot.staging,
     production: walletRoot.production,
   });
-  for (const laneId of CONSOLE_LANE_IDS) {
-    const consoleTarget = consoleTargets[laneId];
+  for (const laneId of BACKEND_LANE_IDS) {
+    const consoleTarget = consoleTargetForLane(consoleTargets, laneId);
     const [releaseId, network] = splitLaneId(laneId);
     const release = composed[releaseId];
     const lane = release.lanes[network];
@@ -408,7 +453,21 @@ export function consoleSecretNames(lane) {
     'STRIPE_WEBHOOK_SECRET',
   ];
   if (lane.release === 'production') names.push('RESEND_API_KEY');
+  // Each later lane of a shared Console signs tenant-root grants with its own key, the one
+  // its role Workers trust (Refactor 261).
+  for (const entry of lane.console?.walletLanes?.slice(1) ?? []) {
+    names.push(...consoleLaneGrantSecretNames(entry.laneId));
+  }
   return unique(names, 'console secret requirements');
+}
+
+export function consoleLaneGrantSecretNames(laneId) {
+  const [, network] = splitLaneId(laneId);
+  const prefix = `${network.toUpperCase()}_LANE_`;
+  return [
+    `${prefix}TENANT_ROOT_GRANT_AUTHORITY_SIGNING_KEY_ID`,
+    `${prefix}TENANT_ROOT_GRANT_AUTHORITY_SIGNING_SEED`,
+  ];
 }
 
 export function tenantRootManagedBackupConfig(lane, role) {
@@ -531,7 +590,7 @@ function parseRelease(value, releaseId, consoleTargets) {
       network,
       branch,
       site,
-      consoleTargets?.[laneId],
+      consoleTargets ? consoleTargetForLane(consoleTargets, laneId) : undefined,
     );
   }
   const frontendSite = Object.freeze({
@@ -661,16 +720,24 @@ function parseBackendLane(value, laneId, releaseId, network, branch, site, conso
 
 function assertConsoleTargetMatchesLane(lane, consoleTarget) {
   const config = lane.provisioning.gatewayDeploymentConfig;
+  const ownerLaneId = consoleTarget.laneId;
   const expectedEnvironment = {
     'staging-testnet': 'staging-console',
-    'production-testnet': 'production-testnet-console',
     'production-mainnet': 'production-console',
-  }[lane.id];
+  }[ownerLaneId];
+  const servedLane =
+    ownerLaneId === lane.id ||
+    (consoleTarget.walletLanes?.some((entry) => entry.laneId === lane.id) ?? false);
+  const [ownerRelease] = splitLaneId(ownerLaneId);
   if (
+    !servedLane ||
+    ownerRelease !== lane.release ||
     consoleTarget.environment !== expectedEnvironment ||
-    consoleTarget.origin !== expectedConsoleOrigin(lane) ||
+    consoleTarget.origin !== readConsoleFrontendSite(lane.site.id).walletConsoleOrigin ||
     consoleTarget.siteOrigin !== lane.site.walletSiteOrigin ||
-    consoleTarget.workerName !== lane.resources.gateway.workerName.replace('gateway', 'console') ||
+    (ownerLaneId === lane.id &&
+      consoleTarget.workerName !==
+        lane.resources.gateway.workerName.replace('gateway', 'console')) ||
     consoleTarget.database.name !== lane.resources.gateway.consoleD1Name ||
     consoleTarget.database.id !== config.resources.consoleD1.id ||
     consoleTarget.billing.enabled !== lane.capabilities.billing.enabled ||
@@ -679,14 +746,6 @@ function assertConsoleTargetMatchesLane(lane, consoleTarget) {
   ) {
     throw new Error('Console target does not match backend lane ' + lane.id);
   }
-}
-
-/* The Console API answers on the Wallet Console host. Production testnet keeps its own
-   Console on test.console.seams.sh until the testnet lane uses another Console. */
-function expectedConsoleOrigin(lane) {
-  return lane.id === 'production-testnet'
-    ? 'https://test.console.seams.sh'
-    : readConsoleFrontendSite(lane.site.id).walletConsoleOrigin;
 }
 
 function parseProvisioning(value, laneId, network, provisioningPath) {
@@ -996,8 +1055,9 @@ function assertUniqueResourceNames(lanes) {
       lane.resources.signingWorker.workerName,
       lane.resources.tenantRootControlPlane.workerName,
     );
-    names.push(lane.resources.gateway.consoleD1Name);
   }
+  // Lanes that share a Console share its database (Refactor 261).
+  names.push(...new Set(lanes.map((lane) => lane.resources.gateway.consoleD1Name)));
   for (const lane of lanes) {
     if (lane.provisioning.kind !== 'provisioned') continue;
     for (const resource of Object.values(
@@ -1023,23 +1083,43 @@ function regionalDatabaseIds(lane) {
 
 function assertUniqueProvisionedIdentities(lanes) {
   const provisioned = lanes.filter((lane) => lane.provisioning.kind === 'provisioned');
-  const accountDatabases = [];
-  const accountNamespaces = [];
+  /* One account store per Console: the lanes of one Console share its database and its
+     namespace (Refactor 261). Tenants of different Consoles never share an organisation or a
+     project; the lanes of one Console may. */
+  const accounts = new Map();
   for (const lane of provisioned) {
-    accountDatabases.push(lane.provisioning.gatewayDeploymentConfig.resources.consoleD1.id);
-    accountNamespaces.push(lane.provisioning.gatewayDeploymentConfig.tenant.namespace);
+    const config = lane.provisioning.gatewayDeploymentConfig;
+    const store = accounts.get(lane.console.laneId) ?? {
+      database: config.resources.consoleD1.id,
+      namespace: config.tenant.namespace,
+      orgIds: new Set(),
+      projectIds: new Set(),
+    };
+    if (
+      store.database !== config.resources.consoleD1.id ||
+      store.namespace !== config.tenant.namespace
+    ) {
+      throw new Error('backend lane ' + lane.id + ' differs from the account store of its Console');
+    }
+    store.orgIds.add(config.tenant.orgId);
+    store.projectIds.add(config.tenant.projectId);
+    accounts.set(lane.console.laneId, store);
   }
+  const accountStores = [...accounts.values()];
   assertUnique(
-    [...accountDatabases, ...provisioned.flatMap(regionalDatabaseIds)],
+    [...accountStores.map((store) => store.database), ...provisioned.flatMap(regionalDatabaseIds)],
     'backend D1 identities',
   );
-  assertUnique(accountNamespaces, 'account namespaces');
   assertUnique(
-    provisioned.map((lane) => lane.provisioning.gatewayDeploymentConfig.tenant.orgId),
+    accountStores.map((store) => store.namespace),
+    'account namespaces',
+  );
+  assertUnique(
+    accountStores.flatMap((store) => [...store.orgIds]),
     'tenant organizations',
   );
   assertUnique(
-    provisioned.map((lane) => lane.provisioning.gatewayDeploymentConfig.tenant.projectId),
+    accountStores.flatMap((store) => [...store.projectIds]),
     'tenant projects',
   );
   assertUnique(

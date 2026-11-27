@@ -333,7 +333,7 @@ test('wallet host smoke requires the exact installed wallet package version', as
   await expect(walletManifestMatchesPackageVersion(staleManifest, '1.2.3')).resolves.toBe(false);
 });
 
-test('frontend build uses canonical Console origins for every production lane', () => {
+test('frontend build names the one production Console for every network', () => {
   const site = readFrontendSite('production');
   const environment: NodeJS.ProcessEnv = {};
 
@@ -352,7 +352,8 @@ test('frontend build uses canonical Console origins for every production lane', 
 
   const resolved = buildFrontendEnvironment(site, site.walletSiteOrigin, environment);
 
-  expect(resolved.VITE_TESTNET_CONSOLE_BASE_URL).toBe('https://test.console.seams.sh');
+  // Refactor 261: console.seams.sh serves testnet and mainnet.
+  expect(resolved.VITE_TESTNET_CONSOLE_BASE_URL).toBe('https://console.seams.sh');
   expect(resolved.VITE_MAINNET_CONSOLE_BASE_URL).toBe('https://console.seams.sh');
   expect(resolved.VITE_WALLET_CONSOLE_ORIGIN).toBe('https://console.seams.sh');
   expect(resolved).not.toHaveProperty('VITE_PLATFORM_CONSOLE_ORIGIN');
@@ -1027,8 +1028,15 @@ test('Wallet-system and Console workflows use separate deployment authority', ()
     'utf8',
   );
   expect(consoleWorkflowSource).toContain('staging-console');
-  expect(consoleWorkflowSource).toContain('production-testnet-console');
+  // Refactor 261: the production mainnet Console also serves production testnet.
+  expect(consoleWorkflowSource).not.toContain('production-testnet-console');
   expect(consoleWorkflowSource).toContain('production-console');
+  expect(consoleWorkflowSource).toContain(
+    'secrets.TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_SEED',
+  );
+  expect(
+    readFileSync(path.join(repoRoot, '.github/workflows/deploy-live-demo.yml'), 'utf8'),
+  ).not.toContain('deploy-console-backend.yml');
   expect(consoleWorkflowSource).toContain('--component console');
   expect(consoleWorkflowSource).toContain(
     'deploy:backend build --lane "$DEPLOY_LANE" --component console',

@@ -2,10 +2,59 @@
 
 Status: on 2026-11-21 this repository moved by a GitHub transfer. `purin-labs/monorepo` is
 now `seams-tech/seams-console`, with the same id, history, environments and secrets. The
-company site has its own repository, `purin-labs/purin-monorepo`. "Progress" lists what is
-done and what each remaining step waits for.
+company site has its own repository, `purin-labs/purin-monorepo`. On 2026-11-26 the last
+steps finished: Pantry has its own accounts, the old Console in the old Cloudflare account
+is gone, and no Console lane holds Pantry code, tables or secrets. "Progress" lists the
+results and the work that other owners keep.
 
 ## Progress
+
+Done on 2026-11-26 (the session that took over Wave 2 and the placement question):
+
+- Step 2, Wave 2 (done on 2026-11-22 by the Pantry session, with the owner's yes; Pantry
+  Plan 93, "Follow-up results", Pantry `5ce9e228`). After Plan 95 step 5, that session
+  checked that no outside caller used the old Seams stack after 2026-11-21 08:00 UTC. Then it
+  deleted the stack in the old account: 15 Workers (`router-ab-*`, `seams-sdk-d1-*`,
+  `seams-voice-intents-x-refresh`), 8 D1 databases (`seams-console`, `seams-signer-*` and
+  the `router-ab` private databases among them), the `router-ab` and `outlayer1` buckets, a
+  KV namespace and the custom domain `api.wallet.seams.sh`. Checked on 2026-11-26 with
+  Wrangler in the old account (`ba924da3…`):
+  - 11 Workers remain: `hadimar-api`, `hadimar-web`, `purin-shop` and eight `pantry*`
+    Workers. Their service bindings name only `hadimar-web`, `pantry` and `pantry-*`
+    Workers. The live `pantry` version (`04c6bf1f`) binds no Console.
+  - D1 holds `pantry-global-apac`, `pantry-organisation-apac` and `hadimar`. R2 holds three
+    `pantry-*` buckets and `hadimar-media`.
+- Step 3, Pantry Plan 95 (Pantry `dev` `63081c36`): steps 1 to 5 are done. Step 5 released
+  on 2026-11-21, its gate ran on production on 2026-11-22, and the two Console removal D1
+  patches ran at 09:43 UTC that day. Step 6 (Stripe billing in Pantry) is open. It is Pantry
+  work and needs nothing from this Console.
+- Pantry secrets, confirmed by the owner: 28 secrets are deleted, 14 from `staging-console`
+  and 14 from `production-console`. The 14 names: `SATYR_DEPLOYMENT_ID`,
+  `SATYR_ACCOUNT_ASSERTION_{ISSUER,AUDIENCE}`,
+  `SATYR_ACCOUNT_USER_ASSERTION_{KEY_ID,PUBLIC_JWK_JSON}`, `SATYR_GOOGLE_OIDC_CLIENT_ID`,
+  `SATYR_SERVICE_ORIGIN`, `SATYR_PROVISION_{ENVIRONMENT,PLACEMENT_CELL_ID,TOKEN}` and
+  `ACCOUNT_PROVISION_ASSERTION_{ISSUER,AUDIENCE,KEY_ID,PRIVATE_JWK_JSON}`. No code on `dev`
+  or `main` read them, and the Console env script writes only the names that it owns.
+  `production-testnet-console` had none, and no environment had a `PANTRY_*` name. GitHub
+  cannot restore a deleted secret. The local values files
+  `~/.seams/console/{staging-testnet,production-mainnet}-deployment.env` still hold the 14
+  names each.
+- Testnet deploy of `4ab30f88`. The Deriver B database (`8c379ecb…`) answered from `SIN` as
+  primary in 8 of 8 probes on 2026-11-26 at 10:35 UTC. The other 8 role databases of the
+  three lanes answered from `SIN` too. The `HKG` answer of 2026-11-21 03:11 UTC did not come
+  back. The owner chose to deploy with the check unchanged. Production testnet run
+  `45804331002` from `main` (`d2aada7f`) passed every job: the `SIN` check, every role
+  Worker, the Console with migration 0119, the activation and the frontend. So every lane
+  runs `4ab30f88` and `24ff0b61`.
+- The 3 Pantry tables, confirmed by the owner. Before the change, the tables were empty on
+  all three Console databases, and only their own indexes and triggers named them. Migration
+  0120 (core 0023, `b6e25818`) drops `satyr_service_bindings`, `billing_jev_hours` and
+  `billing_isolated_test_accounts`. Both migration folders apply to an empty SQLite database
+  through the new migration. Staging run `45820274559` (`dev`), then, after `dev` was merged
+  into `main` (`7dcc696d`), production mainnet run `45822123937` and production testnet run
+  `45823905476` passed every job. Afterwards each of the three Console databases has
+  `0120_drop_pantry_tables.sql` as its last migration, and no schema object names the three
+  tables.
 
 Done on 2026-11-21:
 
@@ -97,19 +146,16 @@ Done on 2026-11-20:
   on `purin.io` before. Production run `44730350445` from `main` passed too: `purin.io` now
   serves the same 10 chunks, and its home page keeps its height, sections and text.
 
-Remaining:
+Remaining: nothing in this plan. Steps 1 to 8 are done; step 9 is void, because
+`purin-labs/purin-monorepo` is a new repository. Other owners keep these items:
 
-| Step (see "Order")                   | Owner              | Waits for                                     |
-| ------------------------------------ | ------------------ | --------------------------------------------- |
-| 2. Keep Pantry's old Console Workers | This plan (Wave 2) | Plan 95 step 5, then the owner's confirmation |
-| 3. Pantry's own accounts             | Pantry Plan 95     | Step 5 release and gate (own session)         |
-| Drop the 3 Pantry tables             | This plan          | Every lane runs `24ff0b61` (testnet blocked)  |
-| Pantry secrets in Console envs       | Owner confirms     | Nothing                                       |
-| Testnet deploy of `4ab30f88`         | Owner              | The Deriver B D1 placement (HKG, not SIN)     |
+| Item                                            | Owner                                                           | Next step                                                   |
+| ----------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- |
+| Stripe billing in Pantry                        | Pantry Plan 95                                                  | Its step 6, in the Pantry repository                        |
+| One Console for both networks (open question 4) | Decided 2026-11-26; [Refactor 261](refactor-261-one-console.md) | Plan and build it; `test.console.seams.sh` stays until then |
 
-Steps 4, 6, 7 and 8 are done; step 9 is void, because `purin-labs/purin-monorepo` is a new
-repository. Refactor 200's migration session is archived, so Wave 2 and the placement
-question have no other owner.
+The CHECK constraints that list `'satyr'` or a Pantry meter stay, because SQLite cannot
+change them in place (migration 0119). No code writes those values.
 
 ## Decision
 
@@ -206,7 +252,7 @@ local Wallet pages use it.
 | Console API              | `seams.sh/console/*`             | `console.seams.sh/console/*` (question 3) |
 | Platform Console         | `account.seams.sh` (temporary)   | none                                      |
 | `/account-platform/v1/*` | route on `seams.sh`, answers 404 | none                                      |
-| Testnet Console backend  | `test.console.seams.sh`          | kept until the split ends (question 4)    |
+| Testnet Console backend  | `test.console.seams.sh`          | none: `console.seams.sh` (question 4)     |
 
 Moving the Console API to `console.seams.sh` changes these values, all rendered in
 `packages/wallet-console-server-ts/scripts/render-d1-gateway-config.mjs`:
@@ -264,7 +310,8 @@ are test data (Refactor 200), so no account data moves.
 
 Pantry Plan 95 (`docs/plan-95-pantry-own-accounts.md` on Pantry `dev`, `ab69e3f`, written
 on 2026-11-20) is that work. It has six
-steps, and it needs no Console change before its step 5. On 2026-11-20 the owner took its
+steps, and it needs no Console change before its step 5. Steps 1 to 5 are done
+(2026-11-22); step 6 is open. On 2026-11-20 the owner took its
 five recommendations:
 
 - Its steps 1 to 5 ship to the current `satyr-edge`, before the Pantry brand cutover of
@@ -292,8 +339,11 @@ five recommendations:
      `router-ab-{mpc-router,deriver-a,deriver-b,signing-worker,tenant-root-control-plane}`,
      D1 `router-ab-*-private-sin` and R2 `router-ab-deriver-{a,b}-tenant-root-managed-backup`.
      Wave 1 deleted every other old Seams resource on 2026-11-20.
+   - Done on 2026-11-22: the Pantry session deleted this Wave 2 list (see "Progress").
 3. **Pantry builds its own accounts** (Pantry Plan 95). Then it removes the
    `ACCOUNT_PLATFORM` binding, and `seams-sdk-d1-console` and its database retire.
+   - Done: Plan 95 steps 1 to 5 (2026-11-22). Its step 6, Stripe billing, does not touch
+     this Console.
 4. **Cut the couplings in this repository** (small changes on `dev`):
    - Done (`480f7209`): the company site imports no Wallet app file and no Seams Wallet
      package. The unused Wallet figures were deleted instead of copied.
@@ -412,6 +462,20 @@ repository.
 4. Decided (owner, 2026-11-20): keep `test.console.seams.sh`, the separate Console Worker
    and database of the production testnet lane, until the split ends. Then decide whether
    one Console serves both networks.
+   - Decided (owner, 2026-11-26): one Console serves both networks. The navbar toggle of
+     the Console selects the network. Facts on 2026-11-26: the production frontend gives
+     each network its own Console URL (`VITE_TESTNET_CONSOLE_BASE_URL` is
+     `test.console.seams.sh`, set in `runConsoleOperation` of `scripts/deploy-surface.mjs`),
+     so a person has separate accounts, organisations and billing on each network. Each
+     lane's Gateways bind that lane's Console Worker as `WALLET_CONSOLE`
+     (`consoleWorkerNameFor` in `render-d1-gateway-config.mjs`), and
+     `expectedConsoleOrigin` in `scripts/deployment-targets.mjs` keeps the testnet origin.
+     The Console data model already maps an environment to a network
+     (`networkForConsoleEnvironmentId`). Both lanes run in `seamsadmin`, so the testnet
+     Gateways can bind the mainnet Console Worker. The work is its own plan
+     ([Refactor 261](refactor-261-one-console.md)): it decides the
+     testnet tenant and the data of `seams-console-testnet-sin`, then retires
+     `seams-sdk-d1-console-testnet` and `test.console.seams.sh`.
 5. Decided (owner, 2026-11-20): Pantry keeps the old Console Worker `seams-sdk-d1-console`,
    and what it binds, in the old Cloudflare account until its own accounts exist (order
    step 2). The Refactor 200 cutover does not wait for Pantry.

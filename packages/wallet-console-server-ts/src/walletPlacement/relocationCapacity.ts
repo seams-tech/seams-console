@@ -2,6 +2,7 @@ import { isPlainObject, queryD1All, type D1DatabaseLike } from '@seams/wallet-se
 import { WalletHome } from './home';
 import { WalletRelocationRequest } from './relocation';
 import { WalletRegionalDispatch } from './regionalDispatch';
+import { environmentKeySqlFilter, type LaneEnvironmentKeys } from '../walletLanes/environmentKeys';
 
 const SCOPE = `namespace = ?1 AND organization_id = ?2 AND project_id = ?3
   AND environment_id = ?4 AND wallet_id = ?5 AND move_id = ?6`;
@@ -80,14 +81,15 @@ export class WalletRelocationCapacity {
       .run();
   }
 
-  async recover(namespace: string, nowMs: number): Promise<void> {
+  async recover(namespace: string, keys: LaneEnvironmentKeys, nowMs: number): Promise<void> {
     const rows = await queryD1All(
       this.database,
       `SELECT request_json, source_json
       FROM wallet_relocation_capacity WHERE namespace = ?1
+        AND ${environmentKeySqlFilter('environment_id', 'project_id', '?3')}
         AND (state = 'releasing' OR (state = 'checking' AND expires_at_ms <= ?2))
       ORDER BY started_at_ms LIMIT 4`,
-      [namespace, nowMs],
+      [namespace, nowMs, keys.toSqlParameter()],
     );
     for (const row of rows) {
       if (typeof row.request_json !== 'string' || typeof row.source_json !== 'string')
