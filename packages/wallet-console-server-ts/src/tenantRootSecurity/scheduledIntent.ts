@@ -1,3 +1,4 @@
+import type { LaneEnvironmentKeys } from '../walletLanes/environmentKeys';
 import {
   buildTenantRootOperationRecordV1,
   canonicalTenantRootOperationRecordJsonV1,
@@ -507,6 +508,8 @@ function parseScheduledGrantRow(row: ScheduledGrantRowV1): {
 export function createD1TenantRootScheduledActiveGrantReaderV1(options: {
   readonly database: D1DatabaseLike;
   readonly namespace: string;
+  /** The lane whose control plane rotates the roots (Refactor 261). */
+  readonly environmentKeys: LaneEnvironmentKeys;
 }): TenantRootScheduledActiveGrantReaderV1 {
   const namespace = requiredText(options.namespace, 'grant namespace');
   return {
@@ -547,6 +550,7 @@ export function createD1TenantRootScheduledActiveGrantReaderV1(options: {
           throw new Error('Tenant identity has multiple active roots for scheduling');
         }
         identities.add(identityDigestB64u);
+        if (!options.environmentKeys.admitsEnvironmentId(decoded.value.envId)) continue;
         grants.push({
           identity: decoded.value,
           identityDigestB64u,

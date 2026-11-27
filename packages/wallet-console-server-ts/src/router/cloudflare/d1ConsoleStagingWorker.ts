@@ -1,4 +1,22 @@
+/// <reference types="@cloudflare/workers-types" />
+import { WorkerEntrypoint } from 'cloudflare:workers';
 import { syncRegionalProductionAdmission } from '../../tenantDeployment/productionAdmission';
+import {
+  readConsoleWalletLanes,
+  type ConsoleWalletLane,
+  type ConsoleWalletLanes,
+  type ConsoleWalletNetwork,
+} from './consoleWalletLanes';
+import { LaneEnvironmentKeys } from '../../walletLanes/environmentKeys';
+import type { ConsoleWalletEnvironmentService } from '../../environments/service';
+import {
+  laneProjectEnvironments,
+  lanePublishableKeyAuth,
+  laneSecretKeyAuth,
+  laneTenantRootActiveLineage,
+  laneUsageMeter,
+  laneWalletEnvironments,
+} from '../../walletLanes/guards';
 import { assertNever } from '@seams-internal/console-shared/accountPlatform/boundary';
 import {
   readRegionalWalletConfiguration,
@@ -183,6 +201,8 @@ interface CloudflareD1ConsoleStagingEnv
   readonly SEAMS_TENANT_DEPLOYMENT_LANE: string;
   readonly SEAMS_WALLET_SERVICE_DEPLOYMENT_ID?: string;
   readonly SEAMS_TENANT_BROWSER_CREDENTIAL_JSON?: string;
+  readonly SEAMS_CONSOLE_WALLET_LANES_JSON?: string;
+  readonly WALLET_BALANCE_NEAR_RPC_URL?: string;
   // Console step-up relying party. The id and origin are required wherever the
   // refresh route is mounted, because without them no step-up can be obtained
   // and rotation is unreachable.
@@ -312,6 +332,7 @@ function createRegionalTenantDeployment(
     readonly browserCredential: TenantDeploymentBrowserCredentialProvisioningV1;
     readonly database: D1DatabaseLike;
     readonly bundle: Awaited<ReturnType<typeof createCloudflareD1ConsoleOnlyServiceBundle>>;
+    readonly walletEnvironments: ConsoleWalletEnvironmentService;
     readonly tenantRootState: ReturnType<typeof createTenantRootSecurityStateReaderV1>;
     readonly tenantRootCreationDependencies: TenantRootCreationConsoleRouteDependenciesV1;
   },
@@ -329,6 +350,7 @@ function createRegionalTenantDeployment(
     deploymentLane,
     database,
     bundle,
+    walletEnvironments,
     tenantRootState,
     tenantRootCreationDependencies,
   } = input;
@@ -338,7 +360,7 @@ function createRegionalTenantDeployment(
   const tenantDeploymentReadinessAdapter = createProductionTenantDeploymentReadinessAdapterV1({
     namespace,
     deploymentLane,
-    walletEnvironments: bundle.walletEnvironments,
+    walletEnvironments,
     apiKeys: bundle.apiKeys,
     policies: bundle.policies,
     runtimeSnapshots: bundle.runtimeSnapshots,
@@ -370,7 +392,7 @@ function createRegionalTenantDeployment(
     resources: regional.catalog.deploymentResources(),
     deploymentLane,
     surfaces: regional.surfaces,
-    walletEnvironments: bundle.walletEnvironments,
+    walletEnvironments,
     apiKeys: bundle.apiKeys,
     audit: bundle.audit,
     tenantRootCreation: tenantRootCreationDependencies,
@@ -453,6 +475,7 @@ async function createConsoleHandler(
   ctx: CfExecutionContext,
   request: Request,
   regional: RegionalWalletConfiguration,
+  environmentKeys: LaneEnvironmentKeys,
 ): Promise<FetchHandler> {
   const namespace = requireEnvString(env, 'SEAMS_TENANT_STORAGE_NAMESPACE');
   const deploymentLane = requireEnvString(env, 'SEAMS_TENANT_DEPLOYMENT_LANE');
@@ -489,9 +512,24 @@ async function createConsoleHandler(
       webhookSecretCipher: createConsoleWebhookSecretCipherFromEnv(env),
       walletBalanceReader: {
         resolveWalletIdentities,
+        ...(readEnvString(env, 'WALLET_BALANCE_NEAR_RPC_URL')
+          ? { nearRpcUrl: readEnvString(env, 'WALLET_BALANCE_NEAR_RPC_URL') }
+          : {}),
       },
     },
   });
+  /* The Wallet routes of this lane see only its environments (Refactor 261). The dashboard's
+     environment list and edits keep the full service: they act on every network of a
+     project. */
+  const walletEnvironments = laneWalletEnvironments(bundle.walletEnvironments, environmentKeys);
+  const apiKeyAuth = laneSecretKeyAuth(
+    createRouterApiKeyAuthAdapter(bundle.apiKeys),
+    environmentKeys,
+  );
+  const publishableKeyAuth = lanePublishableKeyAuth(
+    createRouterApiPublishableKeyAuthAdapter(bundle.apiKeys, ctx.waitUntil.bind(ctx)),
+    environmentKeys,
+  );
   const session = createHmacSessionAdapterFromEnv({
     env,
     secretName: 'CONSOLE_SESSION_HMAC_SECRET',
@@ -507,7 +545,7 @@ async function createConsoleHandler(
   });
   const relayHandler = createWalletConsoleRelayHandler(
     createConsoleRouterApiRouteExtensions({
-      apiKeyAuth: createRouterApiKeyAuthAdapter(bundle.apiKeys),
+      apiKeyAuth,
       wallets: bundle.wallets,
       signedDelegate: {
         route: DEFAULT_SIGNED_DELEGATE_ROUTE,
@@ -515,10 +553,7 @@ async function createConsoleHandler(
         billing: bundle.billing,
         ledger: bundle.sponsoredCalls,
         runtimeSnapshots: bundle.runtimeSnapshots,
-        publishableKeyAuth: createRouterApiPublishableKeyAuthAdapter(
-          bundle.apiKeys,
-          ctx.waitUntil.bind(ctx),
-        ),
+        publishableKeyAuth,
         observabilityIngestion: bundle.observabilityIngestion,
         executionFunds: bundle.executionFunds,
         pricing: bundle.sponsorshipPricing,
@@ -529,10 +564,7 @@ async function createConsoleHandler(
         ? {
             sponsoredEvmCall: {
               route: DEFAULT_SPONSORED_EVM_CALL_ROUTE,
-              publishableKeyAuth: createRouterApiPublishableKeyAuthAdapter(
-                bundle.apiKeys,
-                ctx.waitUntil.bind(ctx),
-              ),
+              publishableKeyAuth,
               billing: bundle.billing,
               ledger: bundle.sponsoredCalls,
               runtimeSnapshots: bundle.runtimeSnapshots,
@@ -564,7 +596,7 @@ async function createConsoleHandler(
   });
   const tenantRootCreationDependencies: TenantRootCreationConsoleRouteDependenciesV1 = {
     auth,
-    walletEnvironments: bundle.walletEnvironments,
+    walletEnvironments,
     grants: tenantRootGrants,
     router: {
       fetch: (input, init) => walletControl.router.fetch(new Request(input, init)),
@@ -606,7 +638,7 @@ async function createConsoleHandler(
   });
   const tenantRootCustody = new TenantRootCustodyWorkerRouteV1({
     auth,
-    walletEnvironments: bundle.walletEnvironments,
+    walletEnvironments,
     stepUp: tenantRootStepUp,
     database: env.CONSOLE_DB,
     namespace: namespace,
@@ -628,14 +660,14 @@ async function createConsoleHandler(
       namespace: namespace,
       isOwner: tenantRootCustody.isOrganizationOwner.bind(tenantRootCustody),
       auth,
-      walletEnvironments: bundle.walletEnvironments,
+      walletEnvironments,
       stepUp: tenantRootStepUp,
     },
     env.TENANT_ROOT_RESTORE_ACCESS_JSON,
   );
   const tenantRootSecurityReadRoute = createTenantRootSecurityConsoleRouteV1({
     auth,
-    walletEnvironments: bundle.walletEnvironments,
+    walletEnvironments,
     stepUp: tenantRootStepUp,
     state: tenantRootCustody,
     operations: (scope) =>
@@ -654,7 +686,7 @@ async function createConsoleHandler(
         ...scope,
       }),
     auth,
-    walletEnvironments: bundle.walletEnvironments,
+    walletEnvironments,
     state: tenantRootCustody,
     router: {
       fetch: (input, init) => walletControl.router.fetch(new Request(input, init)),
@@ -670,27 +702,34 @@ async function createConsoleHandler(
     ),
     database: env.CONSOLE_DB,
     bundle,
+    walletEnvironments,
     tenantRootState,
     tenantRootCreationDependencies,
   });
   // Private service-binding target: the declared Wallet Console
   // operations, served ahead of the console router.
   const opsHandler = createWalletConsoleOpsHandler({
-    apiKeyAuth: createRouterApiKeyAuthAdapter(bundle.apiKeys),
-    publishableKeyAuth: createRouterApiPublishableKeyAuthAdapter(
-      bundle.apiKeys,
-      ctx.waitUntil.bind(ctx),
+    apiKeyAuth,
+    publishableKeyAuth,
+    usageMeter: laneUsageMeter(
+      createRouterApiWalletRegistrationProjectionAdapter({
+        walletEnvironments,
+        wallets: bundle.wallets,
+      }),
+      environmentKeys,
     ),
-    usageMeter: createRouterApiWalletRegistrationProjectionAdapter({
-      walletEnvironments: bundle.walletEnvironments,
-      wallets: bundle.wallets,
-    }),
-    projectEnvironments: createWalletProjectEnvironmentResolver({
-      database: env.CONSOLE_DB,
-      namespace,
-      deploymentId: walletServiceDeploymentId,
-    }),
-    tenantRootActiveLineage: new D1TenantRootActiveLineageResolverV1(env.CONSOLE_DB, namespace),
+    projectEnvironments: laneProjectEnvironments(
+      createWalletProjectEnvironmentResolver({
+        database: env.CONSOLE_DB,
+        namespace,
+        deploymentId: walletServiceDeploymentId,
+      }),
+      environmentKeys,
+    ),
+    tenantRootActiveLineage: laneTenantRootActiveLineage(
+      new D1TenantRootActiveLineageResolverV1(env.CONSOLE_DB, namespace),
+      environmentKeys,
+    ),
   });
   const routerWithOps: FetchHandler = async (request, workerEnv, ctx) => {
     const trustResponse = await recoveryTrustResponse(
@@ -852,8 +891,9 @@ function consoleHandler(
   ctx: CfExecutionContext,
   request: Request,
   regional: RegionalWalletConfiguration,
+  environmentKeys: LaneEnvironmentKeys,
 ): Promise<FetchHandler> {
-  return createConsoleHandler(env, ctx, request, regional);
+  return createConsoleHandler(env, ctx, request, regional, environmentKeys);
 }
 
 function createConsoleReadyCheck(env: CloudflareD1ConsoleStagingEnv): () => Promise<void> {
@@ -905,18 +945,95 @@ function d1StringLiteral(value: string): string {
   return `'${value}'`;
 }
 
-async function fetch(
+function fetch(
   request: Request,
   env: CloudflareD1ConsoleStagingEnv,
   ctx: CfExecutionContext,
+): Promise<Response> {
+  return handleConsoleRequest(request, env, ctx, null);
+}
+
+/* Each later lane's Gateways and Wallet Runtimes bind `WALLET_CONSOLE` to the entrypoint of
+   their network (Refactor 261). The binding fixes the lane, so a call cannot name another
+   one. The first lane's Gateways bind the default entrypoint. */
+export class TestnetWalletLane extends WorkerEntrypoint<CloudflareD1ConsoleStagingEnv> {
+  async fetch(request: Request): Promise<Response> {
+    return await handleConsoleRequest(request, this.env, this.ctx, 'testnet');
+  }
+}
+
+export class MainnetWalletLane extends WorkerEntrypoint<CloudflareD1ConsoleStagingEnv> {
+  async fetch(request: Request): Promise<Response> {
+    return await handleConsoleRequest(request, this.env, this.ctx, 'mainnet');
+  }
+}
+
+type ConsoleLane = ConsoleWalletLane<CloudflareD1ConsoleStagingEnv>;
+
+/* The lane of a request (Refactor 261):
+   - a named entrypoint fixes it;
+   - a tenant activation names it in its body;
+   - a dashboard request names its environment in `X-Console-Environment-Id`, and the lane is
+     the one that serves that environment's key;
+   - every other request takes the first lane: its Gateways, the account pages, the CLI.
+   Null means that no lane serves the request. */
+async function selectConsoleLane(
+  request: Request,
+  lanes: ConsoleWalletLanes<CloudflareD1ConsoleStagingEnv>,
+  entrypointNetwork: ConsoleWalletNetwork | null,
+): Promise<ConsoleLane | null> {
+  if (lanes.primary.network === null) return lanes.primary;
+  if (entrypointNetwork) return lanes.forNetwork(entrypointNetwork);
+  if (isTenantDeploymentAutomationRequestV1(request)) {
+    const body: unknown = await request
+      .clone()
+      .json()
+      .catch(() => null);
+    const deploymentLane =
+      body && typeof body === 'object' && !Array.isArray(body)
+        ? (body as { readonly deploymentLane?: unknown }).deploymentLane
+        : undefined;
+    // The first lane's route refuses another lane's activation with its own error.
+    if (typeof deploymentLane !== 'string') return lanes.primary;
+    return lanes.forDeploymentLane(deploymentLane) ?? lanes.primary;
+  }
+  const pathname = new URL(request.url).pathname;
+  const environmentId = request.headers.get('X-Console-Environment-Id')?.trim();
+  if (environmentId && (pathname === '/console' || pathname.startsWith('/console/'))) {
+    return (
+      lanes.all.find((lane) => lane.environmentKeys.admitsEnvironmentId(environmentId)) ?? null
+    );
+  }
+  return lanes.primary;
+}
+
+async function handleConsoleRequest(
+  request: Request,
+  workerEnv: CloudflareD1ConsoleStagingEnv,
+  ctx: CfExecutionContext,
+  entrypointNetwork: ConsoleWalletNetwork | null,
 ): Promise<Response> {
   if (new URL(request.url).pathname.startsWith('/account-platform/'))
     return new Response(null, { status: 404 });
   if (request.method === 'OPTIONS') {
     const response = new Response(null, { status: 204 });
-    withConsoleCors(response.headers, consoleCorsOrigins(env), request);
+    withConsoleCors(response.headers, consoleCorsOrigins(workerEnv), request);
     return response;
   }
+  const lane = await selectConsoleLane(
+    request,
+    readConsoleWalletLanes(workerEnv),
+    entrypointNetwork,
+  );
+  if (!lane) {
+    const response = Response.json(
+      { ok: false, code: 'wallet_lane_unavailable' },
+      { status: 503, headers: { 'Cache-Control': 'no-store' } },
+    );
+    withConsoleCors(response.headers, consoleCorsOrigins(workerEnv), request);
+    return response;
+  }
+  const env = lane.env;
   if (isAccountConsoleRequest(request)) {
     const handler = await createAccountHandler(request, env, ctx);
     return handler(request, env, ctx);
@@ -924,9 +1041,12 @@ async function fetch(
   if (isWalletConsoleTenantRootActiveLineageRequest(request)) {
     const response = await handleWalletConsoleTenantRootActiveLineage(
       request,
-      new D1TenantRootActiveLineageResolverV1(
-        env.CONSOLE_DB,
-        requireEnvString(env, 'SEAMS_TENANT_STORAGE_NAMESPACE'),
+      laneTenantRootActiveLineage(
+        new D1TenantRootActiveLineageResolverV1(
+          env.CONSOLE_DB,
+          requireEnvString(env, 'SEAMS_TENANT_STORAGE_NAMESPACE'),
+        ),
+        lane.environmentKeys,
       ),
     );
     withConsoleCors(response.headers, consoleCorsOrigins(env), request);
@@ -953,7 +1073,7 @@ async function fetch(
         },
       );
       if (new URL(request.url).pathname === '/internal/wallet-placement/v1/registration-setup') {
-        return await registrationSetupResponse(request, env, ctx, deploymentLane, writer, regional);
+        return await registrationSetupResponse(request, env, ctx, lane, writer, regional);
       }
       const mutation = await handleWalletRegistrationMutation(request, {
         database: env.CONSOLE_DB,
@@ -1014,13 +1134,15 @@ async function fetch(
         verifyResources: verifier.verify.bind(verifier),
         onAdmitted: runWalletRelocation.bind(
           null,
-          relocationResumptionOptions(env, regional),
+          relocationResumptionOptions(env, regional, lane.environmentKeys),
           'activation',
         ),
         clock: Date.now,
       });
       if (response.ok)
-        ctx.waitUntil(resumeWalletRelocations(relocationResumptionOptions(env, regional)));
+        ctx.waitUntil(
+          resumeWalletRelocations(relocationResumptionOptions(env, regional, lane.environmentKeys)),
+        );
       return response;
     }
     if (request.url === WALLET_RELOCATION_ADVANCE_URL) {
@@ -1059,7 +1181,7 @@ async function fetch(
     if (timing) tenantDeploymentResponse.headers.append('Server-Timing', timing);
     return tenantDeploymentResponse;
   }
-  const handler = await consoleHandler(env, ctx, request, regional);
+  const handler = await consoleHandler(env, ctx, request, regional, lane.environmentKeys);
   const response = await handler(request, env, ctx);
   const result = new Response(response.body, response);
   withConsoleCors(result.headers, consoleCorsOrigins(env), request);
@@ -1068,6 +1190,7 @@ async function fetch(
 
 async function runConsoleTenantRootRefreshResumptionV1(
   env: CloudflareD1ConsoleStagingEnv,
+  environmentKeys: LaneEnvironmentKeys,
   input: { readonly scheduledTimeMs: number | undefined },
 ): Promise<void> {
   const namespace = requireEnvString(env, 'SEAMS_TENANT_STORAGE_NAMESPACE');
@@ -1080,6 +1203,7 @@ async function runConsoleTenantRootRefreshResumptionV1(
   const resumption = createD1TenantRootOperationResumptionStoreV1({
     database: env.CONSOLE_DB,
     namespace,
+    environmentKeys,
   });
   const pending = await resumption.listPending(1);
   const nowMs = input.scheduledTimeMs ?? Date.now();
@@ -1121,6 +1245,7 @@ async function runConsoleTenantRootRefreshResumptionV1(
       grants: createD1TenantRootScheduledActiveGrantReaderV1({
         database: env.CONSOLE_DB,
         namespace,
+        environmentKeys,
       }),
       state: createTenantRootSecurityStateReaderV1({
         activeRoots: new D1TenantRootActiveLineageResolverV1(env.CONSOLE_DB, namespace),
@@ -1168,10 +1293,21 @@ async function runConsoleTenantRootRefreshResumptionV1(
   }
 }
 
-function consoleScheduledHandler(env: CloudflareD1ConsoleStagingEnv): ScheduledHandler {
+/* Account jobs run once with the account values. Each lane's control plane replays only the
+   operations of its own lane (Refactor 261); one lane's failure does not stop another. */
+function consoleScheduledHandler(
+  lanes: ConsoleWalletLanes<CloudflareD1ConsoleStagingEnv>,
+): ScheduledHandler {
+  const env = lanes.primary.env;
   const namespace = requireEnvString(env, 'SEAMS_TENANT_STORAGE_NAMESPACE');
-  const tenantRootRefreshResumption: TenantRootRefreshResumptionRunner =
-    runConsoleTenantRootRefreshResumptionV1.bind(undefined, env);
+  const tenantRootRefreshResumption: TenantRootRefreshResumptionRunner = async (input) => {
+    const results = await Promise.allSettled(
+      lanes.all.map((lane) =>
+        runConsoleTenantRootRefreshResumptionV1(lane.env, lane.environmentKeys, input),
+      ),
+    );
+    for (const result of results) if (result.status === 'rejected') throw result.reason;
+  };
   return createCloudflareCron({
     billingMonthlyFinalization: {
       emailConsoleBaseUrl: requireEnvString(env, 'CONSOLE_BASE_URL'),
@@ -1196,9 +1332,11 @@ function consoleScheduledHandler(env: CloudflareD1ConsoleStagingEnv): ScheduledH
 
 async function scheduled(
   event: CfScheduledEvent,
-  env: CloudflareD1ConsoleStagingEnv,
+  workerEnv: CloudflareD1ConsoleStagingEnv,
   ctx: CfExecutionContext,
 ): Promise<void> {
+  const lanes = readConsoleWalletLanes(workerEnv);
+  const env = lanes.primary.env;
   ctx.waitUntil(
     resumeCloudflareD1AccountServices(
       { consoleDatabase: env.CONSOLE_DB },
@@ -1208,30 +1346,37 @@ async function scheduled(
       },
     ),
   );
-  const regional = readRegionalWalletConfiguration(env);
-  if (regional.kind === 'configured') {
-    ctx.waitUntil(resumeWalletRelocations(relocationResumptionOptions(env, regional)));
+  for (const lane of lanes.all) {
+    const regional = readRegionalWalletConfiguration(lane.env);
+    if (regional.kind !== 'configured') continue;
+    ctx.waitUntil(
+      resumeWalletRelocations(
+        relocationResumptionOptions(lane.env, regional, lane.environmentKeys),
+      ),
+    );
     ctx.waitUntil(
       syncRegionalProductionAdmission({
-        database: env.CONSOLE_DB,
-        deploymentLane: requireEnvString(env, 'SEAMS_TENANT_DEPLOYMENT_LANE'),
+        database: lane.env.CONSOLE_DB,
+        deploymentLane: lane.deploymentLane,
         runtimes: regional.runtimes,
         nowMs: Date.now(),
       }),
     );
   }
-  const handler = consoleScheduledHandler(env);
+  const handler = consoleScheduledHandler(lanes);
   await handler(event, env, ctx);
 }
 
 function relocationResumptionOptions(
   env: CloudflareD1ConsoleStagingEnv,
   regional: ConfiguredRegionalWallet,
+  environmentKeys: LaneEnvironmentKeys,
 ) {
   return {
     database: env.CONSOLE_DB,
     catalog: regional.catalog,
     namespace: requireEnvString(env, 'SEAMS_TENANT_STORAGE_NAMESPACE'),
+    environmentKeys,
     bindings: {
       gateways: regionalGatewayDispatch(regional),
       runtimes: regional.runtimes,
@@ -1264,10 +1409,11 @@ async function registrationSetupResponse(
   request: Request,
   env: CloudflareD1ConsoleStagingEnv,
   ctx: CfExecutionContext,
-  deploymentLane: string,
+  lane: ConsoleLane,
   writer: TenantRuntimeWriterV1,
   regional: ConfiguredRegionalWallet,
 ): Promise<Response> {
+  const deploymentLane = lane.deploymentLane;
   const setup = await resolveD1RegistrationSetupBinding(
     { database: env.CONSOLE_DB },
     deploymentLane,
@@ -1283,7 +1429,7 @@ async function registrationSetupResponse(
   if (!catalog.matchesResources(setup.binding.resources)) {
     return Response.json({ ok: false, code: 'wallet_home_resources_unverified' }, { status: 503 });
   }
-  const handler = await consoleHandler(env, ctx, request, regional);
+  const handler = await consoleHandler(env, ctx, request, regional, lane.environmentKeys);
   const operations = createWalletConsoleOpsClient({
     fetch: dispatchConsoleOperation.bind(undefined, handler, env, ctx),
   });

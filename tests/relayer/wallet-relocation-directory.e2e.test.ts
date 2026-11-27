@@ -1,3 +1,4 @@
+import { LaneEnvironmentKeys } from '../../packages/wallet-console-server-ts/src/walletLanes/environmentKeys';
 import { activateConsoleDeploymentFixture, fourRegionBinding } from '../helpers/tenantDeploymentFixtures';
 import { handleWalletRelocationAdmission, WALLET_RELOCATION_ADMISSION_URL } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocationAdmission';
 import { WalletRelocationDriver } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocationDriver';
@@ -327,9 +328,9 @@ async function verifyCapacityRecovery(runtime: Miniflare) {
   expect((await responseBody(await placementStatus(runtime, request.wallet))).state).toBe('settled');
   // The requesting process disappears without releasing the successfully blocked source.
   const recovered = new WalletRelocationCapacity(await runtime.getD1Database('CONSOLE_DB', 'ingress-b'), transport);
-  await recovered.recover(request.wallet.namespace, admittedAtMs + 29_999);
+  await recovered.recover(request.wallet.namespace, LaneEnvironmentKeys.all(), admittedAtMs + 29_999);
   expect(gateway.calls).toHaveLength(1);
-  await recovered.recover(request.wallet.namespace, admittedAtMs + 30_001);
+  await recovered.recover(request.wallet.namespace, LaneEnvironmentKeys.all(), admittedAtMs + 30_001);
   expect(gateway.calls.at(-1)).toMatch(/\/release$/u);
   expect(await database.prepare('SELECT state FROM wallet_relocation_capacity WHERE wallet_id = ?')
     .bind(request.wallet.walletId).first<string>('state')).toBe('released');

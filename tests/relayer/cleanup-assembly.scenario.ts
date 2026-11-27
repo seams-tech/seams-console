@@ -1,3 +1,4 @@
+import { LaneEnvironmentKeys } from '../../packages/wallet-console-server-ts/src/walletLanes/environmentKeys';
 import type { WalletHomeCatalog } from '../../packages/wallet-console-server-ts/src/walletPlacement/home';
 import { handleWalletRelocationAdvance, resumeWalletRelocations, WALLET_RELOCATION_ADVANCE_URL } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocationService';
 import { expect } from '@playwright/test';
@@ -116,7 +117,14 @@ export async function verifyCleanupAssembly(database: D1DatabaseLike, request: W
     scope: { namespace: 'another-namespace', organizationId: scope.organizationId, projectId: scope.projectId, environmentId: scope.environmentId },
   });
   expect(denied.status).toBe(403);
-  await resumeWalletRelocations({ database, catalog, bindings, clock, namespace: scope.namespace });
+  await resumeWalletRelocations({
+    database,
+    catalog,
+    bindings,
+    clock,
+    namespace: scope.namespace,
+    environmentKeys: LaneEnvironmentKeys.all(),
+  });
   const deferredMove = await readWalletRelocation(database, request);
   expect(deferredMove?.progress.state).toBe('cutover');
   // The first four unavailable moves do not prevent the next batch from
@@ -125,7 +133,14 @@ export async function verifyCleanupAssembly(database: D1DatabaseLike, request: W
   const waiting = await queryD1One(database, `SELECT COUNT(*) AS count FROM wallet_relocations
     WHERE wallet_id LIKE 'scheduled-outage-%' AND execution_state = 'retry_wait'`, []);
   expect(waiting?.count).toBe(4);
-  await resumeWalletRelocations({ database, catalog, bindings, clock, namespace: scope.namespace });
+  await resumeWalletRelocations({
+    database,
+    catalog,
+    bindings,
+    clock,
+    namespace: scope.namespace,
+    environmentKeys: LaneEnvironmentKeys.all(),
+  });
   const resumedMove = await readWalletRelocation(database, request);
   expect(resumedMove?.progress.state).toBe('completed');
   const advanced = await handleWalletRelocationAdvance(new Request(WALLET_RELOCATION_ADVANCE_URL, { method: 'POST', body }), options);

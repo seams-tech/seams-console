@@ -19,6 +19,7 @@ import { WalletRelocationCleanup } from './relocationCleanup';
 import { walletRelocationStatusView } from './relocationView';
 import { WalletRelocationDriver } from './relocationDriver';
 import { WalletRelocationCapacity } from './relocationCapacity';
+import { environmentKeySqlFilter, type LaneEnvironmentKeys } from '../walletLanes/environmentKeys';
 
 export const WALLET_RELOCATION_ADVANCE_URL = 'https://wallet-placement.internal/internal/wallet-placement/v1/relocation-advance';
 type Scope = Pick<WalletOwnershipKey, 'namespace' | 'organizationId' | 'projectId' | 'environmentId'>;
@@ -145,17 +146,24 @@ async function driveWalletRelocation(
 
 // The existing Console cron retries admitted work without browser polling.
 // Each selected move advances continuously until complete or waiting for recovery.
-export async function resumeWalletRelocations(options: ExecutionOptions & { readonly namespace: string }): Promise<void> {
+// A Console that serves several lanes resumes each lane's moves with that lane's bindings
+// (Refactor 261), so each run reads only the environments of its lane.
+export async function resumeWalletRelocations(options: ExecutionOptions & {
+  readonly namespace: string;
+  readonly environmentKeys: LaneEnvironmentKeys;
+}): Promise<void> {
   const nowMs = options.clock();
-  await new WalletRelocationCapacity(options.database, options.bindings.gateways).recover(options.namespace, nowMs);
+  await new WalletRelocationCapacity(options.database, options.bindings.gateways).recover(options.namespace, options.environmentKeys, nowMs);
   const rows = await queryD1All(options.database, `SELECT move.* FROM wallet_relocations AS move
     LEFT JOIN wallet_relocation_dispatch AS dispatch
       USING (namespace, organization_id, project_id, environment_id, wallet_id, move_id)
     WHERE namespace = ?1 AND state != 'completed'
+      AND ${environmentKeySqlFilter('environment_id', 'project_id', '?3')}
       AND (dispatch.driver_id IS NULL OR dispatch.driver_expires_at_ms <= ?2) AND (
       execution_state IN ('ready', 'running') OR
       (execution_state = 'retry_wait' AND execution_retry_at_ms <= ?2))
-    ORDER BY COALESCE(dispatch.dispatched_at_ms, 0), admitted_at_ms, move_id LIMIT 4`, [options.namespace, nowMs]);
+    ORDER BY COALESCE(dispatch.dispatched_at_ms, 0), admitted_at_ms, move_id LIMIT 4`,
+  [options.namespace, nowMs, options.environmentKeys.toSqlParameter()]);
   for (const row of rows) {
     try {
       const move = WalletRelocation.fromRow(row);

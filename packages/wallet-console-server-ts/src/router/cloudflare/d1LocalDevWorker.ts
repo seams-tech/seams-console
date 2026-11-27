@@ -1,3 +1,4 @@
+import { LaneEnvironmentKeys } from '../../walletLanes/environmentKeys';
 import { createD1AccountConsoleComposition, isAccountConsoleRequest } from './d1AccountConsole';
 import { createConsoleEmailInvitationSecretCipherFromEnv } from './cron';
 import { admitD1EstablishedWalletHome } from '@seams/wallet-server/cloud-host';
@@ -2575,6 +2576,7 @@ async function runLocalTenantRootRefreshResumptionV1(
   const resumption = createD1TenantRootOperationResumptionStoreV1({
     database: env.CONSOLE_DB,
     namespace,
+    environmentKeys: LaneEnvironmentKeys.all(),
   });
   const pending = await resumption.listPending(1);
   const nowMs = input.scheduledTimeMs ?? Date.now();
@@ -2614,6 +2616,7 @@ async function runLocalTenantRootRefreshResumptionV1(
       grants: createD1TenantRootScheduledActiveGrantReaderV1({
         database: env.CONSOLE_DB,
         namespace,
+        environmentKeys: LaneEnvironmentKeys.all(),
       }),
       state: createTenantRootSecurityStateReaderV1({
         activeRoots: new D1TenantRootActiveLineageResolverV1(
