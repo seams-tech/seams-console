@@ -1,11 +1,33 @@
 # Refactor 261 — One Console for both networks
 
 Status: plan, written on 2026-11-26. On 2026-11-27 the owner approved it with the seven
-recommended answers in "Owner decisions". Steps 1 to 5 are done (see "Progress"). Step 6
-(production mainnet) is next. Each push, production deploy, secret change and deletion still
-waits for the owner's yes at its step.
+recommended answers in "Owner decisions". Steps 1 to 6 are done (see "Progress"). The
+deletion of the mainnet organisation "Seams" and step 7 (production testnet) are next. Each
+push, production deploy, secret change and deletion still waits for the owner's yes at its
+step.
 
 ## Progress
+
+Step 6, done on 2026-11-27 (owner: "do all 3 parts of step 6"):
+
+- `lane-grant-key --apply` set `TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_KEY_ID` and
+  `_SEED` in `production-console` (01:52 UTC), after it proved the key against
+  `production-testnet-tenant-root-control-plane`.
+- `main` got the Refactor 261 commits as merge `376856c2` (built from `origin/main` and
+  `5b58c410`; a later doc commit of another session on local `dev` stayed out).
+- Production mainnet run `45925136433` passed every job (roles, Gateways, Runtimes, Console
+  with migrations, activation, all frontend parts) in 10 minutes. Afterwards the live mainnet
+  Console has the lane list, the nine `TESTNET_LANE_*` service bindings and both
+  `TESTNET_LANE_*` grant secrets; it and every mainnet Gateway and Runtime match the rendered
+  configs, except the recovery certificates that CI supplies. `/console/readyz` answers 200
+  also with a testnet environment in `X-Console-Environment-Id` (the testnet lane
+  composition), and the production Console bundle names only `console.seams.sh` as its
+  Console. A sign-in on `console.seams.sh` showed the network switch; the mainnet view of
+  "Seams" shows no selectable environment, because its only `prod` environment is disabled.
+- Before the deletion of "Seams" (decision 4), the mainnet Console database was exported to
+  `~/.seams/old/console-mainnet-f6e040fb-before-org-delete-20261127.sql` (mode 600). The
+  dashboard's Delete asks with a native `confirm()`, which the built-in browser refuses, so the
+  deletion did not start.
 
 Step 5, done on 2026-11-27 (owner: "yes push dev and run staging"): `dev` was pushed at
 `5904f811`, and staging run `45922632541` passed every job (backend, Console with its
