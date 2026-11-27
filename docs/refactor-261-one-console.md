@@ -1,10 +1,10 @@
 # Refactor 261 — One Console for both networks
 
 Status: plan, written on 2026-11-26. On 2026-11-27 the owner approved it with the seven
-recommended answers in "Owner decisions". Steps 1 to 6 are done (see "Progress"). The
-deletion of the mainnet organisation "Seams" and step 7 (production testnet) are next. Each
-push, production deploy, secret change and deletion still waits for the owner's yes at its
-step.
+recommended answers in "Owner decisions". Steps 1 to 6 and decision 4 (the deletion of the
+mainnet organisation "Seams") are done (see "Progress"). Step 7 (production testnet) is next.
+Each push, production deploy, secret change and deletion still waits for the owner's yes at
+its step.
 
 ## Progress
 
@@ -28,6 +28,20 @@ Step 6, done on 2026-11-27 (owner: "do all 3 parts of step 6"):
   `~/.seams/old/console-mainnet-f6e040fb-before-org-delete-20261127.sql` (mode 600). The
   dashboard's Delete asks with a native `confirm()`, which the built-in browser refuses, so the
   deletion did not start.
+- Decision 4, done on 2026-11-27 by a D1 patch (owner: "Use a D1 patch"). The Console's own
+  deletion would have left rows that a lane still acts on, among them the `ACTIVE` mainnet
+  grant of `proj_e8f2…:dev`, and a trigger refuses an organisation with billing history (one
+  $10 manual support credit of 2026-11-21, "internal_production_enablement"). The patch
+  (`~/.seams/old/console-mainnet-org-seams-delete-patch-20261127.sql`) deletes the policies,
+  runtime snapshots, API key, tenant-root grant and the ledger entry with its two postings,
+  then runs the statements of the Console's `deleteOrganization` in its order; the
+  organisation row cascades to the project, environments, membership, owner event and email
+  outbox. A simulation on the backup removed 29 rows, all of "Seams", with no foreign-key
+  violation; the live run changed the same rows. It keeps, by design, 5 audit events, the
+  immutable mainnet lane bindings of that environment and its 2 reserved wallet homes; no lane
+  acts on them. Afterwards the database holds only "Seams Wallets II" with its three `ACTIVE`
+  environments and its `prod` grant, `pragma_foreign_key_check` is empty, and the Console is
+  ready.
 
 Step 5, done on 2026-11-27 (owner: "yes push dev and run staging"): `dev` was pushed at
 `5904f811`, and staging run `45922632541` passed every job (backend, Console with its
