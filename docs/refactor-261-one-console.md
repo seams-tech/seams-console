@@ -1,11 +1,25 @@
 # Refactor 261 — One Console for both networks
 
 Status: plan, written on 2026-11-26. On 2026-11-27 the owner approved it with the seven
-recommended answers in "Owner decisions". Steps 1 to 4 are built on `dev` (see "Progress").
-Step 5 (staging) is next. Each push, production deploy, secret change and deletion still waits
-for the owner's yes at its step.
+recommended answers in "Owner decisions". Steps 1 to 5 are done (see "Progress"). Step 6
+(production mainnet) is next. Each push, production deploy, secret change and deletion still
+waits for the owner's yes at its step.
 
 ## Progress
+
+Step 5, done on 2026-11-27 (owner: "yes push dev and run staging"): `dev` was pushed at
+`5904f811`, and staging run `45922632541` passed every job (backend, Console with its
+migrations, activation, frontend) in 10 minutes. Afterwards:
+
+- The live staging Console, its four Gateways and its four Wallet Runtimes match the rendered
+  configs, except the recovery certificates that CI supplies. The Console has one lane (no
+  lane list), and the Gateways bind it with the default entrypoint.
+- `/console/readyz`, `/console/tenant-root/security/recovery-trust` and `cli-info` answer 200;
+  the CORS preflight from `https://staging.seams.sh` passes. The staging Console bundle names
+  only `console.staging.seams.sh`, the staging Gateway and the staging hosted wallet.
+- A GitHub sign-in on `console.staging.seams.sh` in the built-in browser opened the dashboard.
+  The overview, the wallet list and the tenant-root status (a wallet control call) answered 200. `restore-access` answered 409 `restore_access_unavailable` (no recovery destination is
+  prepared for the project), which is the expected state.
 
 Built on 2026-11-27 (steps 1 to 4, on `dev`):
 
