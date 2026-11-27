@@ -115,18 +115,12 @@ async function runConsoleOperation(operation, site) {
       ...process.env,
       VITE_SITE_ORIGIN: origin,
       VITE_ASSET_BASE_PATH: '/',
+      // One Console serves every network of the site (Refactor 261).
       VITE_CONSOLE_BASE_URL: origin,
-      VITE_MAINNET_CONSOLE_BASE_URL: '',
       VITE_MAINNET_RELAYER_URL: '',
       // The login page runs in a dialog on the Wallet site's pricing page.
       VITE_WALLET_SITE_ORIGIN: readFrontendSite(site.id).walletSiteOrigin,
     };
-    // Preserve the existing account stores. Production testnet retains its own
-    // backend; the mainnet and staging account authorities also serve the new hosts.
-    for (const account of site.accountOrigins) {
-      environment[`VITE_${account.network.toUpperCase()}_CONSOLE_BASE_URL`] =
-        site.id === 'production' && account.network === 'testnet' ? account.origin : origin;
-    }
     for (const lane of readFrontendSite(site.id).lanes) {
       environment[`VITE_${lane.network.toUpperCase()}_RELAYER_URL`] = lane.gatewayOrigin;
       environment[`VITE_${lane.network.toUpperCase()}_WALLET_ORIGIN`] = lane.walletOrigin;

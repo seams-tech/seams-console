@@ -36,7 +36,6 @@ interface ImportMetaEnv {
   readonly VITE_DASHBOARD_WALLETS_ROUTES_ENABLED?: string;
 
   readonly VITE_TESTNET_RELAYER_URL?: string;
-  readonly VITE_TESTNET_CONSOLE_BASE_URL?: string;
   readonly VITE_TESTNET_RELAYER_ACCOUNT_ID?: string;
   readonly VITE_TESTNET_NEAR_NETWORK?: 'testnet';
   readonly VITE_TESTNET_NEAR_RPC_URL?: string;
@@ -55,7 +54,6 @@ interface ImportMetaEnv {
   readonly VITE_TESTNET_RP_ID_BASE?: string;
 
   readonly VITE_MAINNET_RELAYER_URL?: string;
-  readonly VITE_MAINNET_CONSOLE_BASE_URL?: string;
   readonly VITE_MAINNET_RELAYER_ACCOUNT_ID?: string;
   readonly VITE_MAINNET_NEAR_NETWORK?: 'mainnet';
   readonly VITE_MAINNET_NEAR_RPC_URL?: string;

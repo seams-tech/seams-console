@@ -237,10 +237,10 @@ export async function revokeDashboardConsoleSession(): Promise<void> {
   throw new Error(consoleErrorMessage(response, body, 'Console session revoke failed'));
 }
 
-/* Each network has its own Console backend and session cookie, so a switch must read
-   the other network's session. The dashboard reads it ahead of the switch, and the
-   switch hands the result to the dashboard that opens next. That dashboard shows it at
-   once and reads the session again in the background. */
+/* A network switch remounts the dashboard. Both networks share one Console and its session
+   (Refactor 261), so the session does not change; the read made ahead of the switch lets
+   the next dashboard show it at once instead of a loading shell. That dashboard reads the
+   session again in the background. */
 export type PrefetchedDashboardConsoleSession = {
   readonly fetchedAt: number;
   /** The identity has no organization yet, so the dashboard opens onboarding. */

@@ -64,6 +64,7 @@ import {
   replaceDashboardSelectedContext,
   useDashboardUiPreferences,
 } from './useDashboardUiPreferences';
+import { networkForConsoleEnvironmentId } from './environmentNetwork';
 import { useSiteRouter } from '@core/router/useSiteRouter';
 import {
   getActiveFrontendDeployment,
@@ -190,8 +191,10 @@ function prefetchOtherConsoleNetwork(
   if (network) prefetchDashboardConsoleSession(network);
 }
 
-// Each network has its own account store. The top bar shows the switch on wide
-// screens; the account menu carries it as a toggle on every screen.
+// One Console serves every network (Refactor 261): the account, organization and project
+// stay, and the switch selects which environments, Gateway and hosted wallet the dashboard
+// uses. The top bar shows the switch on wide screens; the account menu carries it as a
+// toggle on every screen.
 function consoleNetworkSwitch(
   runtime: Pick<ConsoleRuntimeState, 'selectedNetwork' | 'availableNetworks'>,
   go: (to: string) => void,
@@ -216,9 +219,10 @@ function ignoreContextSelection(): void {}
 
 /* The switch stays in the page. DashboardPage keys the dashboard by network, so the
    new network's dashboard mounts with empty state, as after a page load, and starts
-   from the session read made ahead of the switch. The saved organization and project
-   belong to the old network's account store, so they go; a collapsed rail stays
-   collapsed. All the updates land in one render. */
+   from the session read made ahead of the switch. The organization and project stay; the
+   saved environment belongs to the old network, so it goes and the dashboard selects an
+   environment of the new one. A collapsed rail stays collapsed. All the updates land in one
+   render. */
 function navigateToConsoleNetwork(go: (to: string) => void, network: ConsoleNetwork): void {
   if (!switchConsoleNetwork(network)) return;
   const destination = new URL(DASHBOARD_ACCOUNT_SETTINGS_ROUTE, window.location.origin);
@@ -234,7 +238,7 @@ function switchConsoleNetwork(network: ConsoleNetwork): boolean {
   handOffPrefetchedDashboardConsoleSession(network);
   selectNetwork(network);
   if (getActiveFrontendDeployment().network !== network) return false;
-  persistDashboardSelectedContext({ organization: '', project: '', environment: '' });
+  persistDashboardSelectedContext({ environment: '' });
   return true;
 }
 
@@ -245,13 +249,25 @@ function followConsoleNetworkInUrl(): void {
   if (network === 'testnet' || network === 'mainnet') switchConsoleNetwork(network);
 }
 
+/* With more than one network, the menu shows the environments of the selected one:
+   `dev` and `staging` on testnet, `prod` on mainnet. */
+function environmentNetworkFilter(
+  runtime: Pick<ConsoleRuntimeState, 'selectedNetwork' | 'availableNetworks'>,
+): ConsoleNetwork | null {
+  return runtime.availableNetworks.length > 1 ? runtime.selectedNetwork : null;
+}
+
 function buildProjectEnvironmentOptions(input: {
   environments: DashboardConsoleEnvironment[];
   projectId: string;
+  network: ConsoleNetwork | null;
 }): TopbarOption[] {
   const visibleEnvironments = input.environments
     .filter((environment) => {
       if (environment.projectId !== input.projectId) return false;
+      if (input.network && networkForConsoleEnvironmentId(environment.id) !== input.network) {
+        return false;
+      }
       const status = environment.status.trim().toUpperCase();
       if (status === 'ARCHIVED') return false;
       return status === 'ACTIVE' || environment.key.trim().toLowerCase() === 'prod';
@@ -835,8 +851,9 @@ function DashboardPageInner<ProductRoute extends string, ProductGroupKey extends
       buildProjectEnvironmentOptions({
         environments: environmentRows,
         projectId: selectedProjectId,
+        network: environmentNetworkFilter(frontendRuntime),
       }),
-    [environmentRows, selectedProjectId],
+    [environmentRows, frontendRuntime, selectedProjectId],
   );
 
   const dropdownOptions = React.useMemo<Record<TopbarMenuKey, TopbarOption[]>>(
@@ -861,9 +878,10 @@ function DashboardPageInner<ProductRoute extends string, ProductGroupKey extends
         environments: buildProjectEnvironmentOptions({
           environments: environmentRows,
           projectId: project.value,
+          network: environmentNetworkFilter(frontendRuntime),
         }),
       })),
-    [dropdownOptions.project, environmentRows],
+    [dropdownOptions.project, environmentRows, frontendRuntime],
   );
 
   const defaultTopbarContext = React.useMemo<TopbarContextState>(() => {
