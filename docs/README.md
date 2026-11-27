@@ -12,9 +12,9 @@ It covers one-command deployment, configuration, frontend scope, automatic tenan
 
 ## Console procedures
 
-- [Refactor 261 — one Console for both networks](refactor-261-one-console.md): one
-  Console on `console.seams.sh` serves testnet and mainnet; the navbar toggle selects the
-  network.
+- [Refactor 261 — one Console for both networks](refactor-261-one-console.md) (done
+  2026-11-27): one Console on `console.seams.sh` serves testnet and mainnet; the navbar
+  toggle selects the network. The old `test.console.seams.sh` is gone.
 - [Onboarding](wallet-saas/console-docs/wallet-console-onboarding.md): organization,
   project, and Development environment creation. Activation remains separate.
 - [API keys](wallet-saas/console-docs/api-keys.md): environment credentials and origins.

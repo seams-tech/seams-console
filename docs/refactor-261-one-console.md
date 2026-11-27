@@ -1,13 +1,33 @@
 # Refactor 261 — One Console for both networks
 
-Status: plan, written on 2026-11-26. On 2026-11-27 the owner approved it with the seven
-recommended answers in "Owner decisions". Steps 1 to 7 and decision 4 (the deletion of the
-mainnet organisation "Seams") are done, and step 8 is done; the owner skipped its two checks
-that need a passkey or a Google sign-in (see "Progress"). Step 9 can start on 2026-11-28 after
-02:30 UTC. Each push, production deploy, secret change and deletion still waits for the
-owner's yes at its step.
+Status: done on 2026-11-27. The plan was written on 2026-11-26, and on 2026-11-27 the owner
+approved it with the seven recommended answers in "Owner decisions". Steps 1 to 9 and decision
+4 (the deletion of the mainnet organisation "Seams") are done. The owner skipped the two step 8
+checks that need a passkey or a Google sign-in, and ran step 9 before the full day without
+traffic had passed (see "Progress").
 
 ## Progress
+
+Step 9, done on 2026-11-27 at 07:00 to 07:10 UTC (owner: "just do the deletions now", about
+19 hours before the day without traffic ended):
+
+- Traffic since the testnet cutover (02:30 UTC): one request to `test.console.seams.sh`, the
+  `readyz` of the step 8 checks. The old Worker's other invocations were its two crons (every
+  minute, and 03:00 daily). No Worker in the `seamsadmin` account bound to the old Worker or to
+  its database, and no file in this repository named them.
+- Export: `~/.seams/old/seams-console-testnet-sin-before-delete-20261127.sql` (345 KB, mode
+  600). Loaded into SQLite, it has the same 141 tables and the same row counts as the live
+  database had (97 migrations, 4 deployment bindings, 3 environments, 10 wallet routes).
+- Deleted: the custom domain `test.console.seams.sh`, the Worker
+  `seams-sdk-d1-console-testnet`, the D1 database `seams-console-testnet-sin`
+  (`8700ed4b-8b26-41f1-97a0-a5fd40e32c34`), the GitHub environment `production-testnet-console`
+  (13 secrets; the testnet grant key that the one Console needs was copied to
+  `production-console` in step 6), and the `production` variables
+  `VITE_MAINNET_CONSOLE_BASE_URL` and `VITE_CONSOLE_BASE_URL` (both `https://wallet.seams.sh`).
+- After the deletions: `console.seams.sh/console/readyz`, `test.api.seams.sh/readyz` and
+  `api.seams.sh/readyz` answer 200, and the testnet Gateway still names the `dev` environment of
+  the one Console in `/.well-known/seams-tenant-deployment.json`. `test.console.seams.sh` has no
+  DNS record.
 
 Step 7, done on 2026-11-27 (owner: "Yes, run step 7"): production testnet run
 `45927624709` from `main` (`376856c2`) passed every job in 10 minutes: the role Workers, the
@@ -43,13 +63,9 @@ Step 8, checks on 2026-11-27:
   the owner.
 - Cleanup on 2026-11-27: the deploy and GitHub value scripts no longer make
   `VITE_TESTNET_CONSOLE_BASE_URL` and `VITE_MAINNET_CONSOLE_BASE_URL`, which nothing reads since
-  step 4. A staging build still gets `VITE_CONSOLE_BASE_URL` with the same origin. Two GitHub
-  variables in the `production` environment are left for the owner: `VITE_MAINNET_CONSOLE_BASE_URL`
-  and `VITE_CONSOLE_BASE_URL`, both `https://wallet.seams.sh` from 2026-09-12. No production
-  build reads them: the Console build sets its own value, and the marketing build ignores it.
-
-Step 9 can start on 2026-11-28 after 02:30 UTC, if the host has no request but scanner probes
-in that day.
+  step 4. A staging build still gets `VITE_CONSOLE_BASE_URL` with the same origin. No
+  production build read the two old `production` variables (the Console build sets its own
+  value, and the marketing and Wallet host builds ignore it), so step 9 deleted them.
 
 Step 6, done on 2026-11-27 (owner: "do all 3 parts of step 6"):
 
