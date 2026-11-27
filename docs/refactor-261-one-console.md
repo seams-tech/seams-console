@@ -1,11 +1,84 @@
 # Refactor 261 — One Console for both networks
 
 Status: plan, written on 2026-11-26. On 2026-11-27 the owner approved it with the seven
-recommended answers in "Owner decisions". Steps 1 to 5 are done (see "Progress"). Step 6
-(production mainnet) is next. Each push, production deploy, secret change and deletion still
-waits for the owner's yes at its step.
+recommended answers in "Owner decisions". Steps 1 to 7 and decision 4 (the deletion of the
+mainnet organisation "Seams") are done, and step 8 is done; the owner skipped its two checks
+that need a passkey or a Google sign-in (see "Progress"). Step 9 can start on 2026-11-28 after
+02:30 UTC. Each push, production deploy, secret change and deletion still waits for the
+owner's yes at its step.
 
 ## Progress
+
+Step 7, done on 2026-11-27 (owner: "Yes, run step 7"): production testnet run
+`45927624709` from `main` (`376856c2`) passed every job in 10 minutes: the role Workers, the
+Wallet Runtimes and Gateways, the activation through `console.seams.sh`, and the production
+frontend. The testnet Wallet was unavailable from the Runtime deploy (02:23 UTC) to the end of
+the activation (02:26 UTC).
+
+Step 8, checks on 2026-11-27:
+
+- Every testnet Gateway and Wallet Runtime matches the rendered config: `WALLET_CONSOLE` is
+  `seams-sdk-d1-console` with the entrypoint `TestnetWalletLane`, and the namespace is
+  `seams-production`.
+- The shared database has both active bindings: `production-mainnet` on
+  `proj_65be6ecba1ff48d6a7294f0db59964ca:prod` and `production-testnet` on `…:dev`. The
+  cutover created the `dev` tenant root with the testnet grant key.
+- `test.api.seams.sh/.well-known/seams-tenant-deployment.json` names the `dev` environment, a
+  new publishable key and `development_testnet_v1`; `api.seams.sh` still names `prod`. The
+  testnet Gateway reads its binding from the shared Console through the testnet entrypoint,
+  so this answer proves that path.
+- Requests to `test.console.seams.sh` from 2026-11-26 03:00 to 2026-11-27 03:00 UTC (zone
+  analytics): the two testnet deploy runs of 2026-11-26, scanner probes (404), and one
+  `readyz` of these checks. The old Worker's other invocations are its cron.
+- Skipped by the owner on 2026-11-27 ("Skip them"): a wallet registration on testnet and the
+  dashboard switch for the owner of "Seams Wallets II". The demo registers with a passkey or
+  Google, and that organisation's owner signs in with Google; both need the owner. "Seams
+  Wallets II" is the only organisation now, so the GitHub identity has none.
+- Found by the repository validation after step 4 (failing on `dev` since `5904f811`): on
+  Mainnet the environment menu shows only Production, so a project whose Production is not
+  active had no environment to select, and the Wallet pages showed "Loading Wallet
+  environments..." without end. The production frontend has had this since its deploy on
+  2026-11-27. The owner chose a notice ("Show a notice"): the Wallet pages now say that
+  Production is not active and offer the switch to Testnet. The deploy of this fix waits for
+  the owner.
+
+Step 9 can start on 2026-11-28 after 02:30 UTC, if the host has no request but scanner probes
+in that day.
+
+Step 6, done on 2026-11-27 (owner: "do all 3 parts of step 6"):
+
+- `lane-grant-key --apply` set `TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_KEY_ID` and
+  `_SEED` in `production-console` (01:52 UTC), after it proved the key against
+  `production-testnet-tenant-root-control-plane`.
+- `main` got the Refactor 261 commits as merge `376856c2` (built from `origin/main` and
+  `5b58c410`; a later doc commit of another session on local `dev` stayed out).
+- Production mainnet run `45925136433` passed every job (roles, Gateways, Runtimes, Console
+  with migrations, activation, all frontend parts) in 10 minutes. Afterwards the live mainnet
+  Console has the lane list, the nine `TESTNET_LANE_*` service bindings and both
+  `TESTNET_LANE_*` grant secrets; it and every mainnet Gateway and Runtime match the rendered
+  configs, except the recovery certificates that CI supplies. `/console/readyz` answers 200
+  also with a testnet environment in `X-Console-Environment-Id` (the testnet lane
+  composition), and the production Console bundle names only `console.seams.sh` as its
+  Console. A sign-in on `console.seams.sh` showed the network switch; the mainnet view of
+  "Seams" shows no selectable environment, because its only `prod` environment is disabled.
+- Before the deletion of "Seams" (decision 4), the mainnet Console database was exported to
+  `~/.seams/old/console-mainnet-f6e040fb-before-org-delete-20261127.sql` (mode 600). The
+  dashboard's Delete asks with a native `confirm()`, which the built-in browser refuses, so the
+  deletion did not start.
+- Decision 4, done on 2026-11-27 by a D1 patch (owner: "Use a D1 patch"). The Console's own
+  deletion would have left rows that a lane still acts on, among them the `ACTIVE` mainnet
+  grant of `proj_e8f2…:dev`, and a trigger refuses an organisation with billing history (one
+  $10 manual support credit of 2026-11-21, "internal_production_enablement"). The patch
+  (`~/.seams/old/console-mainnet-org-seams-delete-patch-20261127.sql`) deletes the policies,
+  runtime snapshots, API key, tenant-root grant and the ledger entry with its two postings,
+  then runs the statements of the Console's `deleteOrganization` in its order; the
+  organisation row cascades to the project, environments, membership, owner event and email
+  outbox. A simulation on the backup removed 29 rows, all of "Seams", with no foreign-key
+  violation; the live run changed the same rows. It keeps, by design, 5 audit events, the
+  immutable mainnet lane bindings of that environment and its 2 reserved wallet homes; no lane
+  acts on them. Afterwards the database holds only "Seams Wallets II" with its three `ACTIVE`
+  environments and its `prod` grant, `pragma_foreign_key_check` is empty, and the Console is
+  ready.
 
 Step 5, done on 2026-11-27 (owner: "yes push dev and run staging"): `dev` was pushed at
 `5904f811`, and staging run `45922632541` passed every job (backend, Console with its

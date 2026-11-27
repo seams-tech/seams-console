@@ -216,30 +216,30 @@ Open:
 - The Speak-to-Sign demo moved to `seamsadmin` on 2026-11-26 (owner decision of the same
   day). Its Worker `seams-voice-intents-x-refresh` and the KV `seams-voice-intents-x-cache`
   were deleted with Wave 2 before the move.
-  - New in `seamsadmin`: the Pages project `speak-to-sign` on
-    `https://speak-to-sign-8kf.pages.dev`, and the KV namespaces `speak-to-sign-faucet-limits`
-    (`3410ee1f…`) and `seams-voice-intents-x-cache` (`f54a18bb…`). Cloudflare gave the host a
-    3-character suffix, as for every Pages project of this account. The production
-    deployment `692d54f0` is `seams-tech/speak-to-sign` `dev` at `924d83d`. That commit
-    and `16bf2dd` (its deployed state) put the new host, the new KV ids and the account in
-    that repository.
-  - Secrets: 12 of the 13 old secrets came from `demo/frontend/.dev.vars` of the
-    speak-to-sign checkout (each one checked against its service) and from the staging
-    `speakToSignVerifier` in `deployment/wallet-system/targets.json`.
-    `VOICE_OUTLAYER_PAYMENT_KEY` has no local copy. The owner chose to deploy without it, so
-    `/api/voice-verify` answers 503 until the key is set. The GitHub environment
-    `staging-gateway` and the Worker `seams-sdk-d1-gateway-staging` still hold it.
-  - Checked on 2026-11-26: `/`, `/multisig/`, `/api/near-ai-status`, `/api/x/eligible-posts`
-    (the second call came from `X_CACHE` in 0.1 s), `/api/faucet` (it passes its key and
-    KV checks) and `/api/voice-command` (JEV answered).
-  - Deleted with the owner's yes: the Pages project `speak-to-sign` and the KV
-    `speak-to-sign-faucet-limits` in the source account. `speak-to-sign.pages.dev` is gone.
-    The refresh Worker stays deleted, for a lower X cost (owner).
+  - In `seamsadmin`: the Pages project `speak-to-sign` on `https://speak-to-sign-8kf.pages.dev`
+    and the KV `speak-to-sign-faucet-limits` (`3410ee1f…`). Cloudflare gave the host a
+    3-character suffix, as for every Pages project of this account. The only deployment,
+    `cc41305c`, is `seams-tech/speak-to-sign` `dev` at `94ced9b`; `bbb7617` records its
+    deployed state. `924d83d` put the new host and the account in that repository.
+  - Secrets: only `FAUCET_PRIVATE_KEY` and `NEAR_AI_API_KEY`, from `demo/frontend/.dev.vars`
+    of the speak-to-sign checkout. Each one was checked against its service.
   - Not needed (owner, 2026-11-26): the demo's Wallet, `/api/voice-verify` and the X posts
-    route. The owner stopped the Phala, OutLayer and X API funding, so their credits run
-    out. The Wallet does not work: its Seams project `proj_mv5fzezy_4ztf60` is not in the
-    staging Console after the fresh start, and the demo pins `@seams/wallet` 0.72.0 while
-    the three sign hosts run 0.76.0. No work on these parts is planned.
+    route. The owner stopped the Phala, OutLayer and X API funding. The Wallet does not work:
+    its Seams project `proj_mv5fzezy_4ztf60` is not in the staging Console after the fresh
+    start, and the demo pins `@seams/wallet` 0.72.0 while the three sign hosts run 0.76.0.
+    No work on these parts is planned.
+  - Cleanup on 2026-11-27, with the owner's yes: deleted the four X keys, the six
+    `VOICE_OUTLAYER_*` values, `X_ELIGIBLE_MAX`, the `X_CACHE` binding, the `seamsadmin` KV
+    `seams-voice-intents-x-cache` (`f54a18bb…`, made on 2026-11-26) and the deployments
+    `cd12e769` (a preview from a wrong `--branch dev`), `692d54f0` and `1890533c`, which held
+    those keys. `/api/x/eligible-posts` and `/api/voice-verify` answer 503, and the timeline
+    says that the posts from X are not available.
+  - Checked on 2026-11-27: `/`, `/multisig/`, `/og.png` and `/api/near-ai-status` answer 200;
+    `/api/faucet` passes its key and KV checks; `/api/voice-command` answers (JEV); the URLs of
+    the deleted deployments answer 404.
+  - Deleted in the source account on 2026-11-26, with the owner's yes: the Pages project
+    `speak-to-sign` and the KV `speak-to-sign-faucet-limits`. `speak-to-sign.pages.dev` is
+    gone.
 - Purin account move: `purin.io` can move from 2026-11-27. The Purin account needs the
   Workers Paid plan and an API token first.
 

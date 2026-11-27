@@ -974,11 +974,18 @@ async function verifyFreshUserOnboarding(input: {
     // A lost activation reply must resume the same setup after a reload.
     await expect(page.getByRole('heading', { name: 'Wallet setup unavailable' })).toBeVisible();
     await page.reload();
+    // A new account has no active Production, so Mainnet offers Testnet.
     await expect(
-      page.getByRole('heading', { name: 'Manage your wallets', exact: true }),
+      page.getByRole('heading', { name: 'Production is not active', exact: true }),
     ).toBeVisible();
     expect(await environmentCount(input.database, projectId)).toBe(3);
     expect(transport.enableRequests).toHaveLength(1);
+    await page.getByRole('button', { name: 'Switch to Testnet', exact: true }).click();
+    await expect(page.getByLabel('Account settings page')).toBeVisible();
+    await page.goto(new URL('/dashboard/overview', input.appUrl).href);
+    await expect(
+      page.getByRole('heading', { name: 'Manage your wallets', exact: true }),
+    ).toBeVisible();
     await page.reload();
     await expect(
       page.getByRole('heading', { name: 'Manage your wallets', exact: true }),
@@ -1015,7 +1022,8 @@ async function verifyFreshUserOnboarding(input: {
       'Second fresh project',
     );
     expect(secondOrgId).not.toBe(orgId);
-    await expect(page.getByRole('button', { name: 'Mainnet', exact: true })).toHaveAttribute(
+    // The network is a choice of this browser, so the new account opens on Testnet too.
+    await expect(page.getByRole('button', { name: 'Testnet', exact: true })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
@@ -1031,7 +1039,9 @@ async function verifyFreshUserOnboarding(input: {
           projectCreation: true,
           reloadDuringOnboarding: true,
           onboardingAndWalletShareOrigin: true,
-          selectedNetwork: 'mainnet',
+          firstNetwork: 'mainnet',
+          productionInactiveNoticeOnMainnet: true,
+          selectedNetwork: 'testnet',
           environments: 3,
           lostActivationReplyRecovered: true,
           noDuplicateActivationAfterReload: true,
@@ -1086,9 +1096,9 @@ async function verifyAutomaticWalletSetup(
     define: {
       'import.meta.env.VITE_SITE_ORIGIN': 'window.location.origin',
       'import.meta.env.VITE_CONSOLE_BASE_URL': 'window.location.origin',
-      'import.meta.env.VITE_TESTNET_CONSOLE_BASE_URL': 'window.location.origin',
-      'import.meta.env.VITE_MAINNET_CONSOLE_BASE_URL': 'window.location.origin',
       'import.meta.env.VITE_RELAYER_URL': 'window.location.origin',
+      // A mainnet Gateway gives the Console both networks, so the switch shows.
+      'import.meta.env.VITE_MAINNET_RELAYER_URL': 'window.location.origin',
     },
   });
   const worker = runtime(path.join(evidence, 'state'));
@@ -1222,6 +1232,18 @@ async function verifyAutomaticWalletSetup(
     product.delivery.reconnect();
     await page.reload();
     await expect.poll(environmentCount.bind(null, database, projectId)).toBe(3);
+    // Mainnet uses only Production, which this account has not activated. The Wallet pages
+    // say so and offer Testnet, where Development is active.
+    await page.goto(new URL('/dashboard/api-keys', appUrl).href);
+    await expect(
+      page.getByRole('heading', { name: 'Production is not active', exact: true }),
+    ).toBeVisible();
+    await page.screenshot({
+      path: path.join(evidence, 'mainnet-production-inactive.png'),
+      fullPage: true,
+    });
+    await page.getByRole('button', { name: 'Switch to Testnet', exact: true }).click();
+    await expect(page.getByLabel('Account settings page')).toBeVisible();
     await page.goto(new URL('/dashboard/api-keys', appUrl).href);
     await expect(
       page.getByRole('button', { name: 'Create credential', exact: true }),
@@ -1253,7 +1275,7 @@ async function verifyAutomaticWalletSetup(
     await accountLink.click();
     await expect(page.getByLabel('Account settings page')).toBeVisible();
     await expect(page.getByRole('link', { name: 'API Keys', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Mainnet', exact: true })).toHaveAttribute(
+    await expect(page.getByRole('button', { name: 'Testnet', exact: true })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
@@ -1270,7 +1292,7 @@ async function verifyAutomaticWalletSetup(
     const secondWalletEntry = new URL('/dashboard/api-keys', appUrl);
     secondWalletEntry.searchParams.set('db_org', secondOrgId);
     secondWalletEntry.searchParams.set('db_project', secondProjectId);
-    secondWalletEntry.searchParams.set('db_network', 'mainnet');
+    secondWalletEntry.searchParams.set('db_network', 'testnet');
     // An incomplete account in the cookie must not redirect an owned-project link.
     const incompleteOrgId = 'account-without-projects';
     await product.core.account.createOrganization(ownerIdentity(), {
@@ -1314,6 +1336,7 @@ async function verifyAutomaticWalletSetup(
       path: path.join(evidence, 'foreign-context-denied.png'),
       fullPage: true,
     });
+    walletEntry.searchParams.set('db_network', 'testnet');
     await page.goto(walletEntry.href);
     await expect(
       page.getByRole('button', { name: 'Create credential', exact: true }),
@@ -1454,7 +1477,11 @@ async function verifyAutomaticWalletSetup(
     await refreshAccess.click();
     await expect(page.getByText('Live Wallet access is enabled.', { exact: true })).toBeVisible();
     expect(transport.enableRequests).toHaveLength(5);
-    await page.getByRole('button', { name: 'Selected Wallet, Development', exact: true }).click();
+    // Production is active now, and Mainnet uses it.
+    await page.getByRole('button', { name: 'Mainnet', exact: true }).click();
+    await expect(page.getByLabel('Account settings page')).toBeVisible();
+    await page.goto(new URL('/dashboard/deployment-status', appUrl).href);
+    await page.getByRole('button', { name: 'Selected Wallet, Production', exact: true }).click();
     await expect(
       page.getByRole('menuitemradio', { name: 'Production', exact: true }),
     ).toBeEnabled();

@@ -264,6 +264,31 @@ export const walletProductMessages = {
     en: 'Loading Wallet environments...',
     ja: 'ウォレットの環境を読み込んでいます…',
   },
+  walletGateMainnetInactiveTitle: {
+    en: 'Production is not active',
+    ja: '本番環境は有効になっていません',
+  },
+  walletGateMainnetInactive: {
+    en: 'Mainnet uses the Production environment of this project, and it is not active yet. Development and Staging run on Testnet.',
+    ja: 'メインネットではこのプロジェクトの本番環境を使いますが、まだ有効になっていません。開発環境とステージング環境はテストネットで動きます。',
+  },
+  walletGateTestnetInactiveTitle: {
+    en: 'No Testnet environment is active',
+    ja: 'テストネットの環境は有効になっていません',
+  },
+  walletGateTestnetInactive: {
+    en: 'Testnet uses the Development and Staging environments of this project, and neither is active.',
+    ja: 'テストネットではこのプロジェクトの開発環境とステージング環境を使いますが、どちらも有効になっていません。',
+  },
+  walletGateNoEnvironmentTitle: {
+    en: 'No environment is active',
+    ja: '有効な環境がありません',
+  },
+  walletGateNoEnvironment: {
+    en: 'This project has no active Wallet environment.',
+    ja: 'このプロジェクトには有効なウォレット環境がありません。',
+  },
+  walletGateSwitchNetwork: { en: 'Switch to {network}', ja: '{network}に切り替える' },
   walletGateUnavailable: { en: 'Wallet unavailable', ja: 'ウォレットを利用できません' },
   walletGateCheckAgain: { en: 'Check again', ja: '再確認' },
   walletGateLoadingProject: { en: 'Loading project...', ja: 'プロジェクトを読み込んでいます…' },

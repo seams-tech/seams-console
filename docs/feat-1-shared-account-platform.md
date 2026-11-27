@@ -1,5 +1,14 @@
 # Shared account platform implementation plan
 
+**History (2026-11-27).** This plan built one account platform for the Wallet and Pantry
+(Satyr). Pantry left it on 2026-11-21: Refactor 260 step 5 (`24ff0b61`) removed the Pantry
+service from the Console, and migrations 0119 and 0120 removed its rows and tables. The
+Console keeps the organisations, projects, members and billing for the Wallet only. So the
+Pantry parts below (Phase 4, the Satyr service, and `add-service.md` for a second service)
+describe code that is gone. For the current state, read
+[Refactor 260](refactor-260-console-split.md) and the code. The text below is the record as of
+2026-10-14.
+
 Status: Phases 1 through 4 and Phase 5 staging are implemented and validated.
 Staging cutover and the deployed request-latency repair are complete.
 Production platform migration is deferred by the user, pending the separate Wallet rollout.

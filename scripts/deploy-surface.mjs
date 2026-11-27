@@ -120,6 +120,8 @@ async function runConsoleOperation(operation, site) {
       VITE_MAINNET_RELAYER_URL: '',
       // The login page runs in a dialog on the Wallet site's pricing page.
       VITE_WALLET_SITE_ORIGIN: readFrontendSite(site.id).walletSiteOrigin,
+      // Without it the top bar's Docs link falls back to the local docs host.
+      VITE_DOCS_ORIGIN: readFrontendSite(site.id).docsOrigin,
     };
     for (const lane of readFrontendSite(site.id).lanes) {
       environment[`VITE_${lane.network.toUpperCase()}_RELAYER_URL`] = lane.gatewayOrigin;

@@ -40,7 +40,10 @@ import {
   useDashboardConsoleSession,
   type DashboardConsoleSessionClaims,
 } from './consoleSession';
-import { DashboardSelectedContextProvider } from './selectedContext';
+import {
+  DashboardSelectedContextProvider,
+  type DashboardEnvironmentAvailability,
+} from './selectedContext';
 import {
   listDashboardEnvironments,
   listDashboardProjects,
@@ -393,6 +396,8 @@ function DashboardPageInner<ProductRoute extends string, ProductGroupKey extends
   const [selectedProjectId, setSelectedProjectId] = React.useState<string>(persistedProjectId);
   const [environmentRows, setEnvironmentRows] = React.useState<DashboardConsoleEnvironment[]>([]);
   const [environmentRefreshRevision, setEnvironmentRefreshRevision] = React.useState(0);
+  // The refresh revision that environmentRows answers, or -1 while no list has arrived.
+  const [environmentRowsRevision, setEnvironmentRowsRevision] = React.useState(-1);
   const organizationRecoveryAttemptRef = React.useRef<string>('');
   const sessionForbidden =
     !consoleSession.loading &&
@@ -827,6 +832,7 @@ function DashboardPageInner<ProductRoute extends string, ProductGroupKey extends
 
   React.useEffect(() => {
     const claims = consoleSession.claims;
+    setEnvironmentRowsRevision(-1);
     if (!claims || !currentOrgId || !usesWalletContext) {
       setEnvironmentRows([]);
       return;
@@ -836,6 +842,7 @@ function DashboardPageInner<ProductRoute extends string, ProductGroupKey extends
       .then((environments) => {
         if (cancelled) return;
         setEnvironmentRows(environments);
+        setEnvironmentRowsRevision(environmentRefreshRevision);
       })
       .catch(() => {
         if (cancelled) return;
@@ -855,6 +862,18 @@ function DashboardPageInner<ProductRoute extends string, ProductGroupKey extends
       }),
     [environmentRows, frontendRuntime, selectedProjectId],
   );
+
+  /* A list from an earlier refresh can be the one from before Wallet setup made the
+     environments, so only the list of the current refresh decides that none can be used. */
+  const environmentAvailability = React.useMemo<DashboardEnvironmentAvailability>(() => {
+    if (environmentRowsRevision !== environmentRefreshRevision) return { kind: 'loading' };
+    if (environmentOptions.some(isSelectableOption)) return { kind: 'selectable' };
+    return {
+      kind: 'none',
+      network: environmentNetworkFilter(frontendRuntime),
+      networkSwitch: consoleNetworkSwitch(frontendRuntime, go) ?? null,
+    };
+  }, [environmentOptions, environmentRefreshRevision, environmentRowsRevision, frontendRuntime, go]);
 
   const dropdownOptions = React.useMemo<Record<TopbarMenuKey, TopbarOption[]>>(
     () => ({
@@ -1345,6 +1364,7 @@ function DashboardPageInner<ProductRoute extends string, ProductGroupKey extends
         <DashboardSelectedContextProvider
           value={selectedContext}
           displayValue={selectedContextDisplay}
+          environmentAvailability={environmentAvailability}
         >
           <ActiveViewComponent
             key={`${currentOrgId}:${selectedContext.project}:${selectedContext.environment}`}

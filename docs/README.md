@@ -12,9 +12,9 @@ It covers one-command deployment, configuration, frontend scope, automatic tenan
 
 ## Console procedures
 
-[Console split history](feat-2-platform-console.md) records the completed separation
-of Platform and Wallet entry points and the reasons for that design.
-
+- [Refactor 261 — one Console for both networks](refactor-261-one-console.md): one
+  Console on `console.seams.sh` serves testnet and mainnet; the navbar toggle selects the
+  network.
 - [Onboarding](wallet-saas/console-docs/wallet-console-onboarding.md): organization,
   project, and Development environment creation. Activation remains separate.
 - [API keys](wallet-saas/console-docs/api-keys.md): environment credentials and origins.
@@ -42,16 +42,18 @@ of Platform and Wallet entry points and the reasons for that design.
 - [Local/provider runtime qualification](../deployment/celld/README.md): retain
   its qualification limits when describing private infrastructure.
 
-## Concept plans
-
-- [Refactor 210 — voice intents](refactor-210-voice-intents.md): Speak-to-Sign
-  and the spoken multisig with OutLayer. Speak-to-Sign runs on testnet: a TEE
-  verifier signs a verdict, and the Wallet pays from the owner's own account
-  after it checks the verdict. The shared vault design is retired (2026-11-09).
-  The spoken multisig is a plan only.
-
 ## Historical feature records
 
+- [Refactor 260 — Console split](refactor-260-console-split.md): the move to
+  `seams-tech/seams-console`, the company site split, and the removal of Pantry from the
+  Console (finished 2026-11-26).
+- [Shared account platform](feat-1-shared-account-platform.md): one account platform for the
+  Wallet and Pantry. Pantry left it on 2026-11-21.
+- [Platform and Wallet consoles](feat-2-platform-console.md): the separate Platform Console of
+  October 2026, removed on 2026-11-21.
+- [Refactor 210 — voice intents](refactor-210-voice-intents.md): the first Speak-to-Sign and
+  spoken multisig plan with OutLayer. Speak-to-Sign now follows `seams-wallet` Refactors 227
+  and 254.
 - [BYO authentication](refactor-201-BYO-auth.md): 0.28 and 0.29 implementation and release evidence.
 - [VoiceID transaction confirmations](voiceid-transaction-confirmation-plan.md):
   October 2026 experiments, 0.26.0 release evidence, and deferred design.

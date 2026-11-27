@@ -4,7 +4,13 @@ import { useDashboardConsoleSession } from '@core/dashboard/consoleSession';
 import { DashboardLoadingState } from '@core/dashboard/components/DashboardLoadingState';
 import { requireConsoleBaseUrl } from '@core/dashboard/consoleHttp';
 import { DASHBOARD_ENVIRONMENTS_UPDATED_EVENT } from '@core/dashboard/consoleContextApi';
-import { useDashboardSelectedContext } from '@core/dashboard/selectedContext';
+import { CONSOLE_NETWORKS } from '@core/dashboard/layout/AccountMenuToggles';
+import {
+  useDashboardEnvironmentAvailability,
+  useDashboardSelectedContext,
+  type DashboardNoEnvironment,
+} from '@core/dashboard/selectedContext';
+import type { ConsoleNetwork } from '@core/runtime';
 import {
   changeProjectService,
   getServiceStatus,
@@ -177,6 +183,58 @@ function assertNever(value: never): never {
   throw new Error(`Unknown Wallet setup state: ${String(value)}`);
 }
 
+function noEnvironmentCopy(network: ConsoleNetwork | null): {
+  readonly title: string;
+  readonly description: string;
+} {
+  switch (network) {
+    case 'mainnet':
+      return {
+        title: t('walletGateMainnetInactiveTitle'),
+        description: t('walletGateMainnetInactive'),
+      };
+    case 'testnet':
+      return {
+        title: t('walletGateTestnetInactiveTitle'),
+        description: t('walletGateTestnetInactive'),
+      };
+    case null:
+      return { title: t('walletGateNoEnvironmentTitle'), description: t('walletGateNoEnvironment') };
+    default:
+      return assertNever(network);
+  }
+}
+
+/* The selected network has no environment that the dashboard can select: on Mainnet the
+   project's Production environment is not active yet. The other network can still have one,
+   so the notice offers the same switch as the top bar. */
+function NoEnvironmentNotice({
+  network,
+  networkSwitch,
+}: DashboardNoEnvironment): React.JSX.Element {
+  const copy = noEnvironmentCopy(network);
+  const target = networkSwitch
+    ? CONSOLE_NETWORKS.find((entry) => entry.value !== networkSwitch.selected)
+    : undefined;
+  return (
+    <section className="dashboard-view__section">
+      <h2>{copy.title}</h2>
+      <p>{copy.description}</p>
+      {networkSwitch && target ? (
+        <button
+          type="button"
+          className="dashboard-pagination-button"
+          onClick={networkSwitch.onSelect.bind(null, target.value)}
+          onPointerEnter={networkSwitch.onIntent}
+          onFocus={networkSwitch.onIntent}
+        >
+          {t('walletGateSwitchNetwork', { network: target.label })}
+        </button>
+      ) : null}
+    </section>
+  );
+}
+
 function WalletProjectSetup({
   organizationId,
   projectId,
@@ -184,6 +242,7 @@ function WalletProjectSetup({
   children,
 }: WalletProjectSetupProps): React.JSX.Element {
   const selected = useDashboardSelectedContext();
+  const environments = useDashboardEnvironmentAvailability();
   const [state, setState] = React.useState<SetupState>({ kind: 'loading' });
   const [attempt, retry] = React.useReducer(nextAttempt, 0);
   // eslint-disable-next-line react-hooks/exhaustive-deps -- All bound inputs are dependencies; setState is stable.
@@ -208,6 +267,7 @@ function WalletProjectSetup({
     case 'ready':
       if (state.service.kind === 'active') {
         if (selected.environment) return <>{children}</>;
+        if (environments.kind === 'none') return <NoEnvironmentNotice {...environments} />;
         return <DashboardLoadingState title={t('walletGateLoadingEnvironments')} />;
       }
       return (
