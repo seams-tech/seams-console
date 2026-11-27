@@ -1,5 +1,12 @@
 # Separate Platform and Wallet consoles
 
+**History (2026-11-27).** The Platform Console is gone. Refactor 260 step 5 (`4ab30f88`)
+removed its build on 2026-11-21. The Wallet Console on `console.seams.sh` serves the
+invitations, and it keeps the support billing page at `/platform/billing` for support sessions
+only. `account.seams.sh` and `account.staging.seams.sh` are former hosts that redirect to
+`console.*`. For the current state, read [Refactor 260](refactor-260-console-split.md). The
+text below records the design of October 2026.
+
 Status: implemented and deployed to staging and production, recorded October 17, 2026.
 
 ## Why

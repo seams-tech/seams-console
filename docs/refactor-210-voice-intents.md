@@ -1,5 +1,14 @@
 # Refactor 210 — voice intents with OutLayer and yield/resume
 
+**History (2026-11-27).** This plan is no longer current. On 2026-11-26 the owner stopped the
+Phala, OutLayer and X API funding. The current Speak-to-Sign design is in
+`seams-wallet/docs/refactor-227-speak-to-sign-without-passkey.md`. The plan to move its
+verifier to SaySo, with OutLayer as an optional module, is
+`seams-wallet/docs/refactor-254-speak-to-sign-verifier-backends.md`. Refactor 225 (Jev rules
+for the step-up) was retired with nothing built on 2026-11-26. The spoken multisig of this plan
+was never built. The demo site runs from the `seamsadmin` account (Refactor 200). The text
+below is the record of the plan and its measured results.
+
 Status: plan only, written 2026-11-06. It changes no production code. All work
 runs on NEAR testnet.
 
