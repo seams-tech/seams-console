@@ -386,3 +386,44 @@ test('production workflows supply every required Gateway secret as a protected s
   expect(consoleWorkflow).toContain('RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}');
   expect(consoleWorkflow).not.toContain('EMAIL_OTP_SES_ACCESS_KEY_ID:');
 });
+
+// Refactor 261: the production mainnet Console serves both production lanes.
+test('the production testnet lane uses the production mainnet Console through its entrypoint', async () => {
+  const module = await deploymentTargetsModule;
+  const render = await import(
+    pathToFileURL(
+      path.join(repoRoot, 'packages/wallet-console-server-ts/scripts/render-d1-gateway-config.mjs'),
+    ).href
+  );
+  const testnet = module.readBackendLane('production-testnet');
+  const mainnet = module.readBackendLane('production-mainnet');
+  const staging = module.readBackendLane('staging-testnet');
+
+  expect(testnet.console).toEqual(mainnet.console);
+  expect(testnet.console.workerName).toBe('seams-sdk-d1-console');
+  expect(testnet.resources.gateway.consoleD1Name).toBe('seams-console');
+  expect(testnet.provisioning.gatewayDeploymentConfig.tenant.namespace).toBe('seams-production');
+  expect(render.walletConsoleBinding(testnet)).toEqual({
+    binding: 'WALLET_CONSOLE',
+    service: 'seams-sdk-d1-console',
+    entrypoint: 'TestnetWalletLane',
+  });
+  expect(render.walletConsoleBinding(mainnet)).toEqual({
+    binding: 'WALLET_CONSOLE',
+    service: 'seams-sdk-d1-console',
+  });
+  expect(render.walletConsoleBinding(staging)).toEqual({
+    binding: 'WALLET_CONSOLE',
+    service: 'seams-sdk-d1-console-staging',
+  });
+  expect(module.consoleSecretNames(mainnet)).toEqual(
+    expect.arrayContaining([
+      'TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_KEY_ID',
+      'TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_SEED',
+    ]),
+  );
+  expect(module.consoleSecretNames(staging)).not.toContain(
+    'TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_SEED',
+  );
+  expect(() => render.consoleServedLanes(testnet)).toThrow(/no Console of its own/u);
+});

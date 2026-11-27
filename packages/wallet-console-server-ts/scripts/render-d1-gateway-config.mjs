@@ -45,16 +45,7 @@ function main() {
   if (options.worker !== 'console') requireAllocatedWalletRegions(deployment);
   const config =
     options.worker === 'console'
-      ? buildConsoleConfig(
-          deployment,
-          lane.console,
-          lane.site.walletSiteOrigin,
-          lane.site.formerWalletSiteOrigins,
-          lane.walletOrigin,
-          lane.gatewayOrigin,
-          lane.emailOtpDelivery,
-          process.cwd(),
-        )
+      ? buildConsoleConfig(lane, process.cwd())
       : options.worker === 'wallet-runtime'
         ? buildWalletRuntimeConfig(
             deployment,
@@ -65,6 +56,7 @@ function main() {
             lane.site.docsOrigin,
             process.cwd(),
             lane.resources.tenantRootControlPlane.workerName,
+            walletConsoleBinding(lane),
           )
         : buildConfig(
             deployment,
@@ -74,6 +66,7 @@ function main() {
             lane.emailOtpDelivery,
             lane.site.docsOrigin,
             process.cwd(),
+            walletConsoleBinding(lane),
           );
   writePrivateJson(options.output, config);
   process.stdout.write(`${path.resolve(process.cwd(), options.output)}\n`);
@@ -153,11 +146,43 @@ function withoutPublicTraffic() {
   return process.env.SEAMS_DEPLOY_WITHOUT_PUBLIC_TRAFFIC === 'true';
 }
 
-export function consoleWorkerNameFor(gatewayWorkerName) {
-  if (!gatewayWorkerName.includes('gateway')) {
-    throw new Error(`cannot derive console worker name from ${gatewayWorkerName}`);
+/* A Gateway or Wallet Runtime reaches the Console that serves its lane. A lane after the
+   Console's first binds the entrypoint of its network, so the binding fixes the lane
+   (Refactor 261). The first lane binds the default entrypoint. */
+export function walletConsoleBinding(lane) {
+  const index = lane.console.walletLanes?.findIndex((entry) => entry.laneId === lane.id) ?? 0;
+  if (index < 0) throw new Error(`the Console of ${lane.id} does not list it`);
+  return {
+    binding: 'WALLET_CONSOLE',
+    service: lane.console.workerName,
+    ...(index > 0 ? { entrypoint: consoleLaneEntrypoint(lane.network) } : {}),
+  };
+}
+
+function consoleLaneEntrypoint(network) {
+  if (network === 'testnet') return 'TestnetWalletLane';
+  if (network === 'mainnet') return 'MainnetWalletLane';
+  throw new Error(`no Console entrypoint serves the ${network} network`);
+}
+
+/* A later lane's values carry this prefix in the Console Worker (`consoleWalletLanes.ts`). */
+function consoleLanePrefix(network) {
+  return `${network.toUpperCase()}_LANE_`;
+}
+
+/* The lanes that one Console serves, first its owner. */
+export function consoleServedLanes(ownerLane) {
+  if (ownerLane.console.laneId !== ownerLane.id) {
+    throw new Error(
+      `${ownerLane.id} has no Console of its own: its Console belongs to ${ownerLane.console.laneId}`,
+    );
   }
-  return gatewayWorkerName.replace('gateway', 'console');
+  const walletLanes = ownerLane.console.walletLanes;
+  if (!walletLanes) return [{ lane: ownerLane, environmentKeys: null }];
+  return walletLanes.map((entry) => ({
+    lane: entry.laneId === ownerLane.id ? ownerLane : readBackendLane(entry.laneId),
+    environmentKeys: entry.environmentKeys,
+  }));
 }
 
 export function walletRuntimeWorkerNameFor(gatewayWorkerName) {
@@ -167,101 +192,79 @@ export function walletRuntimeWorkerNameFor(gatewayWorkerName) {
   return gatewayWorkerName.replace('gateway', 'wallet-runtime');
 }
 
-// The Console Worker (R105 Phase 4): its own origin, session plane, cron, and
-// only the Console D1 binding. It is also the private WALLET_CONSOLE service
-// binding target for the split Gateway.
-function buildConsoleConfig(
-  deployment,
-  consoleTarget,
-  walletSiteOrigin,
-  formerWalletSiteOrigins,
-  walletOrigin,
-  gatewayOrigin,
-  emailOtpDelivery,
-  packageRoot,
-) {
-  const resources = deployment.resources;
-  const consoleOrigin = consoleTarget.origin;
-  const customerReplica = consoleTarget.walletServiceDeploymentId !== deployment.lane;
-  const consoleSite = readConsoleFrontendSite(
-    deployment.lane === 'staging-testnet' ? 'staging' : 'production',
+// The Console Worker (R105 Phase 4): its own origin, session plane, cron, and only the
+// Console D1 binding. It is also the private WALLET_CONSOLE service binding target of the
+// Gateways and Wallet Runtimes of every lane it serves (Refactor 261).
+function buildConsoleConfig(ownerLane, packageRoot) {
+  const served = consoleServedLanes(ownerLane);
+  const deployment = requireProvisionedGatewayDeploymentConfig(
+    ownerLane.id,
+    ownerLane.provisioning,
   );
-  const frontendOrigins =
-    deployment.lane === 'production-testnet' || customerReplica
-      ? []
-      : [consoleSite.walletConsoleOrigin];
+  const consoleTarget = ownerLane.console;
+  const walletSiteOrigin = ownerLane.site.walletSiteOrigin;
+  const consoleSite = readConsoleFrontendSite(ownerLane.site.id);
+  const frontendOrigins = [consoleSite.walletConsoleOrigin];
   // Former hosts keep the Console API routes; their pages redirect to the new hosts.
-  const formerFrontendOrigins =
-    frontendOrigins.length === 0 ? [] : consoleSite.formerWalletConsoleOrigins;
-  const production = deployment.lane !== 'staging-testnet';
+  const formerFrontendOrigins = consoleSite.formerWalletConsoleOrigins;
+  const production = ownerLane.release !== 'staging';
   const consoleBaseUrl = new URL(consoleSite.walletConsoleOrigin);
-  consoleBaseUrl.searchParams.set(
-    'db_network',
-    consoleTarget.walletServiceDeploymentId === 'production-mainnet' ? 'mainnet' : 'testnet',
-  );
-  let regionalWalletConfigured = true;
-  for (const region of WALLET_REGIONS) {
-    if (resources.regions[region].signerD1.kind !== 'allocated') {
-      regionalWalletConfigured = false;
-    }
-  }
+  consoleBaseUrl.searchParams.set('db_network', ownerLane.network);
   const vars = {
     SEAMS_TENANT_STORAGE_NAMESPACE: deployment.tenant.namespace,
-    SEAMS_TENANT_DEPLOYMENT_LANE: deployment.lane,
     SEAMS_WALLET_SERVICE_DEPLOYMENT_ID: consoleTarget.walletServiceDeploymentId,
     SEAMS_TENANT_BROWSER_CREDENTIAL_JSON: JSON.stringify({
       kind: 'create_managed_publishable_key',
     }),
-    TENANT_DEPLOYMENT_SURFACES_JSON: JSON.stringify({
-      applicationOrigin: walletSiteOrigin,
-      hostedWalletOrigin: walletOrigin,
-      gatewayOrigin,
-      relyingPartyId: new URL(walletOrigin).hostname,
-    }),
     CONSOLE_BASE_URL: consoleBaseUrl.href,
     CONSOLE_CORS_ORIGINS: [walletSiteOrigin, consoleSite.walletConsoleOrigin].join(','),
-    CONSOLE_STEP_UP_RP_ID: new URL(
-      customerReplica ? consoleSite.walletConsoleOrigin : walletSiteOrigin,
-    ).hostname,
-    CONSOLE_STEP_UP_ORIGIN:
-      frontendOrigins.length > 0 || customerReplica
-        ? consoleSite.walletConsoleOrigin
-        : walletSiteOrigin,
+    CONSOLE_STEP_UP_RP_ID: new URL(walletSiteOrigin).hostname,
+    CONSOLE_STEP_UP_ORIGIN: consoleSite.walletConsoleOrigin,
     CONSOLE_SESSION_COOKIE_NAME: DEFAULT_CONSOLE_SESSION_COOKIE_NAME,
-    CONSOLE_SESSION_ISSUER: `${consoleOrigin}/console`,
+    CONSOLE_SESSION_ISSUER: `${consoleTarget.origin}/console`,
     CONSOLE_SESSION_AUDIENCE: DEFAULT_CONSOLE_SESSION_AUDIENCE,
     CONSOLE_EMAIL_INVITATION_SECRET_KEY_ID: `console-email-${deployment.lane}-r1`,
     CONSOLE_WEBHOOK_SECRET_KEY_ID: `console-webhook-${deployment.lane}-r1`,
+    SPONSORED_EXECUTION_REAL_PRICING_JSON: JSON.stringify(
+      buildOutlayerSponsoredExecutionPricingConfig(served.map(servedRuntimeProfile)),
+    ),
+    SPONSORED_EXECUTION_STATIC_PRICING_JSON: JSON.stringify(
+      buildStaticSponsoredExecutionPricingConfig(served.map(servedRuntimeProfile)),
+    ),
   };
-  if (regionalWalletConfigured) {
-    vars.SEAMS_WALLET_HOME_CATALOG_JSON = walletHomeCatalogJson(deployment);
+  if (consoleTarget.walletLanes) {
+    vars.SEAMS_CONSOLE_WALLET_LANES_JSON = JSON.stringify(
+      served.map(({ lane, environmentKeys }) => ({
+        deploymentLane: lane.id,
+        network: lane.network,
+        environmentKeys,
+      })),
+    );
   }
   if (consoleTarget.platformSupportEmails) {
     vars.CONSOLE_PLATFORM_SUPPORT_EMAILS = consoleTarget.platformSupportEmails.join(',');
   }
   addOptionalStringVar(vars, 'GOOGLE_OIDC_CLIENT_ID', deployment.optional.googleOidcClientId);
-  addOptionalStringVar(
-    vars,
-    'TENANT_ROOT_RECOVERY_CERTIFICATES_JSON',
-    process.env.TENANT_ROOT_RECOVERY_CERTIFICATES_JSON,
-  );
-  vars.SPONSORED_EXECUTION_REAL_PRICING_JSON = JSON.stringify(
-    buildOutlayerSponsoredExecutionPricingConfig(deployment.runtimeProfile),
-  );
-  vars.SPONSORED_EXECUTION_STATIC_PRICING_JSON = JSON.stringify(
-    buildStaticSponsoredExecutionPricingConfig(deployment.runtimeProfile),
-  );
   if (production) {
     vars.CONSOLE_EMAIL_RUNTIME_PROFILE = 'PRODUCTION';
     vars.CONSOLE_EMAIL_PROVIDER = 'RESEND';
-    vars.CONSOLE_EMAIL_FROM = `Seams <${emailOtpDelivery.provider.fromAddress}>`;
+    vars.CONSOLE_EMAIL_FROM = `Seams <${ownerLane.emailOtpDelivery.provider.fromAddress}>`;
     vars.CONSOLE_EMAIL_CRON_EXPRESSIONS = '* * * * *';
   } else {
     vars.CONSOLE_EMAIL_RUNTIME_PROFILE = 'DEVELOPMENT';
     vars.CONSOLE_EMAIL_PROVIDER = 'CAPTURE';
   }
+  const services = [];
+  for (const [index, { lane }] of served.entries()) {
+    const prefix = index === 0 ? '' : consoleLanePrefix(lane.network);
+    const values = consoleLaneValues(lane, index === 0);
+    for (const [name, value] of Object.entries(values.vars)) vars[`${prefix}${name}`] = value;
+    for (const service of values.services) {
+      services.push({ ...service, binding: `${prefix}${service.binding}` });
+    }
+  }
   return {
-    name: consoleWorkerNameFor(resources.workerName),
+    name: consoleTarget.workerName,
     main: path.join(packageRoot, 'src/router/cloudflare/d1ConsoleStagingWorker.ts'),
     ...(consoleTarget.placementRegion
       ? { placement: { region: consoleTarget.placementRegion } }
@@ -272,30 +275,22 @@ function buildConsoleConfig(
     routes: withoutPublicTraffic()
       ? []
       : buildConsoleRoutes(
-          consoleOrigin,
+          consoleTarget.origin,
           walletSiteOrigin,
           [...frontendOrigins, ...formerFrontendOrigins],
-          formerWalletSiteOrigins,
+          ownerLane.site.formerWalletSiteOrigins,
         ),
     d1_databases: [
       {
         binding: 'CONSOLE_DB',
-        database_name: resources.consoleD1.name,
-        database_id: resources.consoleD1.id,
+        database_name: deployment.resources.consoleD1.name,
+        database_id: deployment.resources.consoleD1.id,
         migrations_dir: path.join(packageRoot, 'migrations/d1-console'),
       },
     ],
-    services: [
-      ...(regionalWalletConfigured ? regionalGatewayBindings(deployment) : []),
-      ...(regionalWalletConfigured ? regionalRuntimeBindings(deployment) : []),
-      {
-        binding: 'WALLET_RUNTIME',
-        service: walletRuntimeWorkerNameFor(resources.regions[resources.ingressRegion].workerName),
-      },
-    ],
+    services,
     triggers: {
-      // Account-wide jobs stay with the original account authority.
-      crons: customerReplica || withoutPublicTraffic() ? [] : ['* * * * *', '0 3 * * *'],
+      crons: withoutPublicTraffic() ? [] : ['* * * * *', '0 3 * * *'],
     },
     observability: {
       enabled: true,
@@ -307,11 +302,66 @@ function buildConsoleConfig(
   };
 }
 
-/* The Console API answers on its own origin. A Console with no frontend host (production
-   testnet, a customer replica) owns its host as a custom domain. Otherwise the origin is the
-   Wallet Console host: its API and tenant-deployment paths go to this Worker and its pages
-   to Pages. Former Console hosts and the Wallet site hosts keep the API paths, so a client
-   that names an older host keeps working; an API host never redirects. */
+function servedRuntimeProfile({ lane }) {
+  return requireProvisionedGatewayDeploymentConfig(lane.id, lane.provisioning).runtimeProfile;
+}
+
+/* The values of one lane, with the names that the Console's first lane uses. Recovery
+   certificates exist only for the first lane: production testnet has none
+   (`docs/recovery-trust-operations.md`). */
+function consoleLaneValues(lane, first) {
+  const deployment = requireProvisionedGatewayDeploymentConfig(lane.id, lane.provisioning);
+  const resources = deployment.resources;
+  const vars = {
+    TENANT_DEPLOYMENT_SURFACES_JSON: JSON.stringify({
+      applicationOrigin: lane.site.walletSiteOrigin,
+      hostedWalletOrigin: lane.walletOrigin,
+      gatewayOrigin: lane.gatewayOrigin,
+      relyingPartyId: new URL(lane.walletOrigin).hostname,
+    }),
+    WALLET_BALANCE_NEAR_RPC_URL: walletBalanceNearRpcUrl(deployment),
+  };
+  if (first) vars.SEAMS_TENANT_DEPLOYMENT_LANE = deployment.lane;
+  let regionalWalletConfigured = true;
+  for (const region of WALLET_REGIONS) {
+    if (resources.regions[region].signerD1.kind !== 'allocated') regionalWalletConfigured = false;
+  }
+  if (regionalWalletConfigured)
+    vars.SEAMS_WALLET_HOME_CATALOG_JSON = walletHomeCatalogJson(deployment);
+  if (first) {
+    addOptionalStringVar(
+      vars,
+      'TENANT_ROOT_RECOVERY_CERTIFICATES_JSON',
+      process.env.TENANT_ROOT_RECOVERY_CERTIFICATES_JSON,
+    );
+  }
+  return {
+    vars,
+    services: [
+      ...(regionalWalletConfigured ? regionalGatewayBindings(deployment) : []),
+      ...(regionalWalletConfigured ? regionalRuntimeBindings(deployment) : []),
+      {
+        binding: 'WALLET_RUNTIME',
+        service: walletRuntimeWorkerNameFor(resources.regions[resources.ingressRegion].workerName),
+      },
+    ],
+  };
+}
+
+/* The Console reads wallet NEAR balances from the network of the lane. The testnet lanes name
+   their relayer's RPC host; mainnet has no relayer and uses the mainnet host of the price
+   oracle. */
+function walletBalanceNearRpcUrl(deployment) {
+  if (gatewayRuntimeProfileNearNetwork(deployment.runtimeProfile) === 'mainnet') {
+    return MAINNET_NEAR_RPC_URL;
+  }
+  return deployment.optional.nearRelayer?.rpcUrl ?? 'https://rpc.testnet.fastnear.com';
+}
+
+/* The Console API answers on the Wallet Console host: its API and tenant-deployment paths go
+   to this Worker and its pages to Pages. Former Console hosts and the Wallet site hosts keep
+   the API paths, so a client that names an older host keeps working; an API host never
+   redirects. */
 export function buildConsoleRoutes(
   consoleOrigin,
   walletSiteOrigin,
@@ -326,7 +376,7 @@ export function buildConsoleRoutes(
   };
   const frontendRoutes = frontendOrigins.flatMap((origin) => routesOn(origin, apiPaths));
   if (!frontendOrigins.includes(consoleOrigin)) {
-    return [{ pattern: new URL(consoleOrigin).hostname, custom_domain: true }, ...frontendRoutes];
+    throw new Error(`the Console origin ${consoleOrigin} is not its frontend host`);
   }
   return [
     ...frontendRoutes,
@@ -353,6 +403,7 @@ function buildWalletRuntimeConfig(
   docsOrigin,
   packageRoot,
   controlPlaneWorkerName,
+  consoleBinding,
 ) {
   const resources = deployment.resources.regions[region];
   return {
@@ -377,7 +428,7 @@ function buildWalletRuntimeConfig(
       { binding: 'TENANT_ROOT_CONTROL_PLANE', service: controlPlaneWorkerName },
       { binding: 'DERIVER_A', service: deployment.serviceNames.deriverA },
       { binding: 'DERIVER_B', service: deployment.serviceNames.deriverB },
-      { binding: 'WALLET_CONSOLE', service: consoleWorkerNameFor(deployment.resources.workerName) },
+      consoleBinding,
     ],
     observability: {
       enabled: true,
@@ -402,6 +453,7 @@ function buildConfig(
   emailOtpDelivery,
   docsOrigin,
   packageRoot,
+  consoleBinding,
 ) {
   const resources = deployment.resources.regions[region];
   const vars = buildWorkerVars(
@@ -438,7 +490,7 @@ function buildConfig(
       ...regionalGatewayBindings(deployment),
       { binding: 'SIGNING_WORKER', service: deployment.serviceNames.signingWorker },
       { binding: 'MPC_ROUTER', service: deployment.serviceNames.mpcRouter },
-      { binding: 'WALLET_CONSOLE', service: consoleWorkerNameFor(deployment.resources.workerName) },
+      consoleBinding,
     ],
     triggers: {
       crons: withoutPublicTraffic() ? [] : ['* * * * *'],
@@ -599,40 +651,52 @@ function addSpeakToSignVerifierVars(vars, verifier) {
   }
 }
 
-function buildOutlayerSponsoredExecutionPricingConfig(runtimeProfile) {
-  const networkClass =
-    gatewayRuntimeProfileNearNetwork(runtimeProfile) === 'mainnet' ? 'MAINNET' : 'TESTNET';
+// The price oracle `price-oracle.near` is a mainnet contract.
+const MAINNET_NEAR_RPC_URL = 'https://free.rpc.fastnear.com';
+
+/* One pricing class per NEAR network of the lanes that the Console serves. */
+function nearNetworkClasses(runtimeProfiles) {
+  const classes = runtimeProfiles.map((profile) =>
+    gatewayRuntimeProfileNearNetwork(profile) === 'mainnet' ? 'MAINNET' : 'TESTNET',
+  );
+  if (new Set(classes).size !== classes.length) {
+    throw new Error('two lanes of one Console share a NEAR network');
+  }
+  return classes;
+}
+
+function buildOutlayerSponsoredExecutionPricingConfig(runtimeProfiles) {
+  const near = {};
+  for (const networkClass of nearNetworkClasses(runtimeProfiles)) {
+    near[networkClass] = {
+      nativeUnitDecimals: 24,
+      estimateFeeAmountYocto: '1000000000000000000000',
+      pricingVersionPrefix: `outlayer-near-${networkClass.toLowerCase()}`,
+    };
+  }
   return {
     provider: 'outlayer',
-    nearRpcUrl: 'https://free.rpc.fastnear.com',
+    nearRpcUrl: MAINNET_NEAR_RPC_URL,
     oracleContractId: 'price-oracle.near',
     nearUsdPriceId: 'c415de8d2efa7db216527dff4b60e8f3a5311c740dadb233e13e12547e226750',
     maxAgeSeconds: 120,
     maxLatestToEmaDeviationBps: 1_000,
     cacheTtlMs: 60_000,
-    near: {
-      [networkClass]: {
-        nativeUnitDecimals: 24,
-        estimateFeeAmountYocto: '1000000000000000000000',
-        pricingVersionPrefix: `outlayer-near-${networkClass.toLowerCase()}`,
-      },
-    },
+    near,
   };
 }
 
-function buildStaticSponsoredExecutionPricingConfig(runtimeProfile) {
-  const networkClass =
-    gatewayRuntimeProfileNearNetwork(runtimeProfile) === 'mainnet' ? 'MAINNET' : 'TESTNET';
-  return {
-    near: {
-      [networkClass]: {
-        estimateFeeAmountYocto: '1000000000000000000000',
-        minorPerFeeUnitNumerator: '300',
-        minorPerFeeUnitDenominator: '1000000000000000000000000',
-        pricingVersion: `static-near-${networkClass.toLowerCase()}-v1`,
-      },
-    },
-  };
+function buildStaticSponsoredExecutionPricingConfig(runtimeProfiles) {
+  const near = {};
+  for (const networkClass of nearNetworkClasses(runtimeProfiles)) {
+    near[networkClass] = {
+      estimateFeeAmountYocto: '1000000000000000000000',
+      minorPerFeeUnitNumerator: '300',
+      minorPerFeeUnitDenominator: '1000000000000000000000000',
+      pricingVersion: `static-near-${networkClass.toLowerCase()}-v1`,
+    };
+  }
+  return { near };
 }
 
 function addNearRelayerVars(vars, nearRelayer) {

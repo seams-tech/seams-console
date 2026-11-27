@@ -44,13 +44,14 @@ jobs:
               test "$REF_NAME" = dev
               echo "environment=staging-console" >> "$GITHUB_OUTPUT"
               ;;
-            production-testnet)
-              test "$REF_NAME" = main
-              echo "environment=production-testnet-console" >> "$GITHUB_OUTPUT"
-              ;;
             production-mainnet)
               test "$REF_NAME" = main
               echo "environment=production-console" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              # The production mainnet Console also serves production testnet (Refactor 261).
+              echo "Lane $DEPLOY_LANE has no Console of its own" >&2
+              exit 1
               ;;
           esac
 
@@ -140,6 +141,9 @@ jobs:
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
       TENANT_ROOT_GRANT_AUTHORITY_SIGNING_KEY_ID: ${{ secrets.TENANT_ROOT_GRANT_AUTHORITY_SIGNING_KEY_ID }}
       TENANT_ROOT_GRANT_AUTHORITY_SIGNING_SEED: ${{ secrets.TENANT_ROOT_GRANT_AUTHORITY_SIGNING_SEED }}
+      # The production Console also serves the testnet lane with that lane's grant key (Refactor 261).
+      TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_KEY_ID: ${{ secrets.TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_KEY_ID }}
+      TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_SEED: ${{ secrets.TESTNET_LANE_TENANT_ROOT_GRANT_AUTHORITY_SIGNING_SEED }}
       TENANT_ROOT_RECOVERY_CERTIFICATES_JSON: ${{ vars.TENANT_ROOT_RECOVERY_CERTIFICATES_JSON }}
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       GITHUB_OAUTH_CLIENT_ID: ${{ secrets.SEAMS_GITHUB_OAUTH_CLIENT_ID }}

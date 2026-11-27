@@ -27,10 +27,7 @@ import {
   GATEWAY_WORKER_COMPATIBILITY_DATE,
   GATEWAY_WORKER_COMPATIBILITY_FLAGS,
 } from '../packages/wallet-console-server-ts/scripts/gateway-deployment-config.mjs';
-import {
-  consoleWorkerNameFor,
-  walletRuntimeWorkerNameFor,
-} from '../packages/wallet-console-server-ts/scripts/render-d1-gateway-config.mjs';
+import { walletRuntimeWorkerNameFor } from '../packages/wallet-console-server-ts/scripts/render-d1-gateway-config.mjs';
 
 // A deploy step that is not a component: it prepares an empty Cloudflare account.
 const ACCOUNT_BOOTSTRAP = 'account-bootstrap';
@@ -176,6 +173,17 @@ async function main(args) {
   if (options.operation !== 'plan') {
     requireProvisionedLane(lane);
     assertDeploymentBranch(lane);
+  }
+  // A lane that a shared Console serves smokes that Console but never builds, migrates or
+  // deploys it (Refactor 261).
+  if (
+    options.component === 'console' &&
+    options.operation !== 'smoke' &&
+    lane.console.laneId !== lane.id
+  ) {
+    throw new Error(
+      `${lane.id} has no Console of its own; its Console is deployed with --lane ${lane.console.laneId}`,
+    );
   }
   switch (options.operation) {
     case 'plan':
@@ -1586,7 +1594,7 @@ async function bootstrapAccount(lane) {
     lane.resources.deriverA.workerName,
     lane.resources.deriverB.workerName,
     lane.resources.tenantRootControlPlane.workerName,
-    consoleWorkerNameFor(lane.resources.gateway.workerName),
+    lane.console.workerName,
     ...gateways.map(walletRuntimeWorkerNameFor),
     ...gateways,
   ]);
