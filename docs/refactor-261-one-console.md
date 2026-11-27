@@ -34,6 +34,13 @@ Step 8, checks on 2026-11-27:
   dashboard switch for the owner of "Seams Wallets II". The demo registers with a passkey or
   Google, and that organisation's owner signs in with Google; both need the owner. "Seams
   Wallets II" is the only organisation now, so the GitHub identity has none.
+- Found by the repository validation after step 4 (failing on `dev` since `5904f811`): on
+  Mainnet the environment menu shows only Production, so a project whose Production is not
+  active had no environment to select, and the Wallet pages showed "Loading Wallet
+  environments..." without end. The production frontend has had this since its deploy on
+  2026-11-27. The owner chose a notice ("Show a notice"): the Wallet pages now say that
+  Production is not active and offer the switch to Testnet. The deploy of this fix waits for
+  the owner.
 
 Step 9 can start on 2026-11-28 after 02:30 UTC, if the host has no request but scanner probes
 in that day.

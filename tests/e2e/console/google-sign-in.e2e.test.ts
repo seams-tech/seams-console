@@ -152,8 +152,6 @@ test('Google sign-in recovers from prompt failures and both providers remain vis
     define: {
       'import.meta.env.VITE_SITE_ORIGIN': 'window.location.origin',
       'import.meta.env.VITE_CONSOLE_BASE_URL': 'window.location.origin',
-      'import.meta.env.VITE_TESTNET_CONSOLE_BASE_URL': 'window.location.origin',
-      'import.meta.env.VITE_MAINNET_CONSOLE_BASE_URL': 'window.location.origin',
       'import.meta.env.VITE_RELAYER_URL': 'window.location.origin',
       'import.meta.env.VITE_WALLET_CONSOLE_ORIGIN': 'window.location.origin',
     },
