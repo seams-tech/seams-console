@@ -1,7 +1,53 @@
 # Refactor 261 — One Console for both networks
 
-Status: plan, written on 2026-11-26. Nothing is built. The steps wait for the owner's answers
-to the questions in "Owner decisions".
+Status: plan, written on 2026-11-26. On 2026-11-27 the owner approved it with the seven
+recommended answers in "Owner decisions". Steps 1 to 4 are built on `dev` (see "Progress").
+Step 5 (staging) is next. Each push, production deploy, secret change and deletion still waits
+for the owner's yes at its step.
+
+## Progress
+
+Built on 2026-11-27 (steps 1 to 4, on `dev`):
+
+- Server (`walletLanes/`, `consoleWalletLanes.ts`, `d1ConsoleStagingWorker.ts`): the lane
+  table from `SEAMS_CONSOLE_WALLET_LANES_JSON`, the `TestnetWalletLane` and
+  `MainnetWalletLane` entrypoints, the lane choice by `X-Console-Environment-Id`, the guards on
+  the Wallet environment service, both key adapters, the project environment resolver, the
+  usage meter and the tenant-root lineage, and per-lane cron with SQL filters on the
+  environment key. A Console without the list has one lane that serves every environment.
+- Config: the mainnet Console target lists `walletLanes`; the testnet lane takes the mainnet
+  Console, database `seams-console`, namespace `seams-production` and the tenant
+  `proj_65be6ecba1ff48d6a7294f0db59964ca:dev`. Its Gateways and Wallet Runtimes bind
+  `seams-sdk-d1-console` with the entrypoint `TestnetWalletLane`. The Console renders both
+  lanes (later-lane values carry `TESTNET_LANE_`) and pricing for both NEAR classes.
+  `customerReplica` and the custom-domain Console route are gone.
+- Deploys: `deploy-live-demo.yml` has no Console job; `deploy-console-backend.yml` refuses a
+  lane without its own Console and passes the `TESTNET_LANE_*` grant secrets;
+  `deploy:backend` and `dispatch-deployment-workflow.mjs` refuse a Console build, migration or
+  deploy for the testnet lane (its smoke stays). `console-deployment-environment.mjs
+lane-grant-key --lane production-testnet --manifest-file <export>` copies the testnet grant
+  key into `production-console` only after it proves that the key is the one that
+  `production-testnet-tenant-root-control-plane` trusts; a dry run on 2026-11-27 passed and set
+  nothing.
+- Frontend: one Console base URL for both networks; the switch keeps the organisation and
+  project and selects an environment of the new network; the environment menu shows only the
+  selected network's environments when two networks exist.
+
+Checks on 2026-11-27:
+
+- Rendered configs: the staging Console differs from the live one only by
+  `WALLET_BALANCE_NEAR_RPC_URL` (the old default) and the recovery certificates that CI
+  supplies. The mainnet Console gains only the testnet lane values, the lane list and the
+  second pricing class. Staging and mainnet Gateways keep their bindings.
+- `pnpm check` and `pnpm test:scripts` (54) pass. The new unit test
+  (`consoleWalletLanes.unit.test.ts`, 7) and the composed test
+  (`console-wallet-lanes.e2e.test.ts`, the real Worker in Miniflare with both entrypoints)
+  pass. A local staging Console build bundles both entrypoints.
+- Failures that exist on `HEAD` without this work, not repaired here:
+  `tenant-deployment-binding.e2e.test.ts` (503 expected, 502 received),
+  `tenant-home-challenge.e2e.test.ts` and `wallet-relocation-directory.e2e.test.ts` (they read
+  migrations from `../seams-wallet` paths that do not exist), and 17 unit tests that need the
+  missing Playwright Chromium build 1187.
 
 ## Decision
 
@@ -132,14 +178,16 @@ Where the Worker calls its one lane (`d1ConsoleStagingWorker.ts`):
 
 Two faults that exist today and that this plan fixes on the way:
 
-- The balance reader falls back to testnet RPC hosts (`wallets/balances.ts`, lines 20–22) and
-  the Worker passes no RPC URL. So the mainnet Console reads mainnet wallet balances from
-  testnet NEAR and testnet EVM hosts.
+- The balance reader falls back to the testnet NEAR RPC host (`wallets/balances.ts`, lines
+  20–22) and the Worker passes no RPC URL. So the mainnet Console reads mainnet NEAR balances
+  from testnet. (Tempo and Arc are testnet chains on every lane: the gas onboarding policy is
+  fixed to testnet, `gasSponsorship/onboarding.ts`. Their hosts are right.)
 - Placement passes the **lane** where the usage SQL expects the **service deployment id**
-  (`walletPlacement/d1.ts`, line 406, against `billing/usage.ts`, lines 161–165). The two are
-  equal on every lane today, so nothing fails yet; on the shared Console they differ for the
-  testnet lane. Only `prod` environments produce these rows, and `prod` runs on mainnet, so
-  the fix is a type that names the service deployment id, not a data change.
+  (`walletPlacement/d1.ts`, line 406, against `billing/usage.ts`, lines 161–165), and the
+  signature statements use one value for both columns. The two are equal on every lane today,
+  so nothing fails. Only `prod` environments write these rows, and `prod` runs on mainnet,
+  whose lane id is the service deployment id. So the lane table refuses a lane that serves
+  `prod` under another id, and the billing statements stay as they are.
 
 ### Trust per lane
 
@@ -238,9 +286,12 @@ Worker, database and host retire.
      `WALLET_CONSOLE` to their lane's entrypoint. A caller cannot name another lane.
    - A tenant activation from GitHub: the lane is `deploymentLane` in the body, and the OIDC
      scope check stays per lane (`automationRoute.ts`).
-   - A dashboard request: the frontend sends the selected network in a header. A request
-     without the header selects the Console's first lane (mainnet on production, the only
-     lane on staging), so the CLI and an old frontend keep working.
+   - A dashboard request: the lane serves the environment that the request names in
+     `X-Console-Environment-Id`. The dashboard's Wallet pages already send that header
+     (`products/wallet/consoleWalletHttp.ts`), and the Wallet claims read it
+     (`router/walletConsoleAuth.ts`), so the lane always matches the environment. A request
+     without it selects the Console's first lane (mainnet on production, the only lane on
+     staging), so the CLI and the account pages keep working.
    - In a lane's composition, the Wallet environment resolver returns only the environments
      whose key belongs to the lane. A `prod` environment is not found through the testnet lane,
      and a `dev` environment is not found through the mainnet lane. This is the one guard that
@@ -289,10 +340,9 @@ Each step is a commit (or a few) on `dev`. Steps 1 to 4 change no production res
 
 1. **Server: the lane table.** Parse the lanes from the Worker environment into one typed
    value. Build one composition per request for the selected lane. Add the named entrypoints,
-   the network header (and its CORS allow entry), the per-lane environment filter, the
-   per-lane cron filters, the multi-lane automation route, per-lane balance RPC hosts, and a
-   type that separates the lane id from the service deployment id. A single-lane Console
-   behaves as today.
+   the lane choice by environment, the per-lane environment filter, the per-lane cron filters,
+   the multi-lane automation route, per-lane NEAR balance hosts, and the check that the `prod`
+   lane is the service deployment id. A single-lane Console behaves as today.
 2. **Config and targets.** `buildConsoleConfig` renders all lanes of a Console. The Gateway and
    Runtime configs bind `WALLET_CONSOLE` to the Console of their account authority with their
    lane's entrypoint (no more `consoleWorkerNameFor` from the Gateway name).
@@ -306,8 +356,8 @@ Each step is a commit (or a few) on `dev`. Steps 1 to 4 change no production res
    `console-deployment-environment.mjs` carry the testnet lane's grant key as a second secret
    pair in `production-console`. `dispatch-deployment-workflow.mjs` and the script tests
    follow.
-4. **Frontend.** One Console base URL; the network header on every Console request; the switch
-   of point 4. `deploy-surface.mjs` stops setting a per-network Console URL.
+4. **Frontend.** One Console base URL; the switch of point 4. `deploy-surface.mjs` stops
+   setting a per-network Console URL.
 5. **Staging.** Deploy `dev` to staging (one lane through the new code). Run the staging
    activation and the Console smoke, and sign in on `console.staging.seams.sh`.
 6. **Production mainnet.** Set the testnet grant key secret pair in `production-console`. Merge
@@ -343,6 +393,9 @@ Each step is a commit (or a few) on `dev`. Steps 1 to 4 change no production res
   on 2026-11-26).
 
 ## Owner decisions
+
+Decided on 2026-11-27: the owner took the recommended answer of each question ("Approve all 7",
+asked in the parent session).
 
 1. **Design.** One Console Worker with a lane table (recommended), or a hostless testnet replica
    on the shared database.
