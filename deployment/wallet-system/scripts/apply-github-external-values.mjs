@@ -299,11 +299,6 @@ function appendProductionSiteUpdates(plan, values) {
         name: `${prefix}RELAYER_URL`,
         value: lane.gatewayOrigin,
       },
-      {
-        environment: plan.environmentPrefix,
-        name: `${prefix}CONSOLE_BASE_URL`,
-        value: lane.gatewayOrigin,
-      },
       { environment: plan.environmentPrefix, name: `${prefix}NEAR_NETWORK`, value: lane.network },
       {
         environment: plan.environmentPrefix,

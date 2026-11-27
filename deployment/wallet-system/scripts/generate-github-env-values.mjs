@@ -936,7 +936,6 @@ function buildProductionLaneVariables(input, lane) {
   const tempo = nearNetwork === 'testnet';
   return {
     [`${prefix}RELAYER_URL`]: lane.gatewayOrigin,
-    [`${prefix}CONSOLE_BASE_URL`]: lane.gatewayOrigin,
     [`${prefix}NEAR_NETWORK`]: nearNetwork,
     [`${prefix}NEAR_RPC_URL`]: productionLaneValue(
       input,

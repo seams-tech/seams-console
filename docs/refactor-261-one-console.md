@@ -41,6 +41,12 @@ Step 8, checks on 2026-11-27:
   2026-11-27. The owner chose a notice ("Show a notice"): the Wallet pages now say that
   Production is not active and offer the switch to Testnet. The deploy of this fix waits for
   the owner.
+- Cleanup on 2026-11-27: the deploy and GitHub value scripts no longer make
+  `VITE_TESTNET_CONSOLE_BASE_URL` and `VITE_MAINNET_CONSOLE_BASE_URL`, which nothing reads since
+  step 4. A staging build still gets `VITE_CONSOLE_BASE_URL` with the same origin. Two GitHub
+  variables in the `production` environment are left for the owner: `VITE_MAINNET_CONSOLE_BASE_URL`
+  and `VITE_CONSOLE_BASE_URL`, both `https://wallet.seams.sh` from 2026-09-12. No production
+  build reads them: the Console build sets its own value, and the marketing build ignores it.
 
 Step 9 can start on 2026-11-28 after 02:30 UTC, if the host has no request but scanner probes
 in that day.

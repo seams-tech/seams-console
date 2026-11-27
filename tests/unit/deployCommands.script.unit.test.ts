@@ -347,16 +347,26 @@ test('frontend build names the one production Console for every network', () => 
     environment[`${prefix}NEAR_RPC_URL`] = `https://rpc.${lane.network}.example`;
     environment[`${prefix}NEAR_EXPLORER`] = `https://explorer.${lane.network}.example`;
     environment[`${prefix}SIGNING_SESSION_PERSISTENCE_MODE`] = 'sealed_refresh_v1';
-    environment[`${prefix}CONSOLE_BASE_URL`] = 'https://stale-console.example';
   }
 
   const resolved = buildFrontendEnvironment(site, site.walletSiteOrigin, environment);
 
-  // Refactor 261: console.seams.sh serves testnet and mainnet.
-  expect(resolved.VITE_TESTNET_CONSOLE_BASE_URL).toBe('https://console.seams.sh');
-  expect(resolved.VITE_MAINNET_CONSOLE_BASE_URL).toBe('https://console.seams.sh');
+  // Refactor 261: console.seams.sh serves testnet and mainnet, so no network names a Console.
   expect(resolved.VITE_WALLET_CONSOLE_ORIGIN).toBe('https://console.seams.sh');
+  expect(resolved).not.toHaveProperty('VITE_TESTNET_CONSOLE_BASE_URL');
+  expect(resolved).not.toHaveProperty('VITE_MAINNET_CONSOLE_BASE_URL');
   expect(resolved).not.toHaveProperty('VITE_PLATFORM_CONSOLE_ORIGIN');
+
+  // A staging build reads its one lane without a network prefix.
+  const staging = readFrontendSite('staging');
+  const stagingResolved = buildFrontendEnvironment(staging, staging.walletSiteOrigin, {
+    VITE_NEAR_NETWORK: 'testnet',
+    VITE_NEAR_RPC_URL: 'https://rpc.testnet.example',
+    VITE_NEAR_EXPLORER: 'https://explorer.testnet.example',
+    VITE_SIGNING_SESSION_PERSISTENCE_MODE: 'sealed_refresh_v1',
+  });
+  expect(stagingResolved.VITE_CONSOLE_BASE_URL).toBe('https://console.staging.seams.sh');
+  expect(stagingResolved.VITE_WALLET_CONSOLE_ORIGIN).toBe('https://console.staging.seams.sh');
 });
 
 test('frontend Pages headers align with hosted wallet asset policies', () => {
