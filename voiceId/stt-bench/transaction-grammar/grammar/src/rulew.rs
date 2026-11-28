@@ -535,9 +535,11 @@ pub fn run2(corpus_path: &str, cases_path: &str, heard_path: &str, out_path: &st
 // vault of `vault_for` (a transfer, or a multisig transfer whose corpus row
 // names its receiver, as the verifier adds the receiver to the contacts) or no
 // contacts (other multisig approvals), then `parse_transfer` and `render`
-// (transfers) or word equality (approvals). Each row also carries the Rule W2
-// decision of `rule_w2` above, so the two can be compared case by case. The
-// expected text is the corpus `spoken` text, as the audio was made from it.
+// (transfers) or word equality (approvals). A row of a request with a receiver
+// carries the receiver fields of the scorer's homophone rule. Each row also
+// carries the Rule W2 decision of `rule_w2` above, so the two can be compared
+// case by case. The expected text is the corpus `spoken` text, as the audio was
+// made from it.
 
 fn rule_crate(heard: &str, expected: &str, is_transfer: bool, vault: &[SpokenAccount]) -> Decision {
     let tokens = match normalize_punctuated(heard, vault) {
@@ -561,6 +563,14 @@ fn rule_crate(heard: &str, expected: &str, is_transfer: bool, vault: &[SpokenAcc
     let mut detail = json!({"normalized": normalized});
     if !is_transfer {
         let accepted = normalized == expected;
+        // A multisig transfer ends in a send sentence. Its parse names what the approval pays,
+        // so the scorer reads it as it reads a transfer.
+        if let Some(send) = tokens.iter().position(|t| t.as_str() == "send").filter(|_| !vault.is_empty()) {
+            if let ParseResult::Transfer(p) = parse_transfer(&tokens[send..], vault) {
+                detail["parsedReceiver"] = json!(p.receiver.as_str());
+                detail["parsedHundredths"] = json!(p.amount.hundredths());
+            }
+        }
         return Decision { accepted, stage: if accepted { "accepted" } else { "words" }, detail };
     }
     match parse_transfer(&tokens, vault) {
@@ -628,7 +638,7 @@ pub fn run_crate(corpus_path: &str, cases_path: &str, heard_path: &str, out_path
             "voice": case["voice"], "rate": case["rate"], "audioText": audio_text, "expected": expected,
             "requestKindDetail": request["kind"],
         });
-        if let (true, Some(rc)) = (is_transfer, receiver) {
+        if let Some(rc) = receiver {
             let audio_rec = audio_text.split_once(" to ").and_then(|(_, rest)| by_words.get(rest).copied());
             row["receiver"] = json!(contacts[rc].account.as_str());
             row["audioRecipient"] = json!(audio_rec.map(|i| contacts[i].account.as_str()));
