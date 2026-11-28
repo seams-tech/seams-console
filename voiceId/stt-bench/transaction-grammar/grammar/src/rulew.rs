@@ -295,7 +295,7 @@ pub fn clean2(heard: &str) -> (String, Vec<String>) {
 }
 
 /// Every word the grammar and this corpus can say: rendered requests, their
-/// near misses and confusion sets, contacts, challenge words, number words.
+/// near misses and confusion sets, contacts, number words.
 fn grammar_words(corpus: &Value) -> std::collections::BTreeSet<String> {
     let mut texts: Vec<String> = Vec::new();
     for r in corpus["requests"].as_array().unwrap() {
@@ -309,9 +309,6 @@ fn grammar_words(corpus: &Value) -> std::collections::BTreeSet<String> {
     }
     for c in corpus["contacts"].as_array().unwrap() {
         texts.push(c.as_str().unwrap().to_owned());
-    }
-    for w in spoken_intent::CHALLENGE_WORDS {
-        texts.push(w.to_owned());
     }
     let mut n: u64 = 0;
     while n <= 120 {
@@ -535,15 +532,15 @@ pub fn run2(corpus_path: &str, cases_path: &str, heard_path: &str, out_path: &st
 // ```
 //
 // The shipped text step: `spoken_intent::normalize_punctuated` with the valid
-// vault of `vault_for` (transfers) or no contacts (multisig approvals), then
-// `parse_transfer` and `render` (transfers) or word equality (approvals).
-// Each row also carries the Rule W2 decision of `rule_w2` above, so the two
-// can be compared case by case. The expected text is the corpus `spoken`
-// text, as the audio was made from it.
+// vault of `vault_for` (a transfer, or a multisig transfer whose corpus row
+// names its receiver, as the verifier adds the receiver to the contacts) or no
+// contacts (other multisig approvals), then `parse_transfer` and `render`
+// (transfers) or word equality (approvals). Each row also carries the Rule W2
+// decision of `rule_w2` above, so the two can be compared case by case. The
+// expected text is the corpus `spoken` text, as the audio was made from it.
 
 fn rule_crate(heard: &str, expected: &str, is_transfer: bool, vault: &[SpokenAccount]) -> Decision {
-    let contacts: &[SpokenAccount] = if is_transfer { vault } else { &[] };
-    let tokens = match normalize_punctuated(heard, contacts) {
+    let tokens = match normalize_punctuated(heard, vault) {
         Ok(tokens) => tokens,
         Err(refusal) => {
             let stage = match refusal {
@@ -619,9 +616,10 @@ pub fn run_crate(corpus_path: &str, cases_path: &str, heard_path: &str, out_path
         let expected = request["spoken"].as_str().context("spoken")?;
         let receiver = request["receiver"].as_str().map(|a| *index_of.get(a).expect("receiver is a contact"));
         let is_transfer = request_id.starts_with('t');
+        // `rule_w2` reads no contacts for a multisig approval.
         let vault: Vec<&Contact> = match receiver {
-            Some(rc) if is_transfer => vault_for(rc, &contacts).into_iter().map(|i| &contacts[i]).collect(),
-            _ => contacts.iter().collect(),
+            Some(rc) => vault_for(rc, &contacts).into_iter().map(|i| &contacts[i]).collect(),
+            None => Vec::new(),
         };
         let vault_accounts: Vec<SpokenAccount> = vault.iter().map(|c| c.account.clone()).collect();
         let audio_text = case["text"].as_str().unwrap_or_default();

@@ -2,13 +2,18 @@
 //! confusion sets. Every text comes from the crate's `render`; the near-miss
 //! texts that the grammar cannot express (negation, a changed verb, an added
 //! clause, a missing amount) are edits of rendered token lists.
+//!
+//! The seeded draws are those of the corpus of 2026-11-07 (seams-console
+//! `78b05bdb`), so seed 210 gives its 200 transfers again and its 50
+//! multisig proposals in the words of today's crate: a multisig approval has
+//! no challenge words, and a verifier version speaks eight check digits.
 
 use std::num::NonZeroU8;
 
 use serde_json::{json, Value};
 use spoken_intent::{
-    confusion_set, phonetic_key, render, ChallengeWord, NearAccount, NearAmount, Network,
-    ProposalV1, SpokenAccount, SpokenRequestV1, CHALLENGE_WORDS, RENDERER_VERSION,
+    confusion_set, phonetic_key, render, NearAccount, NearAmount, Network, ProposalV1,
+    SpokenAccount, SpokenRequestV1, RENDERER_VERSION,
 };
 
 /// The 60 contacts: confusable pairs, digits, dashes and underscores.
@@ -295,9 +300,9 @@ pub fn build(seed: u64) -> Value {
     let fixed_ids = [1u64, 13, 30, 42, 100, 999, 17, 70, 115, 550];
     for index in 0..MULTISIG_REQUESTS {
         let proposal_id = fixed_ids.get(index).copied().unwrap_or_else(|| 1 + rng.below(999));
-        let first = rng.below(64) as u8;
-        let second = (first as u64 + 1 + rng.below(63)) as u8 % 64;
-        let challenge = [ChallengeWord::from_index(first).unwrap(), ChallengeWord::from_index(second).unwrap()];
+        // The two challenge words drew here. The draws stay, so the proposals stay the same.
+        let _ = rng.below(64);
+        let _ = rng.below(63);
         let member = &contacts[(index * 23 + 5) % contacts.len()];
         let (kind_name, proposal) = match index % 5 {
             0 => ("ms_transfer", ProposalV1::Transfer { receiver: member.clone(), amount: amount(amounts[index] ) }),
@@ -312,23 +317,24 @@ pub fn build(seed: u64) -> Value {
                 ("ms_set_verifier_version", ProposalV1::SetVerifierVersion { version_hash: hash })
             }
         };
-        let approval = |id: u64, proposal: ProposalV1, challenge: [ChallengeWord; 2]| SpokenRequestV1::MultisigApproval {
+        // The owner and the salt are not spoken, so any value works.
+        let approval = |id: u64, proposal: ProposalV1| SpokenRequestV1::MultisigApproval {
             network: Network::Testnet,
+            owner: owner.clone(),
             multisig: multisig.clone(),
             proposal_id: id,
             proposal,
-            challenge,
+            salt: [0u8; 32],
         };
-        let request = approval(proposal_id, proposal.clone(), challenge);
+        let request = approval(proposal_id, proposal.clone());
         let words = tokens_of(&request);
         let mut misses: Vec<(String, Vec<String>)> = Vec::new();
         let neighbour = if proposal_id > 1 && rng.below(2) == 0 { proposal_id - 1 } else { proposal_id + 1 };
-        misses.push(("proposal_id".into(), tokens_of(&approval(neighbour, proposal.clone(), challenge))));
-        misses.push(("swapped_challenge".into(), tokens_of(&approval(proposal_id, proposal.clone(), [challenge[1], challenge[0]]))));
+        misses.push(("proposal_id".into(), tokens_of(&approval(neighbour, proposal.clone()))));
         let variant = match &proposal {
             ProposalV1::Transfer { receiver, amount: a } => {
                 if let Some(changed) = one_digit_change(a.hundredths(), &mut rng) {
-                    misses.push(("one_digit".into(), tokens_of(&approval(proposal_id, ProposalV1::Transfer { receiver: receiver.clone(), amount: amount(changed) }, challenge))));
+                    misses.push(("one_digit".into(), tokens_of(&approval(proposal_id, ProposalV1::Transfer { receiver: receiver.clone(), amount: amount(changed) }))));
                 }
                 let mut missing = words.clone();
                 let send = missing.iter().position(|w| w == "send").unwrap();
@@ -344,8 +350,10 @@ pub fn build(seed: u64) -> Value {
                 hash[0] ^= 0x01; // changes the leading digits
                 ("version_digit", ProposalV1::SetVerifierVersion { version_hash: hash })
             }
+            // The mix of 2026-11-07 has five kinds; a hidden note came later.
+            ProposalV1::HideNote { .. } => unreachable!("index % 5 draws no hidden note"),
         };
-        let variant_words = tokens_of(&approval(proposal_id, variant.1, challenge));
+        let variant_words = tokens_of(&approval(proposal_id, variant.1));
         if variant_words != words {
             misses.push((variant.0.into(), variant_words));
         }
@@ -357,7 +365,7 @@ pub fn build(seed: u64) -> Value {
         misses.push(("negation".into(), negated));
         misses.push(("added_clause".into(), added_clause(&words, &closest_contact(member, &contacts))));
         let confusion: Vec<String> = confusion_set(&request, &contacts).iter().map(|t| text(t)).collect();
-        requests.push(json!({
+        let mut row = json!({
             "id": format!("m{index:03}"),
             "kind": kind_name,
             "proposalId": proposal_id,
@@ -365,14 +373,19 @@ pub fn build(seed: u64) -> Value {
             "spoken": join(&words),
             "confusionSet": confusion,
             "nearMisses": misses.into_iter().map(|(k, w)| json!({"kind": k, "text": join(&w)})).collect::<Vec<_>>(),
-        }));
+        });
+        // A multisig transfer names its receiver, so the scorer can give it the contacts.
+        if let ProposalV1::Transfer { receiver, amount: a } = &proposal {
+            row["receiver"] = json!(receiver.as_str());
+            row["amountHundredths"] = json!(a.hundredths());
+        }
+        requests.push(row);
     }
 
     json!({
         "renderer": RENDERER_VERSION,
         "seed": seed,
         "contacts": ACCOUNTS.as_slice(),
-        "challengeWords": CHALLENGE_WORDS.as_slice(),
         "requests": requests,
     })
 }
