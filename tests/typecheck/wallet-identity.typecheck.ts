@@ -7,7 +7,7 @@ import type {
 import type {
   WalletRuntimeWalletIdentityRequest,
   WalletRuntimeWalletIdentitiesResult,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 
 declare const service: ConsoleWalletService;
 declare const context: ConsoleWalletsContext;

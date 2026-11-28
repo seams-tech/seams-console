@@ -1,5 +1,5 @@
 import { verifyCustodyNamespaces, type RelocationCustodyNamespaces } from './custodyResourceVerification';
-import { isPlainObject, queryD1One, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, queryD1One, type D1DatabaseLike } from '@seams/host/cloud-host';
 import type { WalletHome } from '../walletPlacement/home';
 import { TenantDeploymentD1ResourceIdentityV1 } from './deploymentResource';
 import type { TenantD1ResourceVerifierV1 } from './resourceChallenge';

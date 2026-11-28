@@ -1,5 +1,5 @@
-import { buildHostedAuthMenuOpenRequest, hostedAuthMenuSessionIdFromBoundary } from '@seams/wallet';
-import type { HostedAuthMenuMode } from '@seams/wallet/react';
+import { buildHostedAuthMenuOpenRequest, hostedAuthMenuSessionIdFromBoundary } from '@seams/mpc-wallet/client';
+import type { HostedAuthMenuMode } from '@seams/mpc-wallet/react';
 import React from 'react';
 import '@wallet-ui/sdk/wallet-ui.css';
 import {

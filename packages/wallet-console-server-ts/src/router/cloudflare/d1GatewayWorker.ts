@@ -19,17 +19,17 @@ import { resumeGatewayRegistrationPublications } from '../../walletPlacement/reg
 import { resumeGatewaySignatureCompletions } from '../../walletPlacement/signatureCompletions';
 import { resolveGatewayDeployment } from '../../walletPlacement/gatewaySession';
 import { regionForRegistrationIngress } from '../../walletPlacement/home';
-import type { CfExecutionContext, CfScheduledEvent } from '@seams/wallet-server/cloud-host';
+import type { CfExecutionContext, CfScheduledEvent } from '@seams/host/cloud-host';
 import {
   handleSplitGatewayRequest,
   type CloudflareD1GatewayEnv,
-} from '@seams/wallet-server/hosted-wallet-gateway';
+} from '@seams/host/hosted-wallet-gateway';
 import {
   runRouterAbPrewarmScheduledV1,
   readEnvironmentCsv,
   withCors,
   WalletHomeCustodyBinding,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { resolveEmailOtpDeliveryProviderFromEnv } from '../../email/otp/emailOtpProviders';
 import { bindTenantDeploymentToRuntimeEnvironmentV1 } from '../../tenantDeployment/runtimeBinding';
 import { tenantDeploymentPublicProjectionResponseV1 } from '../../tenantDeployment/publicProjection';

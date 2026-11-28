@@ -4,7 +4,7 @@ import {
   queryD1One,
   type D1DatabaseLike,
   type D1ResultLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   RegistrationSetupAllocation,
   WalletHome,

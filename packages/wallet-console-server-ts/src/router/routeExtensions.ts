@@ -1,11 +1,11 @@
-import type { RouterApiKeyAuthAdapter } from '@seams/wallet-server/cloud-host';
-import { resolveSourceIpFromFetchHeaders } from '@seams/wallet-server/cloud-host';
-import type { NormalizedRouterLogger } from '@seams/wallet-server/cloud-host';
-import type { RouteDefinition } from '@seams/wallet-server/cloud-host';
-import { routeJson, toFetchRouteResponse } from '@seams/wallet-server/cloud-host';
-import type { RouterApiRouteExtension } from '@seams/wallet-server/cloud-host';
-import { readJson } from '@seams/wallet-server/cloud-host';
-import type { RouterApiPublishableKeyAuthAdapter } from '@seams/wallet-server/cloud-host';
+import type { RouterApiKeyAuthAdapter } from '@seams/host/cloud-host';
+import { resolveSourceIpFromFetchHeaders } from '@seams/host/cloud-host';
+import type { NormalizedRouterLogger } from '@seams/host/cloud-host';
+import type { RouteDefinition } from '@seams/host/cloud-host';
+import { routeJson, toFetchRouteResponse } from '@seams/host/cloud-host';
+import type { RouterApiRouteExtension } from '@seams/host/cloud-host';
+import { readJson } from '@seams/host/cloud-host';
+import type { RouterApiPublishableKeyAuthAdapter } from '@seams/host/cloud-host';
 import type { ConsoleBillingService } from '@seams-internal/console-server/billing/index';
 import type { WalletExecutionFunds } from '../sponsorship/funds';
 import type { ConsoleObservabilityIngestionService } from '@seams-internal/console-server/observability/index';
@@ -20,7 +20,7 @@ import {
   walletConsoleApiWalletSearchRouteDefinitionV1,
   walletConsoleSignedDelegateRouteDefinitionV1,
   walletConsoleSponsoredEvmCallRouteDefinitionV1,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type {
   SponsoredEvmCallExecutorConfig,
   SponsoredEvmExecutionAdapterResolver,
@@ -40,7 +40,7 @@ import {
   handleRouterApiWalletSearch,
 } from './routerApiWallets';
 
-export { DEFAULT_WALLET_CONSOLE_SIGNED_DELEGATE_ROUTE_V1 as DEFAULT_SIGNED_DELEGATE_ROUTE } from '@seams/wallet-server/cloud-host';
+export { DEFAULT_WALLET_CONSOLE_SIGNED_DELEGATE_ROUTE_V1 as DEFAULT_SIGNED_DELEGATE_ROUTE } from '@seams/host/cloud-host';
 const SPONSORED_EVM_MVP_DISABLED_MESSAGE =
   'EVM gas sponsorship pricing is not configured on this server.';
 

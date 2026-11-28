@@ -7,7 +7,7 @@ import {
   signSecp256k1Recoverable,
   encodeEip1559SignedTxFromSignature65,
   keccak256Bytes,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { SponsoredEvmExecutionError } from './executionFailure';
 import { normalizeEvmAddress, type SponsoredEvmCall } from './evm';
 import type {

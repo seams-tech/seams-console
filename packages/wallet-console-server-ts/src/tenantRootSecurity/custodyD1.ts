@@ -4,7 +4,7 @@ import {
   queryD1One,
   type D1DatabaseLike,
   type D1Row,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   tenantRootDownloadableRecoverySetV1,
   type TenantRootDeriverRoleV1,
@@ -19,7 +19,7 @@ import {
   type TenantRootSourceCustodyDispositionV1,
   type TenantRootTrustLevelV1,
 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import type { TenantRootCustodyStateV1, TenantRootCustodyStoreV1 } from './custodyService';
 import type {
   TenantRootRecipientChallengeRecordV1,

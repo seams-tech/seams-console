@@ -1,11 +1,11 @@
 import type { ConsoleAuditService } from '@seams-internal/console-server/audit/service';
-import { base64UrlEncode, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { base64UrlEncode, type D1DatabaseLike } from '@seams/host/cloud-host';
 import {
   decodeTenantRootIdentityWireV1,
   type TenantRootIdentityV1,
 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import { enrollmentBytes, enrollmentSecretHash, enrollmentText } from './cliEnrollmentStore';
 import {
   guardTenantRootSecurityRequestV1,

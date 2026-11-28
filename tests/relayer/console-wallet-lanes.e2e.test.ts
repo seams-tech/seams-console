@@ -10,7 +10,7 @@ import {
   createWalletConsoleOpsClient,
   isD1DatabaseLike,
   type WalletConsoleServiceBinding,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { consoleWorkerEnvironment } from '../helpers/consoleWorkerEnvironment';
 import { activateWalletProject } from '../helpers/accountWalletProject.fixtures';
 import { createD1ConsoleApiKeyService } from '../../packages/wallet-console-server-ts/src/apiKeys/d1';

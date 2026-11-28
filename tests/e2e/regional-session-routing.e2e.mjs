@@ -227,7 +227,7 @@ const bundle = await build({
   tsconfig: resolve(root, 'packages/wallet-console-server-ts/tsconfig.json'),
   alias: {
     '@shared': resolve(publicRoot, 'packages/shared-ts/src'),
-    '@seams/wallet-server/cloud-host': resolve(candidate, 'dist/esm/cloud-host.js'),
+    '@seams/host/cloud-host': resolve(candidate, 'dist/esm/cloud-host.js'),
   },
   stdin: {
     resolveDir: root,
@@ -237,7 +237,7 @@ const bundle = await build({
       export { parseEmailOtpWalletEnrollmentRow } from ${JSON.stringify(resolve(candidate, 'src/router/cloudflare/d1/emailOtp/d1EmailOtpRecords.ts'))};
       export { parseGoogleLoginVerifyRequest } from ${JSON.stringify(resolve(candidate, 'src/router/auth/authRequestValidation.ts'))};
       export { prepareD1TenantStatement } from ${JSON.stringify(resolve(candidate, 'src/core/d1TenantStore.ts'))};
-      export { verifyGoogleOidcToken } from '@seams/wallet-server/cloud-host';
+      export { verifyGoogleOidcToken } from '@seams/host/cloud-host';
       export { abandonedGoogleEmailOtpRegistrationAttemptRecord } from ${JSON.stringify(resolve(candidate, 'src/router/cloudflare/d1/emailOtp/d1GoogleEmailOtpRegistrationRecords.ts'))};
       export { D1IdentityStore } from ${JSON.stringify(resolve(candidate, 'src/core/d1IdentityStore.ts'))};
       export { CloudflareD1EmailOtpEnrollmentStore } from ${JSON.stringify(resolve(candidate, 'src/router/cloudflare/d1/emailOtp/d1EmailOtpEnrollmentStore.ts'))};

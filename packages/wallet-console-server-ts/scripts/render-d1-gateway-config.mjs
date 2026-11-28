@@ -33,7 +33,7 @@ const require = createRequire(import.meta.url);
 
 function walletServerMigrationsDirectory() {
   return path.join(
-    path.dirname(require.resolve('@seams/wallet-server/package.json')),
+    path.dirname(require.resolve('@seams/host/package.json')),
     'migrations/d1-signer',
   );
 }
@@ -491,6 +491,7 @@ function buildConfig(
       { binding: 'SIGNING_WORKER', service: deployment.serviceNames.signingWorker },
       { binding: 'MPC_ROUTER', service: deployment.serviceNames.mpcRouter },
       consoleBinding,
+      ...speakToSignVerifierBindings(deployment.optional.speakToSignVerifier),
     ],
     triggers: {
       crons: withoutPublicTraffic() ? [] : ['* * * * *'],
@@ -636,11 +637,14 @@ function buildWorkerVars(
 }
 
 /**
- * The secrets file adds SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY and SPEAK_TO_SIGN_NEAR_AI_API_KEY (the
- * summary route of a note) for the same lanes.
+ * The secrets file adds the key of the backend (SAYSO_API_KEY or
+ * SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY) and SPEAK_TO_SIGN_NEAR_AI_API_KEY (the summary route of a
+ * note) for the same lanes. A SaySo lane also gets the SAYSO service binding.
  */
 function addSpeakToSignVerifierVars(vars, verifier) {
   if (!verifier) return;
+  vars.SPEAK_TO_SIGN_BACKEND = verifier.backend;
+  if (verifier.backend !== 'outlayer') return;
   vars.SPEAK_TO_SIGN_OUTLAYER_BASE_URL = verifier.outlayerBaseUrl;
   vars.SPEAK_TO_SIGN_OUTLAYER_PROJECT = verifier.project;
   vars.SPEAK_TO_SIGN_OUTLAYER_VERSION_KEY = verifier.versionKey;
@@ -649,6 +653,12 @@ function addSpeakToSignVerifierVars(vars, verifier) {
   if (verifier.veniceVersionKey) {
     vars.SPEAK_TO_SIGN_OUTLAYER_VENICE_VERSION_KEY = verifier.veniceVersionKey;
   }
+}
+
+/* Only the regional Gateways serve the verify route; the Wallet Runtime builds no verifier. */
+function speakToSignVerifierBindings(verifier) {
+  if (verifier?.backend !== 'sayso') return [];
+  return [{ binding: 'SAYSO', service: verifier.saysoWorkerName }];
 }
 
 // The price oracle `price-oracle.near` is a mainnet contract.

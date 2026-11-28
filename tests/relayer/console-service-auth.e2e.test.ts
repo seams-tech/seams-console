@@ -8,7 +8,7 @@ import {
   WALLET_CONSOLE_SERVICE_ORIGIN_V1,
   isD1DatabaseLike,
   type WalletConsoleServiceBinding,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { createHash, randomBytes } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { consoleWorkerEnvironment } from '../helpers/consoleWorkerEnvironment';
@@ -313,9 +313,9 @@ test('isolated runtime uses the original Wallet authority and enforces durable c
     tsconfig: path.join(repoRoot, 'packages/wallet-console-server-ts/tsconfig.json'),
     alias: process.env.SEAMS_WALLET_SERVER_CANDIDATE
       ? {
-          '@seams/wallet-server/cloud-host': createRequire(
+          '@seams/host/cloud-host': createRequire(
             path.resolve(process.env.SEAMS_WALLET_SERVER_CANDIDATE, 'package.json'),
-          ).resolve('@seams/wallet-server/cloud-host'),
+          ).resolve('@seams/host/cloud-host'),
         }
       : {},
   });
@@ -1032,7 +1032,7 @@ test('isolated runtime uses the original Wallet authority and enforces durable c
         await readFile(
           path.join(
             process.env.SEAMS_WALLET_SERVER_CANDIDATE ??
-              path.join(repoRoot, 'node_modules/@seams/wallet-server'),
+              path.join(repoRoot, 'node_modules/@seams/host'),
             'package.json',
           ),
         ),

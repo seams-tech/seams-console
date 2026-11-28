@@ -1,4 +1,4 @@
-import { queryD1All, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import { queryD1All, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { WalletAuthorizationRelocation } from './authorizationRelocation';
 import { WalletRelocationReceipt, type WalletRelocation } from './relocation';

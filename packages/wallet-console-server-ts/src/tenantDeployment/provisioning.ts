@@ -1,6 +1,6 @@
 import type { RegionalDeploymentInstaller } from './regionalAdmission';
 import type { ConsoleApiKeyService } from '@seams-internal/wallet-console-server/apiKeys/service';
-import { base64UrlEncode } from '@seams/wallet-server/cloud-host';
+import { base64UrlEncode } from '@seams/host/cloud-host';
 import type { ConsoleAuditService } from '@seams-internal/console-server/audit/service';
 import type { ConsoleWalletEnvironmentService } from '@seams-internal/wallet-console-server/environments/service';
 import { buildTenantRootIdentityFromAuthenticatedDeploymentV1 } from '@seams-internal/wallet-console-shared/tenant-root';

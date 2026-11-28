@@ -25,7 +25,7 @@ export type {
   RouterApiCloudflareSignerWorkerEnv,
   ScheduledHandler,
   SeamsD1SignerTenantStorageWorkerEnv,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 export type {
   RouterApiCloudflareConsoleWorkerEnv,
   SeamsCloudflareComposedWorkerEnv,
@@ -44,8 +44,8 @@ export type {
   RouteVersion,
   SignerD1DoStorageTarget,
   TenantDataJurisdiction,
-} from '@seams/wallet-server/cloud-host';
-export { createSignerD1DoStorageTarget } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+export { createSignerD1DoStorageTarget } from '@seams/host/cloud-host';
 export type {
   CloudflareTenantStorageRoute,
   ConsoleD1StorageTarget,
@@ -68,16 +68,16 @@ export { authenticateConsoleRequest } from '@seams-internal/console-server/route
 export type {
   RouterApiRuntimeSnapshotPublishedUpdate,
   InMemoryRouterApiRuntimeSnapshotConsumer,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 export {
   createInMemoryRouterApiRuntimeSnapshotConsumer,
   validateRuntimeSnapshotExpectation,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 export {
   extractBearerCredential,
   extractRouterApiEnvironmentId,
   resolveSourceIpFromFetchHeaders,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 
 export type { ConsoleRouterOptions } from './console';
 export type {

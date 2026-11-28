@@ -2,7 +2,7 @@ import type {
   D1DatabaseLike,
   D1Row,
   WalletRuntimeServiceBinding,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { TenantDeploymentD1ResourceIdentityV1 } from './deploymentResource';
 import { TenantDeploymentStoreError } from './service';
 import type { WalletHomeCatalog, WalletRegion } from '../walletPlacement/home';

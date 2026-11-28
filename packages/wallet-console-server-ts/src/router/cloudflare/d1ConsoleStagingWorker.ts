@@ -31,7 +31,7 @@ import type { RevocableConsoleSessionAdapter } from '@seams-internal/console-ser
 import { createD1ConsoleSessionRevocationStore } from '@seams-internal/console-server/boundary/sessionRevocations';
 import type { ConsoleAccountService } from '@seams-internal/console-server/account/service';
 import { handleWalletRegistrationMutation } from '../../walletPlacement/service';
-import { createWalletConsoleOpsClient } from '@seams/wallet-server/cloud-host';
+import { createWalletConsoleOpsClient } from '@seams/host/cloud-host';
 import { handleRegistrationSetupRequest } from '../../walletPlacement/registrationSetup';
 import {
   handleWalletRelocationAdmission,
@@ -57,7 +57,7 @@ import { withConsoleCors } from '@seams-internal/console-server/router/cloudflar
 import { TenantRootCustodyWorkerRouteV1 } from '../../tenantRootSecurity/custodyWorkerRoute';
 import { D1TenantRootActiveLineageResolverV1 } from '../../tenantRootSecurity/activeLineageD1';
 import { createTenantRootRestoreWorkerRouteV1 } from '../../tenantRootSecurity/restoreWorkerRoute';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { createWalletConsoleRouter } from '../consoleComposition';
 import { attachConsoleRouteSurface } from '@seams-internal/console-server/router/consoleRouteSurface';
 import { resolveCompleteWalletConsoleRouteSurface } from '../walletConsoleRouteDefinitions';
@@ -67,11 +67,11 @@ import {
   handleWalletConsoleTenantRootActiveLineage,
   isWalletConsoleTenantRootActiveLineageRequest,
 } from '../../serviceBinding/walletConsoleOpsHandler';
-import type { WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import type { WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import {
   createWalletControlClientBindings,
   WALLET_CONTROL_AUTH_MARKER_V1,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { createWalletConsoleRelayHandler } from '../../serviceBinding/walletConsoleRelay';
 import {
   createConsoleRouterApiRouteExtensions,
@@ -108,7 +108,7 @@ import type {
   CfScheduledEvent,
   FetchHandler,
   ScheduledHandler,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   createConsoleSessionAuthAdapter,
   createHmacSessionAdapterFromEnv,
@@ -117,7 +117,7 @@ import {
 import {
   readEnvironmentString as readEnvString,
   requireEnvironmentString as requireEnvString,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { createStripeBillingProviderAdaptersFromEnv } from '@seams-internal/console-server/billing/stripeProvider';
 import {
   createCloudflareCron,

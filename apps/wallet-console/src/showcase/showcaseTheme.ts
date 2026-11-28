@@ -1,4 +1,4 @@
-import type { WalletLocale } from '@seams/wallet';
+import type { WalletLocale } from '@seams/mpc-wallet/client';
 import type { AppearanceConfig } from '@wallet-ui/core/types/seams';
 import { demoIframeAppearance, demoThemePreset, type DemoThemePreset } from '@/context/app-themes';
 

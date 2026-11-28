@@ -13,14 +13,14 @@ import {
   WALLET_CONSOLE_OP_PATHS_V1,
   WALLET_CONSOLE_SERVICE_ORIGIN_V1,
   type RouterApiProjectEnvironmentResolver,
-} from '@seams/wallet-server/cloud-host';
-import { createWalletConsoleRelayProxyExtensionV1 } from '@seams/wallet-server/cloud-host';
-import { createWalletRuntimeOpsHandler } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { createWalletConsoleRelayProxyExtensionV1 } from '@seams/host/cloud-host';
+import { createWalletRuntimeOpsHandler } from '@seams/host/cloud-host';
 import {
   createWalletControlClientBindings,
   handleWalletControlRequest,
   WALLET_CONTROL_AUTH_MARKER_V1,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import walletRuntimeWorker from '../../packages/wallet-console-server-ts/src/router/cloudflare/d1WalletRuntimeWorker';
 import { createCloudflareD1AccountServiceBundle } from '../../packages/console-server-ts/src/router/cloudflare/d1AccountServices';
 import { createD1ConsoleWalletEnvironmentService } from '../../packages/wallet-console-server-ts/src/environments/d1';
@@ -35,7 +35,7 @@ import {
 async function getNoWalletIdentities() {
   return { identities: [] };
 }
-import type { RouterApiUsageMeterEvent } from '@seams/wallet-server/cloud-host';
+import type { RouterApiUsageMeterEvent } from '@seams/host/cloud-host';
 import type { TenantRootIdentityV1 } from '@seams-internal/wallet-console-server/tenantRootCreation/types';
 
 const CTX = {

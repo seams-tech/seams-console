@@ -53,7 +53,7 @@ jobs:
           console.log(`environment_id=${lane.provisioning.gatewayDeploymentConfig.tenant.environmentId}`);
           JS
       - name: Require packaged resource challenge migration
-        run: test -s node_modules/@seams/wallet-server/migrations/d1-signer/0042_deployment_resource_challenges.sql
+        run: grep -q 'CREATE TABLE IF NOT EXISTS "deployment_resource_challenges"' node_modules/@seams/host/migrations/d1-signer/0001_signer_d1_baseline.sql
 
   authorize:
     name: Authorize production live-demo deployment

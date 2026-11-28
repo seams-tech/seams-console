@@ -2,7 +2,7 @@ import type {
   WalletRuntimeServiceBinding,
   WalletRuntimeWalletIdentitiesResult,
   WalletRuntimeWalletIdentityRequest,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { D1WalletHomeDirectory } from '../walletPlacement/d1';
 import { WalletOwnershipKey, type WalletRegion } from '../walletPlacement/home';
 import { createWalletRuntimeOpsClient } from './walletRuntimeOpsClient';

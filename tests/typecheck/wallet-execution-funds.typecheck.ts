@@ -5,7 +5,7 @@ import type {
 } from '../../packages/wallet-console-server-ts/src/sponsorship/prepaidBalance';
 import { SponsoredEvmExecutionError } from '../../packages/wallet-console-server-ts/src/sponsorship/executionFailure';
 import type { SponsorshipReplayOrMatchResolution } from '../../packages/wallet-console-server-ts/src/router/sponsorshipRuntime';
-import type { RouteResponse } from '@seams/wallet-server/cloud-host';
+import type { RouteResponse } from '@seams/host/cloud-host';
 
 declare const handle: SponsoredPrepaidReservationHandle;
 declare const replayResponse: RouteResponse<Record<string, unknown>>;

@@ -148,7 +148,7 @@ function runLocalInitializer(root) {
   const result = spawnSync(
     process.execPath,
     [
-      require.resolve('@seams/wallet-server/local-runtime/initialize-local-wallet.mjs'),
+      require.resolve('@seams/host/local-runtime/initialize-local-wallet.mjs'),
       '--root',
       root,
       '--force',

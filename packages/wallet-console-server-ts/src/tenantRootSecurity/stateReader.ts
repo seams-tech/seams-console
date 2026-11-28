@@ -4,11 +4,11 @@ import {
   type TenantRootRotationJobV1,
   type TenantRootSecurityStatusV1,
 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
 import type { D1TenantRootActiveLineageResolverV1 } from './activeLineageD1';
 import type { TenantRootIdentityV1 } from '../tenantRootCreation/types';
-import { ROUTER_AB_MPC_ROUTER_ORIGIN } from '@seams/wallet-server/cloud-host';
+import { ROUTER_AB_MPC_ROUTER_ORIGIN } from '@seams/host/cloud-host';
 import type { TenantRootSecurityStateReaderV1 } from './consoleRoute';
 
 export interface TenantRootSecurityStateReaderOptionsV1 {

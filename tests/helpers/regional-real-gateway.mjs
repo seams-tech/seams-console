@@ -35,7 +35,7 @@ export async function createRegionalRealGateway({
     tsconfig: resolve(root, 'packages/wallet-console-server-ts/tsconfig.json'),
     alias: {
       '@shared': resolve(publicRoot, 'packages/shared-ts/src'),
-      '@seams/wallet-server/cloud-host': resolve(candidate, 'dist/esm/cloud-host.js'),
+      '@seams/host/cloud-host': resolve(candidate, 'dist/esm/cloud-host.js'),
     },
     stdin: {
       resolveDir: root,
@@ -68,7 +68,7 @@ export async function createRegionalRealGateway({
         export { WalletPlacementConsoleBinding } from './packages/wallet-console-server-ts/src/walletPlacement/consoleBinding';
         export { handleWalletHomeServiceRequest } from './packages/wallet-console-server-ts/src/walletPlacement/service';
         export { handleRegistrationSetupRequest } from './packages/wallet-console-server-ts/src/walletPlacement/registrationSetup';
-        export { createWalletConsoleOpsClient } from '@seams/wallet-server/cloud-host';
+        export { createWalletConsoleOpsClient } from '@seams/host/cloud-host';
         export { parseTenantRuntimeWriterV1 } from './packages/wallet-console-server-ts/src/tenantDeployment/resourceVerification';
       `,
     },

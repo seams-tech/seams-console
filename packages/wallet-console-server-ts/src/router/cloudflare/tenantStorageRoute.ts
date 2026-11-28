@@ -17,7 +17,7 @@ import {
   type SignerD1DoStorageTarget,
   type TenantDataJurisdiction,
   type TenantStorageRouteDiagnostic,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 
 export type ConsoleD1StorageTarget = {
   readonly kind: 'd1';

@@ -79,9 +79,9 @@ function extractImportSpecifiers(source) {
 }
 
 function isWalletPackageImport(specifier) {
-  if (specifier === '@seams/wallet' || specifier.startsWith('@seams/wallet/')) return true;
-  if (specifier === '@seams/wallet-server' || specifier.startsWith('@seams/wallet-server/'))
-    return true;
+  for (const name of ['@seams/mpc-wallet', '@seams/wallet-connect', '@seams/host']) {
+    if (specifier === name || specifier.startsWith(`${name}/`)) return true;
+  }
   if (
     specifier === '@seams-internal/wallet-console-shared' ||
     specifier.startsWith('@seams-internal/wallet-console-shared/')
@@ -92,7 +92,7 @@ function isWalletPackageImport(specifier) {
     specifier.startsWith('@seams-internal/wallet-console-server/')
   )
     return true;
-  return /(?:^|\/)(?:wallet|wallet-server|wallet-console-shared-ts|wallet-console-server-ts)\/(?:src|dist)(?:\/|$)/.test(
+  return /(?:^|\/)(?:mpc-wallet|wallet-connect|mpc-wallet-server|wallet-console-shared-ts|wallet-console-server-ts)\/(?:src|dist)(?:\/|$)/.test(
     specifier,
   );
 }

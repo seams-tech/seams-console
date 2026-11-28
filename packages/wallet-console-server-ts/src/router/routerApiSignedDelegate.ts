@@ -33,15 +33,15 @@ import {
   createSponsoredNearDelegateExecutionAdapter,
   type SponsoredNearDelegateAuthService,
 } from '../sponsorship/nearExecutionAdapter';
-import { enforceRoutePolicy } from '@seams/wallet-server/cloud-host';
-import type { NormalizedRouterLogger } from '@seams/wallet-server/cloud-host';
-import { resolvePublishableKeyApiCredentialAuth } from '@seams/wallet-server/cloud-host';
-import { extractRouterApiEnvironmentId } from '@seams/wallet-server/cloud-host';
-import type { HeaderRecord, RouteResponse } from '@seams/wallet-server/cloud-host';
-import type { RouteDefinition } from '@seams/wallet-server/cloud-host';
-import type { RouteErrorBody } from '@seams/wallet-server/cloud-host';
-import { routeJson } from '@seams/wallet-server/cloud-host';
-import type { RouterApiPublishableKeyAuthAdapter } from '@seams/wallet-server/cloud-host';
+import { enforceRoutePolicy } from '@seams/host/cloud-host';
+import type { NormalizedRouterLogger } from '@seams/host/cloud-host';
+import { resolvePublishableKeyApiCredentialAuth } from '@seams/host/cloud-host';
+import { extractRouterApiEnvironmentId } from '@seams/host/cloud-host';
+import type { HeaderRecord, RouteResponse } from '@seams/host/cloud-host';
+import type { RouteDefinition } from '@seams/host/cloud-host';
+import type { RouteErrorBody } from '@seams/host/cloud-host';
+import { routeJson } from '@seams/host/cloud-host';
+import type { RouterApiPublishableKeyAuthAdapter } from '@seams/host/cloud-host';
 import {
   runSponsorshipExecution,
   recordSponsoredExecution,
@@ -63,7 +63,7 @@ import {
   emitSponsorshipBlockedObservabilityEvent,
   readSponsorshipBillingBalanceSnapshot,
 } from './sponsorshipBillingEvents';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import { SponsoredNearDelegateRejectedError } from '../sponsorship/executionFailure';
 import { assertNever } from '@seams-internal/console-shared/accountPlatform/boundary';
 

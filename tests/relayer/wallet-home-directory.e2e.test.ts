@@ -18,7 +18,7 @@ import {
 import { WalletHomeServiceClient } from '../../packages/wallet-console-server-ts/src/walletPlacement/serviceClient';
 import { parseTenantRuntimeWriterV1 } from '../../packages/wallet-console-server-ts/src/tenantDeployment/resourceVerification';
 import { ConsoleRegistrationHomeAdmission } from '../../packages/wallet-console-server-ts/src/walletPlacement/registrationAdmission';
-import { parseWalletId } from '@seams/wallet-server/cloud-host';
+import { parseWalletId } from '@seams/host/cloud-host';
 import {
   WALLET_HOME_SERVICE_BASE_PATH,
   WALLET_HOME_SERVICE_ORIGIN,
@@ -277,9 +277,9 @@ test('wallet homes are independent within a tenant and durable across competing 
     tsconfig: path.join(repoRoot, 'packages/wallet-console-server-ts/tsconfig.json'),
     alias: process.env.SEAMS_WALLET_SERVER_CANDIDATE
       ? {
-          '@seams/wallet-server/cloud-host': createRequire(
+          '@seams/host/cloud-host': createRequire(
             path.resolve(process.env.SEAMS_WALLET_SERVER_CANDIDATE, 'package.json'),
-          ).resolve('@seams/wallet-server/cloud-host'),
+          ).resolve('@seams/host/cloud-host'),
         }
       : {},
   });

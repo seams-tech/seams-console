@@ -1,4 +1,4 @@
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { parseTenantRuntimeWriterV1 } from '../../../packages/wallet-console-server-ts/src/tenantDeployment/resourceVerification';
 import type { WalletHomeCatalog } from '../../../packages/wallet-console-server-ts/src/walletPlacement/home';
 import { handleWalletHomeServiceRequest } from '../../../packages/wallet-console-server-ts/src/walletPlacement/service';

@@ -2,7 +2,7 @@ import {
   resumeRegistrationDirectoryPublicationsV1,
   type D1DatabaseLike,
   type RegistrationDirectoryPublicationDelivery,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { TenantDeploymentBindingV1 } from '../tenantDeployment/types';
 import type { ConsoleRegistrationHomeAdmission } from './registrationAdmission';
 

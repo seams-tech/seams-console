@@ -2,18 +2,18 @@ import {
   unavailableRegistrationContext,
   type WalletRegistrationContextResult,
   type WalletRegistrationContextResolver,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { RegistrationOfferClient } from './registrationOfferClient';
-import type { WalletLifecycleRoutingPublisher } from '@seams/wallet-server/cloud-host';
-import type { WalletRecoveryRoutingPublication } from '@seams/wallet-server/cloud-host';
+import type { WalletLifecycleRoutingPublisher } from '@seams/host/cloud-host';
+import type { WalletRecoveryRoutingPublication } from '@seams/host/cloud-host';
 import type { WalletRouteLocator } from './walletRouteLocators';
-import type { WalletSessionLocatorPublication } from '@seams/wallet-server/cloud-host';
+import type { WalletSessionLocatorPublication } from '@seams/host/cloud-host';
 import {
   parseWalletRegistrationSetupReservation,
   proposeWalletRegistrationSetup,
   walletRegistrationSetupRequestDigest,
   type WalletRegistrationReservationAuthority,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import {
   RegistrationSetupAllocation,

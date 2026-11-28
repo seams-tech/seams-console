@@ -26,7 +26,7 @@ import {
   type ConsoleInvitationSecretCipher,
 } from '@seams-internal/console-server/email/index';
 import { createD1ConsoleOnboardingWelcomeEmail } from '../../packages/console-server-ts/src/onboarding/welcomeEmail';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import {
   applyD1MigrationFiles,
   cleanupTemporaryD1Database,

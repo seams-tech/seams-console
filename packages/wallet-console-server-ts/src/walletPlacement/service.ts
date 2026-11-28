@@ -48,7 +48,7 @@ import {
 } from './authorizationManifest';
 import { walletPlacementReadHome } from './placementRouting';
 import { handleLinkedDeviceBootstrap } from './linkedDeviceBootstrap';
-import { D1LinkedDeviceRequestProofNonceStoreV1 } from '@seams/wallet-server/cloud-host';
+import { D1LinkedDeviceRequestProofNonceStoreV1 } from '@seams/host/cloud-host';
 import { handleSyncChallengeCommand } from './syncChallenges';
 import { claimPasskeyCredential } from './passkeyClaims';
 import { handleRegistrationOfferCommand } from './registrationOfferService';
@@ -57,7 +57,7 @@ import { D1WalletRoutes, WalletRouteLocator } from './walletRouteLocators';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { SessionLocator, D1WalletSessionLocators } from './sessionLocators';
 import type { TenantDeploymentD1ResourcesV1 } from '@seams-internal/wallet-console-shared/tenant-deployment';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { D1WalletHomeDirectory } from './d1';
 import { readWalletPlacementStatus } from './relocationStatus';
 import { walletPlacementView, walletRelocationStatusView } from './relocationView';

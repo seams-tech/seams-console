@@ -1,4 +1,4 @@
-import { prepareD1TenantStatement, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { prepareD1TenantStatement, type D1DatabaseLike } from '@seams/host/cloud-host';
 import type { WalletOwnershipKey } from './home';
 type Scope = Pick<
   WalletOwnershipKey,

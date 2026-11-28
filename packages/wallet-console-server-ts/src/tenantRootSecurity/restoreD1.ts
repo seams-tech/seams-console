@@ -1,5 +1,5 @@
 import { decodeTenantRootIdentityWireV1 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
 import {
   base64UrlDecode,
   base64UrlEncode,
@@ -9,7 +9,7 @@ import {
   type D1DatabaseLike,
   type D1ResultLike,
   type D1Row,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type {
   TenantRootDeriverRoleV1,
   TenantRootOutstandingCleanupV1,
@@ -22,7 +22,7 @@ import type {
   TenantRootTenantHeldExternalRecoverySetV1,
   TenantRootTrustLevelV1,
 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import type {
   TenantRootDestinationStateV1,
   TenantRootRestoreBootstrapSessionV1,

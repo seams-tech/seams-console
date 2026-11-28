@@ -1,4 +1,4 @@
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
 import type {
   TenantRootDeriverRoleV1,
   TenantRootIdentityV1,

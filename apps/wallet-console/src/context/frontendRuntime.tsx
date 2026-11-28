@@ -1,6 +1,9 @@
 import React from 'react';
-import { SeamsWebProvider, type SeamsConfigsInput } from '@seams/wallet/react';
-import type { SeamsWebProviderProps } from '@seams/wallet/react/provider';
+import {
+  SeamsWebProvider,
+  type SeamsConfigsInput,
+  type SeamsWebProviderProps,
+} from '@seams/mpc-wallet/react';
 import {
   FRONTEND_CONFIG,
   buildSeamsSdkConfig,

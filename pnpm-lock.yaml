@@ -8,12 +8,15 @@ importers:
 
   .:
     dependencies:
-      '@seams/wallet':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/voice-capture@0.72.0)(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
-      '@seams/wallet-server':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/voice-capture@0.72.0)
+      '@seams/host':
+        specifier: 0.77.0
+        version: 0.77.0(@seams/mpc-wallet@0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@seams/voice-capture@0.72.0)
+      '@seams/mpc-wallet':
+        specifier: 0.77.0
+        version: 0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@seams/wallet-connect':
+        specifier: 0.77.0
+        version: 0.77.0(react@19.1.1)(typescript@5.8.3)
     devDependencies:
       '@eslint/js':
         specifier: 9.39.2
@@ -78,18 +81,18 @@ importers:
       '@seams-internal/wallet-console-shared':
         specifier: workspace:*
         version: link:../../packages/wallet-console-shared-ts
+      '@seams/host':
+        specifier: 0.77.0
+        version: 0.77.0(@seams/mpc-wallet@0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@seams/voice-capture@0.72.0)
+      '@seams/mpc-wallet':
+        specifier: 0.77.0
+        version: 0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@seams/voice-capture':
         specifier: 0.72.0
         version: 0.72.0
-      '@seams/voiceid':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/wallet@0.76.0(@seams/voice-capture@0.72.0)(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@seams/wallet':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/voice-capture@0.72.0)(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
-      '@seams/wallet-server':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/voice-capture@0.72.0)
+      '@seams/wallet-connect':
+        specifier: 0.77.0
+        version: 0.77.0(react@19.1.1)(typescript@5.8.3)
       '@tanstack/react-query':
         specifier: 5.87.1
         version: 5.87.1(react@19.1.1)
@@ -200,9 +203,9 @@ importers:
       '@seams-internal/wallet-console-shared':
         specifier: workspace:*
         version: link:../wallet-console-shared-ts
-      '@seams/wallet-server':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/voice-capture@0.72.0)
+      '@seams/host':
+        specifier: 0.77.0
+        version: 0.77.0(@seams/mpc-wallet@0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@seams/voice-capture@0.72.0)
       bs58:
         specifier: 6.0.0
         version: 6.0.0
@@ -219,9 +222,9 @@ importers:
 
   packages/wallet-console-shared-ts:
     dependencies:
-      '@seams/wallet-server':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/voice-capture@0.72.0)
+      '@seams/host':
+        specifier: 0.77.0
+        version: 0.77.0(@seams/mpc-wallet@0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@seams/voice-capture@0.72.0)
 
   tests:
     devDependencies:
@@ -249,12 +252,15 @@ importers:
       '@seams-internal/wallet-console-shared':
         specifier: workspace:*
         version: link:../packages/wallet-console-shared-ts
-      '@seams/wallet':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/voice-capture@0.72.0)(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
-      '@seams/wallet-server':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/voice-capture@0.72.0)
+      '@seams/host':
+        specifier: 0.77.0
+        version: 0.77.0(@seams/mpc-wallet@0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@seams/voice-capture@0.72.0)
+      '@seams/mpc-wallet':
+        specifier: 0.77.0
+        version: 0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@seams/wallet-connect':
+        specifier: 0.77.0
+        version: 0.77.0(react@19.1.1)(typescript@5.8.3)
       '@simplewebauthn/server':
         specifier: 13.2.2
         version: 13.2.2
@@ -273,9 +279,12 @@ importers:
 
   tests/intended-app:
     dependencies:
-      '@seams/wallet':
-        specifier: 0.76.0
-        version: 0.76.0(@seams/voice-capture@0.72.0)(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
+      '@seams/mpc-wallet':
+        specifier: 0.77.0
+        version: 0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@seams/wallet-connect':
+        specifier: 0.77.0
+        version: 0.77.0(react@19.1.1)(typescript@5.8.3)
       react:
         specifier: 19.1.1
         version: 19.1.1
@@ -1319,6 +1328,33 @@ packages:
   '@scure/bip39@1.6.0':
     resolution: {integrity: sha512-+lF0BbLiJNwVlev4eKelw1WWLaiKXw7sSl8T6FvBlWkdX+94aGJ4o8XjUdlyhTCjd8c+B3KT3JfS8P0bLRNU6A==}
 
+  '@seams/host@0.77.0':
+    resolution: {integrity: sha512-H6NUrtnfkEWW1OJBreNEnIfTr2f0/rL8XdMWE9Z5btZREznThas36++NU3eSOvviMK9sS+atWsQokcoeUxKxJg==}
+    hasBin: true
+    peerDependencies:
+      '@seams/mpc-wallet': 0.77.0
+    peerDependenciesMeta:
+      '@seams/mpc-wallet':
+        optional: true
+
+  '@seams/mpc-wallet@0.77.0':
+    resolution: {integrity: sha512-+nXVBhw0TSTF+t6Xwmsp+TyufsDkMHgeunUwRB/J3MJLC/dSQt08NLDIB6t/PKXeXzL1fw3mjiTKYl1+W8NqUA==}
+    peerDependencies:
+      '@seams/wallet-connect': 0.77.0
+      jsqr: 1.4.0
+      react: '>=19.0.0'
+      react-dom: '>=19.0.0'
+    peerDependenciesMeta:
+      jsqr:
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
+  '@seams/sayso-verdict@0.2.0':
+    resolution: {integrity: sha512-79Ikz7dTLpJ5Qo8HFwklOanlcWtM9QnVPI950i5vH+wEM4tTYWaAyBQEBh0vMvG1YPX5C/nEnStKsjiaXNV+kA==}
+
   '@seams/voice-capture@0.72.0':
     resolution: {integrity: sha512-wrIL45lS/5rrHgjClPAbjfOOK94YbuwCKMOU3ORXera1igjhB5Ud/WLwF9bmSd2jtg0NIDjSTBt4Qyz+fQgg2A==}
     engines: {node: '>=24'}
@@ -1336,35 +1372,12 @@ packages:
     resolution: {integrity: sha512-UZZpm1MOYkzEAIJcpexONcff4S2r3k0lBx6M/w1CsMdgpxbVcNKTfS2K3kr07EshpzDiOj9ckqfbsLm8huaRjw==}
     engines: {node: '>=20'}
 
-  '@seams/voiceid@0.76.0':
-    resolution: {integrity: sha512-pRwKrrpn2Mc5JtG1xnFoQnk8qWJYu1IGSLWY0cnDmDgnUP8/ersYo47cXtQrdVWbacjU1GENnT3uYLUTi7iqeQ==}
-    hasBin: true
+  '@seams/wallet-connect@0.77.0':
+    resolution: {integrity: sha512-PNHDmvXz6v9Tdb0oChrP1nitp5Xs2ea+85LSTZXB0kunt+qMJwn0G6HtaFkcjjm9BfAQfBhtlumALf8iWXXrRA==}
     peerDependencies:
-      '@seams/wallet': 0.76.0
       react: '>=19.0.0'
-      react-dom: '>=19.0.0'
     peerDependenciesMeta:
       react:
-        optional: true
-      react-dom:
-        optional: true
-
-  '@seams/wallet-server@0.76.0':
-    resolution: {integrity: sha512-uTHGZA9OHrPm90LvvhyuBiQvOuDZUxW4L2dLKyYPIbWdMHCP0F49qhS0R198PYuOjGeFBUICYPpxXPBbI5jLPw==}
-    hasBin: true
-
-  '@seams/wallet@0.76.0':
-    resolution: {integrity: sha512-jVTRIHgxEWvV71iJFQnAXHh1AsnYVuRyE7vUeL/ERnuIPFP+gKYfnP0SJ9w4htSM9ewgmyGMbvPLjcA2hjzaXw==}
-    peerDependencies:
-      jsqr: 1.4.0
-      react: '>=19.0.0'
-      react-dom: '>=19.0.0'
-    peerDependenciesMeta:
-      jsqr:
-        optional: true
-      react:
-        optional: true
-      react-dom:
         optional: true
 
   '@simplewebauthn/server@13.2.2':
@@ -3421,6 +3434,41 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
 
+  '@seams/host@0.77.0(@seams/mpc-wallet@0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@seams/voice-capture@0.72.0)':
+    dependencies:
+      '@seams/sayso-verdict': 0.2.0
+      '@seams/voice-sign': 0.72.0(@seams/voice-capture@0.72.0)
+      '@seams/voice-verdict': 0.72.0
+      '@simplewebauthn/server': 13.2.2
+      bs58: 6.0.0
+    optionalDependencies:
+      '@seams/mpc-wallet': 0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+    transitivePeerDependencies:
+      - '@seams/voice-capture'
+
+  '@seams/mpc-wallet@0.77.0(@seams/voice-capture@0.72.0)(@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3))(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+    dependencies:
+      '@levischuck/tiny-cbor': 0.2.11
+      '@near-js/types': 2.4.0
+      '@seams/sayso-verdict': 0.2.0
+      '@seams/voice-sign': 0.72.0(@seams/voice-capture@0.72.0)
+      '@seams/voice-verdict': 0.72.0
+      '@seams/wallet-connect': 0.77.0(react@19.1.1)(typescript@5.8.3)
+      bs58: 6.0.0
+      idb: 8.0.3
+      preact: 10.29.8
+      qrcode: 1.5.4
+      voice-glow: 0.2.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+    optionalDependencies:
+      jsqr: 1.4.0
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
+    transitivePeerDependencies:
+      - '@seams/voice-capture'
+      - preact-render-to-string
+
+  '@seams/sayso-verdict@0.2.0': {}
+
   '@seams/voice-capture@0.72.0':
     dependencies:
       onnxruntime-web: 1.30.0
@@ -3438,47 +3486,15 @@ snapshots:
     dependencies:
       '@noble/ciphers': 1.3.0
 
-  '@seams/voiceid@0.76.0(@seams/wallet@0.76.0(@seams/voice-capture@0.72.0)(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+  '@seams/wallet-connect@0.77.0(react@19.1.1)(typescript@5.8.3)':
     dependencies:
-      '@seams/voice-capture': 0.72.0
-      '@seams/wallet': 0.76.0(@seams/voice-capture@0.72.0)(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
-      preact: 10.29.8
-      voice-glow: 0.2.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-    optionalDependencies:
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
-    transitivePeerDependencies:
-      - preact-render-to-string
-
-  '@seams/wallet-server@0.76.0(@seams/voice-capture@0.72.0)':
-    dependencies:
-      '@seams/voice-sign': 0.72.0(@seams/voice-capture@0.72.0)
-      '@seams/voice-verdict': 0.72.0
-      '@simplewebauthn/server': 13.2.2
-      bs58: 6.0.0
-    transitivePeerDependencies:
-      - '@seams/voice-capture'
-
-  '@seams/wallet@0.76.0(@seams/voice-capture@0.72.0)(jsqr@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)':
-    dependencies:
-      '@levischuck/tiny-cbor': 0.2.11
-      '@near-js/types': 2.4.0
-      '@seams/voice-sign': 0.72.0(@seams/voice-capture@0.72.0)
-      '@seams/voice-verdict': 0.72.0
       borsh: 1.0.0
       bs58: 6.0.0
-      idb: 8.0.3
-      preact: 10.29.8
-      qrcode: 1.5.4
       viem: 2.46.0(typescript@5.8.3)
     optionalDependencies:
-      jsqr: 1.4.0
       react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
     transitivePeerDependencies:
-      - '@seams/voice-capture'
       - bufferutil
-      - preact-render-to-string
       - typescript
       - utf-8-validate
       - zod

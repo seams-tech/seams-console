@@ -1,4 +1,4 @@
-import { parseWalletSessionLimits } from '@seams/wallet/advanced';
+import { parseWalletSessionLimits } from '@seams/mpc-wallet/client';
 import {
   buildConsoleAcceptHeaders,
   buildConsoleJsonHeaders,

@@ -1,4 +1,4 @@
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { D1RegionalDeploymentAdmission } from './regionalAdmission';
 import { DeploymentFencedDatabase } from './fencedDatabase';
 import { parseTenantRuntimeWriterV1, type TenantRuntimeWriterV1 } from './resourceVerification';
@@ -235,7 +235,7 @@ export function bindTenantDeploymentToRuntimeEnvironmentV1<
   return {
     ...env,
     SEAMS_TENANT_STORAGE_NAMESPACE: binding.tenant.namespace,
-    // @seams/wallet-server consumes these names at its request boundary.
+    // @seams/host consumes these names at its request boundary.
     SEAMS_STAGING_ORG_ID: binding.tenant.organizationId,
     SEAMS_STAGING_PROJECT_ID: binding.tenant.projectId,
     SEAMS_STAGING_ENV_ID: binding.tenant.environmentId,

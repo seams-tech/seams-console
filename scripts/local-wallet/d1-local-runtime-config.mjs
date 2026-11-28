@@ -16,10 +16,10 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import dotenv from 'dotenv';
 const require = createRequire(import.meta.url);
-const walletServerRoot = path.dirname(require.resolve('@seams/wallet-server/package.json'));
+const walletServerRoot = path.dirname(require.resolve('@seams/host/package.json'));
 
 import { resolveLocalConsoleOrganizationId } from './local-console-identity.mjs';
-import { resolveLocalTenantRootKeyMaterial } from '@seams/wallet-server/local-runtime';
+import { resolveLocalTenantRootKeyMaterial } from '@seams/host/local-runtime';
 
 const X25519_PKCS8_PREFIX = Buffer.from('302e020100300506032b656e04220420', 'hex');
 const X25519_SPKI_PREFIX = Buffer.from('302a300506032b656e032100', 'hex');
@@ -404,7 +404,7 @@ function applyRuntimePaths(source, repoRoot, outputConfigPath) {
       'migrations_dir = "migrations/d1-console"',
       `migrations_dir = ${JSON.stringify(consoleMigrationsPath)}`,
     ),
-    'migrations_dir = "../../node_modules/@seams/wallet-server/migrations/d1-signer"',
+    'migrations_dir = "../../node_modules/@seams/host/migrations/d1-signer"',
     `migrations_dir = ${JSON.stringify(signerMigrationsPath)}`,
   );
 }

@@ -2,7 +2,7 @@ import {
   base64UrlDecode,
   ROUTER_AB_MPC_ROUTER_ORIGIN,
   signTenantRootCreationGrantV1,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { TenantRootCreationConsoleRouteDependenciesV1 } from './consoleRoute';
 import type { TenantRootCreationGrantRecordV1 } from './types';
 

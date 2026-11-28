@@ -4,7 +4,7 @@ import {
   parseWalletRuntimeWalletIdentityRequest,
   type WalletRuntimeWalletIdentityRequest,
   type WalletRuntimeWalletIdentitiesResult,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { WalletOwnershipKey } from '../walletPlacement/home';
 import type { WalletHomeServiceClient } from '../walletPlacement/serviceClient';
 

@@ -10,7 +10,7 @@ import {
 } from '../observability';
 import type { ConsoleObservabilityIngestionService } from '@seams-internal/console-server/observability/ingestionService';
 import type { ConsoleWebhookService } from '@seams-internal/console-server/webhooks/service';
-import type { NormalizedRouterLogger } from '@seams/wallet-server/cloud-host';
+import type { NormalizedRouterLogger } from '@seams/host/cloud-host';
 
 export interface SponsorshipBillingBalanceSnapshot {
   creditBalanceMinor: number;

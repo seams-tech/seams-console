@@ -1,5 +1,5 @@
 import type { WalletRelocationAttempt } from './relocationExecution';
-import { isPlainObject, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { WalletPlacementError } from './home';
 import type { WalletD1RelocationCommand } from './relocationCommands';
 

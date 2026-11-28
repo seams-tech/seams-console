@@ -1,4 +1,4 @@
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 
 const PREFIX = 'wallet_console_binding_';
 

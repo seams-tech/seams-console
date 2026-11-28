@@ -1,4 +1,4 @@
-import type { D1DatabaseLike, D1ResultLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike, D1ResultLike } from '@seams/host/cloud-host';
 import { createWalletProductionActivityStatement } from '../billing/usage';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { D1WalletHomeDirectory, walletHomeAssignmentFromRow } from './d1';

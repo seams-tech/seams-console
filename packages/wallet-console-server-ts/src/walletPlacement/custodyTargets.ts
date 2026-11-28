@@ -1,4 +1,4 @@
-import { isPlainObject, type WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, type WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import type {
   CustodyRole,
   CustodyNamespace,

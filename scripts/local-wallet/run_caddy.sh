@@ -5,10 +5,10 @@ SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CADDYFILE="$SCRIPT_DIR/Caddyfile"
-SDK_PACKAGE_JSON="$(cd "$SCRIPT_DIR" && node -p "require.resolve('@seams/wallet/package.json')")"
+SDK_PACKAGE_JSON="$(cd "$SCRIPT_DIR" && node -p "require.resolve('@seams/mpc-wallet/package.json')")"
 SDK_PUBLIC_ROOT="$(dirname "$SDK_PACKAGE_JSON")/dist/public"
 SDK_VERSION="$(node -p "require('$SDK_PACKAGE_JSON').version")"
-VOICEID_VERSION="$(cd "$SCRIPT_DIR" && node -p "require('@seams/voiceid/package.json').version")"
+VOICEID_VERSION="$(cd "$SCRIPT_DIR" && node -p "require('@seams/host/package.json').version")"
 # The site enables VoiceID, so the wallet host serves the Wallet assets composed
 # with the VoiceID assets. The composer never overwrites a directory, so each
 # installed version pair gets its own directory.
@@ -22,7 +22,7 @@ fi
 
 if [[ ! -f "$SDK_PUBLIC_ROOT/wallet-assets.manifest.json" ]]; then
   echo "Wallet static assets not found at $SDK_PUBLIC_ROOT" >&2
-  echo "Install an @seams/wallet package that includes the built wallet assets." >&2
+  echo "Install an @seams/mpc-wallet package that includes the built wallet assets." >&2
   exit 1
 fi
 

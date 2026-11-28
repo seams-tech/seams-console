@@ -1,4 +1,4 @@
-import type { CfExecutionContext, FetchHandler } from '@seams/wallet-server/cloud-host';
+import type { CfExecutionContext, FetchHandler } from '@seams/host/cloud-host';
 import {
   resolveConsoleCorsOrigins,
   withConsoleCors,

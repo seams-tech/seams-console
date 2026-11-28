@@ -1,7 +1,7 @@
 import { createWalletMonthlyUsageStatement } from '../billing/usage';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
-import type { D1PreparedStatementLike, RouteResponse } from '@seams/wallet-server/cloud-host';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
+import type { D1PreparedStatementLike, RouteResponse } from '@seams/host/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import {
   MarkFundsIndeterminateRequestV1,
   PlatformUsageEventV1,

@@ -2,7 +2,7 @@
 
 These papers provide background for speaker verification, speech datasets, and
 spoof detection. The active browser implementation lives in
-[`@seams/voiceid`](https://github.com/seams-tech/seams-wallet/tree/main/packages/voiceid).
+[`packages/voiceid`](https://github.com/seams-tech/seams-wallet/tree/main/packages/voiceid) (shipped in `@seams/mpc-wallet` and `@seams/host`).
 
 | Local PDF | Source |
 | --- | --- |

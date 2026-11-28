@@ -6,7 +6,7 @@ import {
   requireRuntimePolicyScope,
   type D1DatabaseLike,
   type GoogleEmailOtpRegistrationAttemptStore,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { WalletPlacementError, WalletOwnershipKey } from './home';
 import type { D1WalletHomeDirectory } from './d1';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';

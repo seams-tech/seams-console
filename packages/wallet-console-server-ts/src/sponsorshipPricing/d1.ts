@@ -1,5 +1,5 @@
-import { formatD1ExecStatement, queryD1One, type D1Row } from '@seams/wallet-server/cloud-host';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { formatD1ExecStatement, queryD1One, type D1Row } from '@seams/host/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import {
   SponsorshipSpendCapEnforcementError,
   type SponsorshipSpendPricingEstimateInput,

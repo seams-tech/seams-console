@@ -1,7 +1,7 @@
 import { useTranslation } from '@/marketing/context';
 import { BrowserOnly } from '@/marketing/BrowserOnly';
 import React from 'react';
-import type { HostedAuthMenuMode } from '@seams/wallet/react';
+import type { HostedAuthMenuMode } from '@seams/mpc-wallet/react';
 import { GrainField } from '@seams-internal/grain-field';
 
 function loadWalletDemo() {

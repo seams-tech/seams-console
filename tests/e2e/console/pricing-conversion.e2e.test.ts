@@ -2,7 +2,7 @@ import { expect as baseExpect, test, type Page, type Route, type TestInfo } from
 import { readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { Miniflare } from 'miniflare';
-import { isD1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isD1DatabaseLike } from '@seams/host/cloud-host';
 import { ConsoleSessionService } from '../../../packages/console-server-ts/src/boundary/session';
 import { createD1ConsoleSessionRevocationStore } from '../../../packages/console-server-ts/src/boundary/sessionRevocations';
 import { createConsoleProviderIdentity } from '../../../packages/console-server-ts/src/boundary/providerIdentity';

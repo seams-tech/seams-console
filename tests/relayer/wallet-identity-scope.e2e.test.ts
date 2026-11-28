@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { isD1DatabaseLike, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isD1DatabaseLike, type D1DatabaseLike } from '@seams/host/cloud-host';
 import {
   consoleWalletKeyString,
   type ConsoleWalletKey,
@@ -155,7 +155,7 @@ test('Console preserves full wallet scope through Runtime, pagination and cached
   if (!candidate) throw new Error('Candidate is required');
   const packageJsonPath = path.resolve(candidate, 'package.json');
   const definition = JSON.parse(await readFile(packageJsonPath, 'utf8'));
-  expect(definition.name).toBe('@seams/wallet-server');
+  expect(definition.name).toBe('@seams/host');
   const resolveCandidate = createRequire(packageJsonPath);
   const aliases: Record<string, string> = {};
   for (const key of Object.keys(definition.exports)) {
@@ -177,7 +177,7 @@ test('Console preserves full wallet scope through Runtime, pagination and cached
   });
   await build({
     stdin: {
-      contents: `import { handleSplitGatewayWalletRuntimeRequest } from '@seams/wallet-server/hosted-wallet-gateway';
+      contents: `import { handleSplitGatewayWalletRuntimeRequest } from '@seams/host/hosted-wallet-gateway';
 export default { async fetch(request, env) {
   return await handleSplitGatewayWalletRuntimeRequest(request, env) ?? new Response('Not found', { status: 404 });
 }};`,
@@ -411,7 +411,7 @@ export default { async fetch(request, env) {
       candidateVersion: definition.version,
       candidateEntrySha256: createHash('sha256')
         .update(
-          await readFile(resolveCandidate.resolve('@seams/wallet-server/hosted-wallet-gateway')),
+          await readFile(resolveCandidate.resolve('@seams/host/hosted-wallet-gateway')),
         )
         .digest('hex'),
       migratedWallet,

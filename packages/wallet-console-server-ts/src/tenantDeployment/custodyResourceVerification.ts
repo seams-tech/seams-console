@@ -1,4 +1,4 @@
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import type { WalletRegion } from '../walletPlacement/home';
 
 export type CustodyRole = 'router' | 'deriverA' | 'deriverB' | 'signingWorker' | 'presignSessions';

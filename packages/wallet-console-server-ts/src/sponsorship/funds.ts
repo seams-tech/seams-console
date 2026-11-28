@@ -1,5 +1,5 @@
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
-import { queryD1One } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
+import { queryD1One } from '@seams/host/cloud-host';
 import type { D1AccountPlatformService } from '@seams-internal/console-server/accountPlatform/d1';
 import type { ServiceProducerAuthorityV1 } from '@seams-internal/console-server/accountPlatform/types';
 import type { ConsoleBillingPrepaidReservationService } from '@seams-internal/console-server/billingPrepaidReservations/service';

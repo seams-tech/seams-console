@@ -29,7 +29,7 @@ await build({
     export { createWalletProjectEnvironmentResolver } from './packages/wallet-console-server-ts/src/router/projectEnvironmentAdapter';
     export { createWalletConsoleOpsHandler } from './packages/wallet-console-server-ts/src/serviceBinding/walletConsoleOpsHandler';
     export { WALLET_API_CREDENTIAL_SCOPE_VALIDATION } from './packages/wallet-console-shared-ts/src/apiKeyScopes';
-    export { WALLET_CONSOLE_OP_PATHS_V1, WALLET_CONSOLE_SERVICE_ORIGIN_V1 } from '@seams/wallet-server/cloud-host';
+    export { WALLET_CONSOLE_OP_PATHS_V1, WALLET_CONSOLE_SERVICE_ORIGIN_V1 } from '@seams/host/cloud-host';
   `,
   },
 });

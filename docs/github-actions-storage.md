@@ -23,7 +23,7 @@ Keep its organization, project, and environment IDs aligned with an existing act
 [Console targets](../deployment/console/targets.json) define the Console resource bindings.
 
 Dependencies use the exact releases in `package.json` and `pnpm-lock.yaml`.
-The frontend job reads the installed `@seams/wallet` version and resolves its npm release's `gitHead`.
+The frontend job reads the installed `@seams/mpc-wallet` version and resolves its npm release's `gitHead`.
 It checks out that exact public Wallet commit to build the docs.
 Environment IDs and Wallet source revisions are resolved automatically.
 

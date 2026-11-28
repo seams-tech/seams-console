@@ -1,4 +1,4 @@
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import type { WalletHome } from './home';
 import { WalletRegionalDispatch } from './regionalDispatch';
 import { relocationTimestamp, type WalletRelocationRequest } from './relocation';

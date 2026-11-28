@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Miniflare } from 'miniflare';
 import { unstable_splitSqlQuery } from 'wrangler';
-import { isD1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isD1DatabaseLike } from '@seams/host/cloud-host';
 import { PlatformPlanUsageEventV1 } from '../../../packages/console-shared-ts/src/accountPlatform';
 import {
   createSimulatedBillingProviderAdapters,
@@ -123,7 +123,7 @@ const signerMigrations = path.join(
     path.dirname(
       createRequire(
         path.join(repository, 'packages/wallet-console-server-ts/package.json'),
-      ).resolve('@seams/wallet-server/package.json'),
+      ).resolve('@seams/host/package.json'),
     ),
   'migrations/d1-signer',
 );
@@ -954,7 +954,7 @@ test('Free plan stops production signing through the regional signing policy', a
 test('Gateway delivers completed production signatures to the Free plan count once', async () => {
   test.skip(
     !existsSync(path.join(signerMigrations, '0082_wallet_signature_completions.sql')),
-    'Requires @seams/wallet-server with SIGNER_DB migration 0082; set SEAMS_WALLET_SERVER_CANDIDATE',
+    'Requires @seams/host with SIGNER_DB migration 0082; set SEAMS_WALLET_SERVER_CANDIDATE',
   );
   test.setTimeout(240_000);
   await rm(path.join(output, 'delivery-state'), { recursive: true, force: true });

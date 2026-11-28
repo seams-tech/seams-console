@@ -4,7 +4,7 @@ import {
   parseWebAuthnRpId,
   type D1DatabaseLike,
   type WalletRegistrationReservationAuthority,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { ConsoleRegistrationHomeAdmission } from '../../../packages/wallet-console-server-ts/src/walletPlacement/registrationAdmission';
 import { parseTenantRuntimeWriterV1 } from '../../../packages/wallet-console-server-ts/src/tenantDeployment/resourceVerification';
 import {

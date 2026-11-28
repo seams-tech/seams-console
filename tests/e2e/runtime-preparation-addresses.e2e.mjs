@@ -23,7 +23,7 @@ await build({
   outfile,
   tsconfig: resolve(root, 'packages/wallet-console-server-ts/tsconfig.json'),
   alias: {
-    '@seams/wallet-server/cloud-host': resolve(candidate, 'src/cloud-host.ts'),
+    '@seams/host/cloud-host': resolve(candidate, 'src/cloud-host.ts'),
     '@shared': resolve(candidate, '../shared-ts/src'),
   },
   define: {

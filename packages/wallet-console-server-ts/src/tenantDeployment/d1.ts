@@ -9,7 +9,7 @@ import {
   type D1DatabaseLike,
   type D1Row,
   type D1ResultLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { parseEnvironmentRow } from '@seams-internal/wallet-console-server/environments/d1';
 import type { ConsoleWalletEnvironment } from '@seams-internal/wallet-console-server/environments/types';
 import {

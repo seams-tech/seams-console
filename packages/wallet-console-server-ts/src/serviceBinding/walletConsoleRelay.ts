@@ -4,8 +4,8 @@ import {
   matchesRouteDefinitionRequest,
   type CfExecutionContext,
   type RouterApiRouteExtension,
-} from '@seams/wallet-server/cloud-host';
-import { WALLET_CONSOLE_SERVICE_ORIGIN_V1 } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { WALLET_CONSOLE_SERVICE_ORIGIN_V1 } from '@seams/host/cloud-host';
 
 export function createWalletConsoleRelayHandler(
   extensions: readonly RouterApiRouteExtension[],

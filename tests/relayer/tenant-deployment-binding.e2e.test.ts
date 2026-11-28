@@ -8,7 +8,7 @@ import { expect, test } from '@playwright/test';
 import { build } from 'esbuild';
 import { Miniflare } from 'miniflare';
 import { unstable_splitSqlQuery } from 'wrangler';
-import { isD1DatabaseLike, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isD1DatabaseLike, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -62,9 +62,9 @@ test('Console binding reads stay fresh through service bindings and retain D1 ti
     tsconfig: path.join(repoRoot, 'packages/wallet-console-server-ts/tsconfig.json'),
     alias: process.env.SEAMS_WALLET_SERVER_CANDIDATE
       ? {
-          '@seams/wallet-server/cloud-host': createRequire(
+          '@seams/host/cloud-host': createRequire(
             path.resolve(process.env.SEAMS_WALLET_SERVER_CANDIDATE, 'package.json'),
-          ).resolve('@seams/wallet-server/cloud-host'),
+          ).resolve('@seams/host/cloud-host'),
         }
       : {},
   });
@@ -198,7 +198,7 @@ test('Console binding reads stay fresh through service bindings and retain D1 ti
       throw new Error('Local signer D1 binding is unavailable');
     const signerMigrations = path.resolve(
       process.env.SEAMS_WALLET_SERVER_CANDIDATE ??
-        path.dirname(createRequire(import.meta.url).resolve('@seams/wallet-server/package.json')),
+        path.dirname(createRequire(import.meta.url).resolve('@seams/host/package.json')),
       'migrations/d1-signer',
     );
     for (const name of (await readdir(signerMigrations)).sort()) {

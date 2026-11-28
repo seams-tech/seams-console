@@ -1,4 +1,4 @@
-import { isPlainObject, queryD1All, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, queryD1All, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { WalletHome } from './home';
 import { WalletRelocationRequest } from './relocation';
 import { WalletRegionalDispatch } from './regionalDispatch';

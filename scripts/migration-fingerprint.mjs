@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const migrationNamePattern = /^[0-9]{4}_[a-z0-9_]+\.sql$/u;
+const baselineNamePattern = /^[0-9]{4}_[a-z0-9_]+_baseline\.sql$/u;
 
 export function readMigrationFiles(migrationsDir) {
   const directory = resolve(migrationsDir);
@@ -45,6 +46,7 @@ export function assertAppliedMigrationSourcesUnchanged({
   migrations,
 }) {
   if (previousFingerprint === undefined) return;
+  if (replacesAppliedHistory(appliedMigrationNames, migrations)) return;
   const previouslyAppliedMigrations = migrations.filter((migration) =>
     appliedMigrationNames.has(migration.name),
   );
@@ -68,6 +70,18 @@ export function assertAppliedMigrationSourcesUnchanged({
 
   throw new Error(
     'Applied D1 migration sources changed; add a new forward migration instead of rewriting an applied migration',
+  );
+}
+
+/* A set that starts with a baseline, and of which no migration is applied yet, replaces the
+   applied history: the signer baseline of @seams/host 0.77.0 replaces 0001 to 0091. The
+   baseline's own guard refuses a database that does not hold the history it replaces, so the
+   applier runs it in place of a source check of migrations that the set no longer has. */
+function replacesAppliedHistory(appliedMigrationNames, migrations) {
+  return (
+    migrations.length > 0 &&
+    baselineNamePattern.test(migrations[0].name) &&
+    migrations.every((migration) => !appliedMigrationNames.has(migration.name))
   );
 }
 

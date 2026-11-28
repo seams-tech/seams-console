@@ -1,10 +1,10 @@
-import type { D1DatabaseLike, D1ResultLike, D1Row } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike, D1ResultLike, D1Row } from '@seams/host/cloud-host';
 import type {
   TenantRootIdentityV1,
   TenantRootRestoreSessionV1,
 } from '@seams-internal/wallet-console-shared/tenant-root';
 import { parseD1ActiveTenantRootCreationV1 } from '../tenantRootCreation/d1';
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
 import { parseD1RestoredTenantRootActiveLineageV1 } from './restoreD1';
 
 /** One signing-lineage lookup shared by local and hosted console composition. */

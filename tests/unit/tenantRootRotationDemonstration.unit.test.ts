@@ -1,4 +1,4 @@
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
 import { expect, test, type Page } from '@playwright/test';
 import type { ConsoleAuthAdapter } from '../../packages/console-server-ts/src/router/consoleAuth';
 import {

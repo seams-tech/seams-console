@@ -3,7 +3,7 @@ import type {
   D1DatabaseLike,
   D1PreparedStatementLike,
   D1ResultLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 
 class ObservedDatabase implements D1DatabaseLike {
   calls = 0;

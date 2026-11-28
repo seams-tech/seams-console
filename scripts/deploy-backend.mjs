@@ -133,10 +133,10 @@ if (isDirectInvocation()) {
 
 function resolveWalletServerRoot() {
   try {
-    return path.dirname(requireFromWalletConsole.resolve('@seams/wallet-server/package.json'));
+    return path.dirname(requireFromWalletConsole.resolve('@seams/host/package.json'));
   } catch (error) {
     throw new Error(
-      `@seams/wallet-server must be installed for hosted deployment: ${formatError(error)}`,
+      `@seams/host must be installed for hosted deployment: ${formatError(error)}`,
     );
   }
 }
@@ -147,15 +147,15 @@ function readWalletServerArtifactManifest() {
   try {
     manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   } catch (error) {
-    throw new Error(`Unable to read @seams/wallet-server artifact manifest: ${formatError(error)}`);
+    throw new Error(`Unable to read @seams/host artifact manifest: ${formatError(error)}`);
   }
   if (
     manifest?.schemaVersion !== 'seams_wallet_server_artifact_manifest_v1' ||
-    manifest?.package?.name !== '@seams/wallet-server' ||
+    manifest?.package?.name !== '@seams/host' ||
     typeof manifest?.package?.version !== 'string' ||
     manifest.package.version.length === 0
   ) {
-    throw new Error('@seams/wallet-server has an invalid artifact manifest');
+    throw new Error('@seams/host has an invalid artifact manifest');
   }
   return manifest;
 }
@@ -467,7 +467,7 @@ function resolveRouterRuntimeRoot() {
 function stageRouterRuntimeArtifact(lane) {
   if (!isRouterRuntimeRoot(PACKAGED_ROUTER_ROOT)) {
     throw new Error(
-      `@seams/wallet-server is missing its packaged Cloudflare runtime at ${PACKAGED_ROUTER_ROOT}`,
+      `@seams/host is missing its packaged Cloudflare runtime at ${PACKAGED_ROUTER_ROOT}`,
     );
   }
   fs.rmSync(RELEASE_ROUTER_ROOT, { recursive: true, force: true });
@@ -1037,7 +1037,7 @@ async function deployBackend(lane, component) {
 function assertWalletServerSecurityPolicy() {
   if (WALLET_SERVER_ARTIFACT_MANIFEST.walletSecurityPolicy !== 'scoped_seals_and_owner_proofs_v1') {
     throw new Error(
-      'The pinned @seams/wallet-server release lacks scoped seals and owner proofs. Publish the updated Wallet Server release and update the exact package pin before deploying.',
+      'The pinned @seams/host release lacks scoped seals and owner proofs. Publish the updated Wallet Server release and update the exact package pin before deploying.',
     );
   }
 }
@@ -1825,7 +1825,7 @@ function walletServerMigration(name) {
     typeof migration.head !== 'string' ||
     !/^[0-9a-f]{64}$/u.test(migration.fingerprint)
   ) {
-    throw new Error(`@seams/wallet-server artifact manifest is missing migration set ${name}`);
+    throw new Error(`@seams/host artifact manifest is missing migration set ${name}`);
   }
   return migration;
 }

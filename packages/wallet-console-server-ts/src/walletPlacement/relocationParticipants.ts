@@ -1,6 +1,6 @@
 import { CustodyRelocationPreparation, CustodyTargetInspector } from './custodyTargets';
 import type { RelocationCustodyNamespaces } from '../tenantDeployment/custodyResourceVerification';
-import type { WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import type { WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import {
   parseTenantRuntimeWriterV1,
   type TenantDeploymentResourceVerificationsV1,

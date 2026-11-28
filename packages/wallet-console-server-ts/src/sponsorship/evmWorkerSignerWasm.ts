@@ -6,7 +6,7 @@ import {
   signSecp256k1Recoverable,
   type ServerEip1559UnsignedTx,
   verifySecp256k1RecoverableSignatureAgainstPublicKey33,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 
 export type WorkerEip1559UnsignedTx = ServerEip1559UnsignedTx;
 

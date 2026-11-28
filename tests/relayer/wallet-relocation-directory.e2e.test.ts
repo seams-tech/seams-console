@@ -693,9 +693,9 @@ test('relocation directory serializes competing moves and survives lost replies 
     tsconfig: path.join(repoRoot, 'packages/wallet-console-server-ts/tsconfig.json'),
     alias: candidate
       ? {
-          '@seams/wallet-server/cloud-host': createRequire(
+          '@seams/host/cloud-host': createRequire(
             path.resolve(candidate, 'package.json'),
-          ).resolve('@seams/wallet-server/cloud-host'),
+          ).resolve('@seams/host/cloud-host'),
         }
       : {},
   });

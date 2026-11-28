@@ -11,7 +11,7 @@ import {
   updateDashboardPolicy,
   type DashboardConsolePolicy,
 } from '../policy-engine/consolePoliciesApi';
-import { keccak256Bytes } from '@seams/wallet/advanced';
+import { keccak256Bytes } from '@seams/mpc-wallet/client';
 import {
   ConsoleDecodeError,
   decodeConsoleEnum,

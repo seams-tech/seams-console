@@ -7,7 +7,7 @@ import type {
   D1DatabaseLike,
   D1PreparedStatementLike,
   D1ResultLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 
 type SqliteJsonRow = Record<string, unknown>;
 

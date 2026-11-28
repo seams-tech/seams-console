@@ -1,5 +1,5 @@
 import { CustodyTargetInspector, parseCustodyTargetPair, type CustodyTargetPair } from './custodyTargets';
-import { isPlainObject, queryD1One, sha256Bytes, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, queryD1One, sha256Bytes, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import { WalletPlacementError, type WalletHome } from './home';
 import { relocationTimestamp, type WalletRelocation } from './relocation';
 import type { WalletRelocationAttempt } from './relocationExecution';

@@ -2,7 +2,7 @@ import { ConsoleWalletEnvironmentError } from './errors';
 import {
   parseExternalAuthProvider,
   parseWalletSessionLimits,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   readOptionalQueryStringField as readOptionalQueryString,
   readOptionalStringField as readOptionalString,

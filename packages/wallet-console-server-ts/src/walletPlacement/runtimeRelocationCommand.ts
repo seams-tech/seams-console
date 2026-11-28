@@ -1,4 +1,4 @@
-import { queryD1One, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { queryD1One, type D1DatabaseLike } from '@seams/host/cloud-host';
 import {
   storedRuntimeVersionMatches,
   type TenantRuntimeWriterV1,

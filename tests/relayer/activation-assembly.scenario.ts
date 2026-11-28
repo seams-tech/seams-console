@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { queryD1One, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { queryD1One, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { WalletRelocationActivation } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocationActivation';
 import type { WalletRelocationRequest } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocation';
 import type { WalletRelocationAttempt } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocationExecution';

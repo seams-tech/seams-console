@@ -1,33 +1,33 @@
 import { LaneEnvironmentKeys } from '../../walletLanes/environmentKeys';
 import { createD1AccountConsoleComposition, isAccountConsoleRequest } from './d1AccountConsole';
 import { createConsoleEmailInvitationSecretCipherFromEnv } from './cron';
-import { admitD1EstablishedWalletHome } from '@seams/wallet-server/cloud-host';
+import { admitD1EstablishedWalletHome } from '@seams/host/cloud-host';
 import { createCloudflareD1AccountServiceBundle } from '@seams-internal/console-server/router/cloudflare/d1AccountServices';
 import { D1RegionalDeploymentAdmission } from '../../tenantDeployment/regionalAdmission';
 import { TenantResourceVerificationV1 } from '../../tenantDeployment/resourceVerification';
 import { createWalletProjectEnvironmentResolver } from '../projectEnvironmentAdapter';
-import { resolveRuntimeTenantRootLineage } from '@seams/wallet-server/cloud-host';
-import type { RuntimePolicyScope } from '@seams/wallet-server/cloud-host';
+import { resolveRuntimeTenantRootLineage } from '@seams/host/cloud-host';
+import type { RuntimePolicyScope } from '@seams/host/cloud-host';
 import { recoveryTrustResponse } from '../../tenantRootSecurity/recoveryTrustRoute';
 import { createRestoreAccessRoute } from '../../tenantRootSecurity/restoreAccessRoute';
 import { createConsoleProviderIdentity } from '@seams-internal/console-server/boundary/providerIdentity';
 import { TenantRootCustodyWorkerRouteV1 } from '../../tenantRootSecurity/custodyWorkerRoute';
 import { D1TenantRootActiveLineageResolverV1 } from '../../tenantRootSecurity/activeLineageD1';
 import { createTenantRootRestoreWorkerRouteV1 } from '../../tenantRootSecurity/restoreWorkerRoute';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import type {
   CfEnv,
   CfExecutionContext,
   CfScheduledEvent,
   FetchHandler,
-} from '@seams/wallet-server/cloud-host';
-import { createSigningSessionSealOptions } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { createSigningSessionSealOptions } from '@seams/host/cloud-host';
 import {
   parseRouterAbEcdsaPresignRuntimeConfig,
   RouterAbEcdsaPresignRuntime,
-} from '@seams/wallet-server/cloud-host';
-import type { SigningSessionSealRoutesOptions } from '@seams/wallet-server/cloud-host';
-import { createCloudflareRouter } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { SigningSessionSealRoutesOptions } from '@seams/host/cloud-host';
+import { createCloudflareRouter } from '@seams/host/cloud-host';
 import {
   consoleCoreServicesFromBundle,
   createCloudflareD1ConsoleOnlyServiceBundle,
@@ -58,12 +58,12 @@ import {
   readD1LinkedDeviceEd25519SourceV1,
   type CloudflareD1EmailOtpServerSealConfig,
   type CloudflareD1RouterApiAuthServiceOptions,
-} from '@seams/wallet-server/cloud-host';
-import { loadCloudflareSignerWasmModule } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { loadCloudflareSignerWasmModule } from '@seams/host/cloud-host';
 import { createConsoleSessionAuthAdapter, createHmacSessionAdapter } from './d1StagingSession';
 import { createD1ConsoleSessionRevocationStore } from '@seams-internal/console-server/boundary/sessionRevocations';
 import type { RevocableConsoleSessionAdapter } from '@seams-internal/console-server/boundary/session';
-import { createEd25519SessionAdapter } from '@seams/wallet-server/cloud-host';
+import { createEd25519SessionAdapter } from '@seams/host/cloud-host';
 import { HostedConsoleAuthHandler } from '../hostedConsoleAuth';
 import {
   resolveSponsoredEvmCallConfigFromWorkerEnv,
@@ -81,15 +81,15 @@ import {
   parseRouterAbPublicKeysetV2,
   ROUTER_AB_PUBLIC_KEYSET_VERSION_V2,
   type RouterAbPublicKeysetV2,
-} from '@seams/wallet-server/cloud-host';
-import { base64UrlDecode, base64UrlEncode } from '@seams/wallet-server/cloud-host';
-import { parseWalletId } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { base64UrlDecode, base64UrlEncode } from '@seams/host/cloud-host';
+import { parseWalletId } from '@seams/host/cloud-host';
 import {
   createRouterAbEd25519YaoProductRegistrationRequestScopedRuntimeV1,
   createRouterAbEd25519YaoProductRegistrationPartitionedStateStoreFromD1V1,
   type RouterAbEd25519YaoProductRegistrationRuntimeV1,
-} from '@seams/wallet-server/cloud-host';
-import { D1WalletStore } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { D1WalletStore } from '@seams/host/cloud-host';
 import {
   createRouterAbEcdsaEd25519CeremonyTokenIssuer,
   createRouterAbEcdsaStrictPostRegistrationPort,
@@ -99,27 +99,27 @@ import {
   type RouterAbEcdsaEd25519PrivateJwk,
   type RouterAbEcdsaStrictPostRegistrationPort,
   type RouterAbEcdsaStrictRegistrationPort,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   createRouterAbServiceBindingFetch,
   ROUTER_AB_MPC_ROUTER_ORIGIN,
   ROUTER_AB_SIGNING_WORKER_ORIGIN,
   type RouterAbServiceBindingEnv,
   type CloudflareServiceBindingFetcher,
-} from '@seams/wallet-server/cloud-host';
-import { withCors } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { withCors } from '@seams/host/cloud-host';
 import {
   createRouterAbEd25519YaoHttpRegistrationBackendFromEnv,
   type RouterAbEd25519YaoTenantRootResolverV1,
-} from '@seams/wallet-server/cloud-host';
-import { CloudflareD1RouterAbEd25519YaoCapabilityPersistence } from '@seams/wallet-server/cloud-host';
-import { handleRouterAbEd25519YaoRegistrationRequestScopedCloudflareV1 } from '@seams/wallet-server/cloud-host';
-import { handleRouterAbEd25519YaoRecoveryRequestScopedCloudflareV1 } from '@seams/wallet-server/cloud-host';
-import type { WarmBootstrapLinkedEd25519AuthorityReaderV1 } from '@seams/wallet-server/cloud-host';
-import { handleRouterAbEd25519YaoExportRequestScopedCloudflareV1 } from '@seams/wallet-server/cloud-host';
-import { handleRouterAbEd25519YaoReissueRequestV1 } from '@seams/wallet-server/cloud-host';
-import { RouterAbEd25519YaoRecoveryWalletSessionAuthorizationAdapter } from '@seams/wallet-server/cloud-host';
-import { RouterAbEd25519YaoExportOwnerProofAuthorizationAdapter } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { CloudflareD1RouterAbEd25519YaoCapabilityPersistence } from '@seams/host/cloud-host';
+import { handleRouterAbEd25519YaoRegistrationRequestScopedCloudflareV1 } from '@seams/host/cloud-host';
+import { handleRouterAbEd25519YaoRecoveryRequestScopedCloudflareV1 } from '@seams/host/cloud-host';
+import type { WarmBootstrapLinkedEd25519AuthorityReaderV1 } from '@seams/host/cloud-host';
+import { handleRouterAbEd25519YaoExportRequestScopedCloudflareV1 } from '@seams/host/cloud-host';
+import { handleRouterAbEd25519YaoReissueRequestV1 } from '@seams/host/cloud-host';
+import { RouterAbEd25519YaoRecoveryWalletSessionAuthorizationAdapter } from '@seams/host/cloud-host';
+import { RouterAbEd25519YaoExportOwnerProofAuthorizationAdapter } from '@seams/host/cloud-host';
 import {
   ROUTER_AB_ED25519_YAO_EXPORT_ADMISSION_PATH_V1,
   ROUTER_AB_ED25519_YAO_EXPORT_EXECUTE_PATH_V1,
@@ -132,8 +132,8 @@ import {
   ROUTER_AB_ED25519_YAO_REISSUE_ADMISSION_PATH_V1,
   ROUTER_AB_ED25519_YAO_REISSUE_EXECUTE_PATH_V1,
   ROUTER_AB_ED25519_YAO_WARM_RECOVERY_BOOTSTRAP_PATH_V1,
-} from '@seams/wallet-server/cloud-host';
-import { ROUTER_AB_TRACE_ID_HEADER_V1 } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { ROUTER_AB_TRACE_ID_HEADER_V1 } from '@seams/host/cloud-host';
 import { createD1TenantRootCreationGrantServiceV1 } from '../../tenantRootCreation/d1';
 import {
   createTenantRootCreationConsoleRouteV1,
@@ -156,7 +156,7 @@ import {
 } from '../../tenantRootSecurity/scheduledIntent';
 import { createTenantRootSecurityConsoleRouteV1 } from '../../tenantRootSecurity/consoleRoute';
 import { createCloudflareCron, type TenantRootRefreshResumptionRunner } from './cron';
-import { buildTenantRootIdentityFromAuthenticatedDeploymentV1 } from '@seams/wallet-server/cloud-host';
+import { buildTenantRootIdentityFromAuthenticatedDeploymentV1 } from '@seams/host/cloud-host';
 import { decodeTenantRootIdentityWireV1 } from '@seams-internal/wallet-console-shared/tenant-root';
 import {
   createD1TenantDeploymentBindingReaderV1,
@@ -1984,12 +1984,10 @@ function localLinkedDeviceSessionComposition(
   const walletStore = new D1WalletStore({
     database: env.SIGNER_DB,
     ...scope,
-    ensureSchema: false,
   });
   const walletAuthMethodStore = new D1WalletAuthMethodStore({
     database: env.SIGNER_DB,
     ...scope,
-    ensureSchema: false,
   });
   const sourceChildReader = createD1LinkedDeviceOwnerSourceChildReaderV1({
     walletAuthMethodStore,
@@ -2117,7 +2115,6 @@ async function createLocalEd25519YaoProductComposition(
   const walletStore = new D1WalletStore({
     database: env.SIGNER_DB,
     ...capabilityScope,
-    ensureSchema: false,
   });
   const store = createRouterAbEd25519YaoProductRegistrationPartitionedStateStoreFromD1V1({
     database: env.SIGNER_DB,
@@ -2174,7 +2171,6 @@ async function createLocalEd25519YaoProductComposition(
         database: env.SIGNER_DB,
         scope: capabilityScope,
         walletStore,
-        ensureSchema: false,
       }),
       capabilities: runtime,
       linkedAuthorities: resolveLinkedAuthorities,

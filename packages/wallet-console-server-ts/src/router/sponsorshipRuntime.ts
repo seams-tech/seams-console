@@ -11,14 +11,14 @@ import type {
 import type {
   EnforceRoutePolicyResult,
   RoutePolicyResolutionFailure,
-} from '@seams/wallet-server/cloud-host';
-import type { RoutePrincipal } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { RoutePrincipal } from '@seams/host/cloud-host';
 import type {
   RouteExecutionContext,
   RouteResponse,
   RouteServices,
-} from '@seams/wallet-server/cloud-host';
-import { routeJson } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { routeJson } from '@seams/host/cloud-host';
 
 type PublishableKeyRoutePrincipal = Extract<RoutePrincipal, { kind: 'api_credentials' }> & {
   credentialType: 'publishable_key';

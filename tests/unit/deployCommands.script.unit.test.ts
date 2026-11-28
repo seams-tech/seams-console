@@ -38,7 +38,7 @@ const requireFromWalletSite = createRequire(
   path.join(repoRoot, 'apps/wallet-console/package.json'),
 );
 const frontendHeaders = path.join(
-  path.dirname(requireFromWalletSite.resolve('@seams/wallet/package.json')),
+  path.dirname(requireFromWalletSite.resolve('@seams/mpc-wallet/package.json')),
   'dist/public/_headers',
 );
 const environmentGeneratorScript = path.join(
@@ -314,7 +314,7 @@ test('frontend plan runs without deployment secrets', () => {
 test('wallet host smoke requires the exact installed wallet package version', async () => {
   const matchingManifest = new Response(
     JSON.stringify({
-      packageName: '@seams/wallet',
+      packageName: '@seams/mpc-wallet',
       packageVersion: '1.2.3',
       versionSkewContract: { packageVersion: '1.2.3' },
     }),
@@ -322,7 +322,7 @@ test('wallet host smoke requires the exact installed wallet package version', as
   );
   const staleManifest = new Response(
     JSON.stringify({
-      packageName: '@seams/wallet',
+      packageName: '@seams/mpc-wallet',
       packageVersion: '1.2.2',
       versionSkewContract: { packageVersion: '1.2.2' },
     }),

@@ -8,7 +8,7 @@ import {
 } from '@seams-internal/console-server/router/consoleRouteDefinitions';
 import { createComposedConsoleRouteDefinitions } from '../router/walletConsoleRouteDefinitions';
 import { authorizeConsoleRouteRequest } from '@seams-internal/console-server/router/consoleRoutePolicy';
-import { headersToRecord } from '@seams/wallet-server/cloud-host';
+import { headersToRecord } from '@seams/host/cloud-host';
 import {
   buildTenantRootIdentityFromAuthenticatedDeploymentV1,
   type TenantRootIdentityV1,

@@ -270,7 +270,7 @@ test('required secrets are derived from enabled capabilities', async () => {
     'LINKED_DEVICE_TARGET_DESCRIPTOR_HMAC_SECRET',
     'ROUTER_AB_CEREMONY_JWT_PRIVATE_JWK',
     'SIGNING_SESSION_SEAL_ROOT_SECRET_B64U',
-    'SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY',
+    'SAYSO_API_KEY',
     'SPEAK_TO_SIGN_NEAR_AI_API_KEY',
   ]);
   expect(module.componentSecretNames(staging, 'console')).toContain(
@@ -313,6 +313,63 @@ test('required secrets are derived from enabled capabilities', async () => {
   const productionTestnet = targets.backendLanes['production-testnet'];
   expect(productionTestnet.emailOtpDelivery.kind).toBe('provider_and_demo_code');
   expect(module.componentSecretNames(productionTestnet, 'gateway')).toContain('RESEND_API_KEY');
+});
+
+function withStagingVerifier(verifier: unknown): Record<string, unknown> {
+  const targets = validTargets();
+  const lane = structuredClone(stagingLane(targets)) as {
+    provisioning: { gatewayDeploymentConfig: { optional: Record<string, unknown> } };
+  };
+  lane.provisioning.gatewayDeploymentConfig.optional.speakToSignVerifier = verifier;
+  return withStaging(targets, lane);
+}
+
+test('the Speak-to-Sign verifier names one backend and its secret', async () => {
+  const module = await deploymentTargetsModule;
+  const outlayer = module.parseDeploymentTargets(
+    withStagingVerifier({
+      backend: 'outlayer',
+      outlayerBaseUrl: 'https://testnet-api.outlayer.ai',
+      project: 'seams-v1.testnet/voice-verifier',
+      versionKey: '21af4130b8209ff593dd5b2e6131ffb85a0c68dec81b8bcbf857688519cd27d9',
+      secretsProfile: 'main',
+      secretsAccountId: 'cyan-loong.testnet',
+    }),
+  ).backendLanes['staging-testnet'];
+  const names = module.componentSecretNames(outlayer, 'gateway');
+  expect(names).toContain('SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY');
+  expect(names).not.toContain('SAYSO_API_KEY');
+  expect(() =>
+    module.parseDeploymentTargets(withStagingVerifier({ backend: 'venice' })),
+  ).toThrow(/backend must be sayso or outlayer/u);
+  expect(() =>
+    module.parseDeploymentTargets(
+      withStagingVerifier({ backend: 'sayso', saysoWorkerName: 'Sayso Verifier' }),
+    ),
+  ).toThrow(/saysoWorkerName/u);
+  expect(() =>
+    module.parseDeploymentTargets(
+      withStagingVerifier({
+        backend: 'sayso',
+        saysoWorkerName: 'sayso-verifier-staging-testnet',
+        project: 'seams-v1.testnet/voice-verifier',
+      }),
+    ),
+  ).toThrow(/project/u);
+});
+
+test('the staging workflow supplies every required Gateway secret', async () => {
+  const module = await deploymentTargetsModule;
+  const workflow = readFileSync(
+    path.join(repoRoot, '.github/workflows/deploy-staging-backend.yml'),
+    'utf8',
+  );
+  for (const name of module.componentSecretNames(
+    module.readBackendLane('staging-testnet'),
+    'gateway',
+  )) {
+    expect(workflow).toContain(`${name}: \${{ secrets.${name} }}`);
+  }
 });
 
 test('email provider delivery validates provider-specific configuration', async () => {

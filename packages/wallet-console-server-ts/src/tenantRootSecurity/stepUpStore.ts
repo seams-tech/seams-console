@@ -1,4 +1,4 @@
-import { queryD1One, type D1DatabaseLike, type D1Row } from '@seams/wallet-server/cloud-host';
+import { queryD1One, type D1DatabaseLike, type D1Row } from '@seams/host/cloud-host';
 import type { TenantRootStepUpReaderV1 } from './routeGuard';
 import type { TenantRootStepUpMethodV1, TenantRootStepUpSessionRecordV1 } from './stepUp';
 

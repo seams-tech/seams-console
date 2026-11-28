@@ -2,7 +2,7 @@ import {
   parseExternalAuthConfiguration,
   parseWalletSessionLimits,
   type WalletSessionLimits,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   secureRandomBase36,
   d1Number as toNumber,

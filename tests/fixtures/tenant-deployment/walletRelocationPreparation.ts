@@ -2,7 +2,7 @@ import type { WalletRelocationBindings } from '../../../packages/wallet-console-
 import { WalletRelocationRequest } from '../../../packages/wallet-console-server-ts/src/walletPlacement/relocation';
 import { parseTenantRuntimeWriterV1, type TenantRuntimeWriterV1 } from '../../../packages/wallet-console-server-ts/src/tenantDeployment/resourceVerification';
 import { relocationWriterVersion } from './walletRelocationResources';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import { WalletRegionalDispatch } from '../../../packages/wallet-console-server-ts/src/walletPlacement/regionalDispatch';
 import { WalletRelocationPreparation } from '../../../packages/wallet-console-server-ts/src/walletPlacement/relocationPreparation';
 

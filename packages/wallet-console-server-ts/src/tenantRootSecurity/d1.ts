@@ -5,7 +5,7 @@ import {
   type D1DatabaseLike,
   type D1ResultLike,
   type D1Row,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   isTenantRootOperationKindV1,
   type TenantRootOperationKindV1,

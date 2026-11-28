@@ -1,4 +1,4 @@
-import { parseWalletId } from '@seams/wallet-server/cloud-host';
+import { parseWalletId } from '@seams/host/cloud-host';
 import { WalletPlacementError, type WalletHome } from './home';
 import type { WalletPlacementStatus } from './relocationStatus';
 

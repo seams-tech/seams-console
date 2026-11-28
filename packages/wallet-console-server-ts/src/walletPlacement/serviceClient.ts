@@ -4,7 +4,7 @@ import {
   walletRegistrationSetupRequestDigest,
   type WalletRegistrationContextResolver,
   type WalletRegistrationContextResult,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { WalletExecutionAuthority } from './executionAuthority';
 import { WalletPlacementConsoleBinding } from './consoleBinding';
 import {
@@ -12,27 +12,27 @@ import {
   type LinkedDeviceBootstrapStore,
   type LinkedDeviceBootstrapResult,
   type LinkedDeviceSessionRecordV1,
-} from '@seams/wallet-server/cloud-host';
-import type { LinkedDeviceRequestProofNonceStoreV1 } from '@seams/wallet-server/cloud-host';
-import type { SyncChallengeFailure } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { LinkedDeviceRequestProofNonceStoreV1 } from '@seams/host/cloud-host';
+import type { SyncChallengeFailure } from '@seams/host/cloud-host';
 import {
   parseWebAuthnSyncChallengeRecord,
   type WebAuthnSyncChallengeStore,
-} from '@seams/wallet-server/cloud-host';
-import type { PasskeyCredentialClaims } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { PasskeyCredentialClaims } from '@seams/host/cloud-host';
 import type { RegistrationOfferCommand } from './registrationOfferService';
 import type { IdentityCommand } from './identityService';
-import type { IdentityStore } from '@seams/wallet-server/cloud-host';
-import type { WalletLifecycleRoutingPublisher } from '@seams/wallet-server/cloud-host';
+import type { IdentityStore } from '@seams/host/cloud-host';
+import type { WalletLifecycleRoutingPublisher } from '@seams/host/cloud-host';
 import type {
   WalletRecoveryRoutingPublication,
   WalletRecoveryRoutingPublisher,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { WalletRouteLocator } from './walletRouteLocators';
 import type {
   WalletSessionLocatorPublication,
   WalletSessionRoutingPublisher,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { SessionLocator } from './sessionLocators';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import {

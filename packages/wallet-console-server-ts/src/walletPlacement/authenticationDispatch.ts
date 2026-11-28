@@ -3,7 +3,7 @@ import {
   verifyGoogleOidcToken,
   parseWalletId,
   webAuthnCredentialIdB64uFromCredential,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { WalletHomeAssignment, WalletOwnershipKey } from './home';
 import type { ConsoleRegistrationHomeAdmission } from './registrationAdmission';
 import { WalletRouteLocator } from './walletRouteLocators';

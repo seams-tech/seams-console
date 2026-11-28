@@ -1,4 +1,4 @@
-import { isPlainObject, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { WalletAuthorizationRelocation } from './authorizationRelocation';
 import { authorizeRouterCleanup } from './routerRelocationReceipt';

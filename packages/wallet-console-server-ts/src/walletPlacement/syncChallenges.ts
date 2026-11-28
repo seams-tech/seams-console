@@ -2,7 +2,7 @@ import {
   parseWebAuthnSyncChallengeRecord,
   WalletLifecycleLocator,
   type D1DatabaseLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { walletHomeAssignmentFromRow } from './d1';
 import { WalletPlacementError, type WalletOwnershipKey } from './home';

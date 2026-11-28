@@ -30,7 +30,7 @@ import {
 } from '@seams-internal/console-server/router/cloudflare/accountRoutes';
 import { WALLET_API_CREDENTIAL_SCOPE_VALIDATION } from '@seams-internal/wallet-console-shared/apiKeyScopes';
 import { WALLET_CONSOLE_WEBHOOK_EVENT_CATEGORY_VALIDATION } from '@seams-internal/wallet-console-shared/webhookEventCategories';
-import { buildCorsOrigins } from '@seams/wallet-server/cloud-host';
+import { buildCorsOrigins } from '@seams/host/cloud-host';
 import { withConsoleCors } from '@seams-internal/console-server/router/cloudflare/cors';
 import type { ConsoleBillingService } from '@seams-internal/console-server/billing/service';
 import {
@@ -189,22 +189,22 @@ import {
   buildConsoleWebhookReplayAuditEvent,
 } from '../consoleAuditMetadata';
 import { resolveConsoleRuntimeSnapshotPayload } from '../runtimeSnapshotPayload';
-import type { NormalizedRouterLogger } from '@seams/wallet-server/cloud-host';
-import { coerceRouterLogger } from '@seams/wallet-server/cloud-host';
+import type { NormalizedRouterLogger } from '@seams/host/cloud-host';
+import { coerceRouterLogger } from '@seams/host/cloud-host';
 import { buildConsoleOpsCockpitSummary } from '../opsCockpitSummary';
 import { attachConsoleRouteSurface } from '@seams-internal/console-server/router/consoleRouteSurface';
 import type { ConsoleRouteDefinition } from '@seams-internal/console-server/router/consoleRouteDefinitions';
 import { resolveWalletConsoleRouteSurface } from '../walletConsoleRouteDefinitions';
 import { handleConsoleObservabilityRoutes } from './consoleObservabilityRoutes';
-import type { CfEnv, CfExecutionContext, FetchHandler } from '@seams/wallet-server/cloud-host';
-import { headersToRecord, json, readJson } from '@seams/wallet-server/cloud-host';
+import type { CfEnv, CfExecutionContext, FetchHandler } from '@seams/host/cloud-host';
+import { headersToRecord, json, readJson } from '@seams/host/cloud-host';
 import {
   tenantStorageRouteDiagnostic,
   type CloudflareTenantStorageRoute,
   type TenantStorageRouteResolver,
 } from './tenantStorageRoute';
-import type { TenantStorageRouteDiagnostic } from '@seams/wallet-server/cloud-host';
-import { parseOrgId } from '@seams/wallet-server/cloud-host';
+import type { TenantStorageRouteDiagnostic } from '@seams/host/cloud-host';
+import { parseOrgId } from '@seams/host/cloud-host';
 import { assertNever } from '@seams-internal/console-shared/accountPlatform/boundary';
 import {
   verifyFreshStepUpForRequestV1,

@@ -4,7 +4,7 @@ import {
   parseWalletRecoveryOperationId,
   type D1DatabaseLike,
   type D1ResultLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { walletHomeAssignmentFromRow } from './d1';
 import { WalletOwnershipKey, WalletPlacementError, type WalletHomeAssignment } from './home';

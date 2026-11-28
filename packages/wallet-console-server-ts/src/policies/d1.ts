@@ -1,4 +1,4 @@
-import { secureRandomBase36 } from '@seams/wallet-server/cloud-host';
+import { secureRandomBase36 } from '@seams/host/cloud-host';
 import {
   d1Integer as toNumber,
   d1ChangedRows,
@@ -8,8 +8,8 @@ import {
   queryD1One,
   type D1ResultLike,
   type D1Row,
-} from '@seams/wallet-server/cloud-host';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { ConsolePolicyError } from './errors';
 import { ConsolePolicyRulesDigest } from './reviewDigest';
 import {

@@ -7,7 +7,7 @@ import {
   normalizeLogger,
   type Logger,
   type WalletRegistrationContextResolver,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { ConsoleCoreRouterServices, WalletConsoleRouterServices } from '../consoleComposition';
 import { createCloudflareD1AccountServiceBundle } from '@seams-internal/console-server/router/cloudflare/d1AccountServices';
 import type { D1AccountPlatformService } from '@seams-internal/console-server/accountPlatform/d1';
@@ -48,7 +48,7 @@ import {
   createD1ConsoleWebhookService,
   type ConsoleWebhookSecretCipher,
 } from '@seams-internal/console-server/webhooks/d1';
-import { base64UrlDecode } from '@seams/wallet-server/cloud-host';
+import { base64UrlDecode } from '@seams/host/cloud-host';
 import type {
   ConsoleWebhookService,
   WebhookDispatchAdapter,
@@ -88,7 +88,7 @@ import type { ConsoleWalletService } from '@seams-internal/wallet-console-server
 import type { D1ConsoleWalletBalanceReaderOptions } from '@seams-internal/wallet-console-server/wallets/balances';
 import { createD1ConsoleRuntimeSnapshotService } from '@seams-internal/wallet-console-server/runtimeSnapshots/d1';
 import type { ConsoleRuntimeSnapshotService } from '@seams-internal/wallet-console-server/runtimeSnapshots/service';
-import type { CloudflareD1RouterApiAuthService } from '@seams/wallet-server/cloud-host';
+import type { CloudflareD1RouterApiAuthService } from '@seams/host/cloud-host';
 import {
   DEFAULT_TEMPO_ONBOARDING_CONTRACT,
   TEMPO_TESTNET_CHAIN_ID,
@@ -104,7 +104,7 @@ import type {
   RouterApiOptions,
   RouterApiProjectEnvironmentResolver,
   RouterApiUsageMeterAdapter,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { createWalletProjectEnvironmentResolver } from '../projectEnvironmentAdapter';
 import type { ConsoleRouterOptions } from '@seams-internal/wallet-console-server/router/console';
 import {
@@ -116,11 +116,11 @@ import {
   createConsoleRouterApiRouteExtensions,
   DEFAULT_SIGNED_DELEGATE_ROUTE,
 } from '@seams-internal/wallet-console-server/router/routeExtensions';
-import type { RouterAbNormalSigningAdmissionAdapter } from '@seams/wallet-server/cloud-host';
+import type { RouterAbNormalSigningAdmissionAdapter } from '@seams/host/cloud-host';
 import {
   createCloudflareD1RouterAbNormalSigningAdmissionStore,
   createRouterAbNormalSigningAdmissionAdapter,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type {
   SponsoredEvmCallExecutorConfig,
   SponsoredEvmExecutionAdapterResolver,
@@ -133,7 +133,7 @@ import type {
   D1DatabaseLike,
   D1DatabaseName,
   TenantDataJurisdiction,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   createStaticCloudflareTenantStorageRouteResolverFromBindings,
   type TenantStorageRouteResolver,

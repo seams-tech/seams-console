@@ -4,7 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { installCandidateAssets } from './candidate-assets';
-import type { WalletMoveId, WalletMoveRequest, WalletMoveStatusResult } from '@seams/wallet';
+import type { WalletMoveId, WalletMoveRequest, WalletMoveStatusResult } from '@seams/mpc-wallet/client';
 
 declare global {
   interface Window {

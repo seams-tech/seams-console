@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSeams } from '@seams/wallet/react';
+import { useSeams } from '@seams/mpc-wallet/react';
 
 export type DemoWalletSessionLifecycleReadiness =
   | { readonly kind: 'initializing' }

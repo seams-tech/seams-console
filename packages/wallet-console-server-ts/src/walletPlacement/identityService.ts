@@ -1,4 +1,4 @@
-import { D1IdentityStore, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { D1IdentityStore, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { WalletPlacementError, type WalletOwnershipKey } from './home';
 
 export type IdentityCommand =
@@ -44,7 +44,6 @@ export async function handleIdentityCommand(
     orgId: scope.organizationId,
     projectId: scope.projectId,
     envId: scope.environmentId,
-    ensureSchema: false,
   });
   switch (raw.operation) {
     case 'find': {

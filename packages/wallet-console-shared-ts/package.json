@@ -18,6 +18,6 @@
     "type-check": "tsrs --noEmit"
   },
   "dependencies": {
-    "@seams/wallet-server": "0.76.0"
+    "@seams/host": "0.77.0"
   }
 }

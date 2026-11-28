@@ -9,7 +9,7 @@ import {
   queryD1One,
   WalletObjectAddressSnapshot,
   type D1DatabaseLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { decodeTenantDeploymentBindingV1 } from '@seams-internal/wallet-console-shared/tenant-deployment';
 import type { TenantDeploymentBindingV1 } from './types';
 import { TenantDeploymentD1ResourceIdentityV1 } from './deploymentResource';

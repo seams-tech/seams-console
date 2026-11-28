@@ -2,7 +2,7 @@ import { LaneEnvironmentKeys } from '../../packages/wallet-console-server-ts/src
 import type { WalletHomeCatalog } from '../../packages/wallet-console-server-ts/src/walletPlacement/home';
 import { handleWalletRelocationAdvance, resumeWalletRelocations, WALLET_RELOCATION_ADVANCE_URL } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocationService';
 import { expect } from '@playwright/test';
-import { queryD1One, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { queryD1One, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { WalletRelocationCleanup } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocationCleanup';
 import type { WalletRelocationRequest } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocation';
 import type { WalletRelocationAttempt } from '../../packages/wallet-console-server-ts/src/walletPlacement/relocationExecution';

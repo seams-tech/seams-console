@@ -1,5 +1,5 @@
 import { WalletD1RelocationCommand } from './relocationCommands';
-import { isPlainObject, queryD1One, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, queryD1One, type D1DatabaseLike } from '@seams/host/cloud-host';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { WalletOwnershipKey, WalletPlacementError } from './home';
 import type { WalletRelocationAttempt } from './relocationExecution';

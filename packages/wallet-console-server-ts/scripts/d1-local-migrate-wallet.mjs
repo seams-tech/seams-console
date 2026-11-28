@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 
 const require = createRequire(import.meta.url);
-const walletServerRoot = path.dirname(require.resolve('@seams/wallet-server/package.json'));
+const walletServerRoot = path.dirname(require.resolve('@seams/host/package.json'));
 const migrationScript = path.join(walletServerRoot, 'scripts/d1-local-migrate-signer.mjs');
 const result = spawnSync(process.execPath, [migrationScript, ...process.argv.slice(2)], {
   stdio: 'inherit',

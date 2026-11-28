@@ -3,7 +3,7 @@ import {
   MAX_WALLET_SESSION_REMAINING_USES,
   MAX_WALLET_SESSION_TTL_MS,
   type D1DatabaseLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   createCloudflareConsoleRouter,
   type ConsoleAuthClaims,

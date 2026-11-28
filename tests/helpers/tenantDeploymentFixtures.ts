@@ -19,8 +19,8 @@ import type {
   ActivateTenantDeploymentBindingInputV1,
   ExpectedActiveTenantDeploymentBindingV1,
 } from '../../packages/wallet-console-server-ts/src/tenantDeployment/types';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
-import { signTenantRootCreationGrantV1 } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
+import { signTenantRootCreationGrantV1 } from '@seams/host/cloud-host';
 import type { TenantRootIdentityV1 } from '../../packages/wallet-console-shared-ts/src/tenant-root';
 import { createD1TenantRootCreationGrantServiceV1 } from '../../packages/wallet-console-server-ts/src/tenantRootCreation/d1';
 

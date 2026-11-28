@@ -4,8 +4,8 @@ import {
   queryD1One,
   sha256Bytes,
   type D1DatabaseLike,
-} from '@seams/wallet-server/cloud-host';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import {
   encodeTenantRootIdentityV1,
   type TenantRootIdentityV1,

@@ -5,7 +5,7 @@ import {
   type HostedAuthMenuExternalAuthRequest,
   type HostedAuthMenuMode,
   type HostedAuthMenuOutcome,
-} from '@seams/wallet/react';
+} from '@seams/mpc-wallet/react';
 import React from 'react';
 import { toast } from 'sonner';
 

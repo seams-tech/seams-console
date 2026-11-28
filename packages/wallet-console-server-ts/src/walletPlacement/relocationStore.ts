@@ -2,7 +2,7 @@ import type { RelocationResourceVerification } from '../tenantDeployment/relocat
 import { WalletRelocationCapacity } from './relocationCapacity';
 import { GatewayRelocationOwnerApproval, hasFreshRelocationOwnerApproval } from './relocationOwnerApproval';
 import { createWalletRelocationParticipants, type WalletRelocationBindings } from './relocationParticipants';
-import { queryD1One, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { queryD1One, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { walletHomeAssignmentFromRow } from './d1';
 import {
   assertDeploymentResourcesVerified,

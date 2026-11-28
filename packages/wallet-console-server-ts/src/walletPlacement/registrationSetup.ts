@@ -10,7 +10,7 @@ import {
   type RouterApiPublishableKeyAuthAdapter,
   type RouterApiPublishableKeyAuthRequest,
   type WalletRegistrationContextResult,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { D1WalletHomeDirectory } from './d1';
 import { RegistrationSetupAllocation, WalletHomeCatalog, WalletOwnershipKey } from './home';
 

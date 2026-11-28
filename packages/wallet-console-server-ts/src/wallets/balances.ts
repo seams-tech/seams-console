@@ -3,11 +3,11 @@ import {
   type ConsoleWalletKey,
 } from '@seams-internal/wallet-console-shared';
 import { parseConsoleWalletKey } from './requests';
-import { type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { type D1DatabaseLike } from '@seams/host/cloud-host';
 import type {
   WalletRuntimeWalletIdentitiesResult,
   WalletRuntimeWalletIdentityRequest,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { ConsoleWalletError } from './errors';
 import type {
   ConsoleWalletBalanceRefreshResult,

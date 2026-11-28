@@ -10,14 +10,14 @@ import {
   decodeTenantRootIdentityWireV1,
   type TenantRootIdentityV1,
 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
 import type { TenantRootSecurityStateReaderV1 } from './consoleRoute';
 import type {
   TenantRootOperationEntryV1,
   TenantRootOperationStoreV1,
   TenantRootPendingOperationV1,
 } from './service';
-import type { D1DatabaseLike, D1Row } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike, D1Row } from '@seams/host/cloud-host';
 
 /** The only operation kind a background schedule can create. */
 export const TENANT_ROOT_SCHEDULED_ROTATION_OPERATION_KIND_V1 =

@@ -7,7 +7,7 @@ import {
   createCloudflareD1RouterAbNormalSigningAdmissionStore,
   queryD1One,
   type D1DatabaseLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { TenantDeploymentD1ResourceIdentityV1 } from './deploymentResource';
 import { D1RegionalDeploymentAdmission } from './regionalAdmission';
 import { parseTenantRuntimeWriterV1 } from './resourceVerification';

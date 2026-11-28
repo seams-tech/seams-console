@@ -1,4 +1,4 @@
-import type { D1DatabaseLike, WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike, WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import { createCloudflareD1AccountServiceBundle } from '../../packages/console-server-ts/src/router/cloudflare/d1AccountServices';
 import { createD1ConsoleWalletEnvironmentService } from '../../packages/wallet-console-server-ts/src/environments/d1';
 import type { ConsoleAuthClaims } from '../../packages/console-server-ts/src/router/consoleAuth';

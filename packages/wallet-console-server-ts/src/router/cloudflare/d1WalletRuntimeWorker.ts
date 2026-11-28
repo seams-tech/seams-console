@@ -5,18 +5,18 @@ import { handleRuntimeIdentityHomeRequest } from '../../serviceBinding/runtimeId
 import { WalletHomeCatalog } from '../../walletPlacement/home';
 import { WalletHomeServiceClient } from '../../walletPlacement/serviceClient';
 import { parseTenantRuntimeWriterV1 } from '../../tenantDeployment/resourceVerification';
-import type { CfExecutionContext } from '@seams/wallet-server/cloud-host';
+import type { CfExecutionContext } from '@seams/host/cloud-host';
 import {
   handleSplitGatewayWalletRuntimeRequest,
   readWalletRuntimeIdentities,
   type CloudflareD1GatewayEnv,
-} from '@seams/wallet-server/hosted-wallet-gateway';
+} from '@seams/host/hosted-wallet-gateway';
 import {
   handleWalletControlRequest,
   WalletHomeCustodyBinding,
   WALLET_RUNTIME_OP_PATHS_V1,
   type WalletControlRuntimeBindings,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { resolveEmailOtpDeliveryProviderFromEnv } from '../../email/otp/emailOtpProviders';
 import { resolveBoundTenantDeploymentRuntimeEnvironmentV1 } from '../../tenantDeployment/runtimeBinding';
 import { createTenantDeploymentRuntimeInspectionHandlerV1 } from '../../tenantDeployment/runtimeInspection';

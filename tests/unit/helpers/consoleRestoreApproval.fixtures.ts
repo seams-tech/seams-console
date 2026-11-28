@@ -5,7 +5,7 @@ import {
   WALLET_CONSOLE_AUDIT_CATEGORIES,
   WALLET_CONSOLE_AUDIT_EVIDENCE_REFERENCE_KINDS,
 } from '../../../packages/wallet-console-server-ts/src/audit';
-import { buildTenantRootIdentityFromAuthenticatedDeploymentV1 } from '@seams/wallet-server/cloud-host';
+import { buildTenantRootIdentityFromAuthenticatedDeploymentV1 } from '@seams/host/cloud-host';
 import type { TenantRootStepUpSessionRecordV1 } from '../../../packages/wallet-console-server-ts/src/tenantRootSecurity/stepUp';
 import { activateWalletProject } from '../../helpers/accountWalletProject.fixtures';
 import { consoleAuthorizationClaims } from '../../helpers/consoleAuthorization.fixtures';

@@ -6,16 +6,16 @@ import {
   parseListConsoleWalletsRequest,
   parseSearchConsoleWalletsRequest,
 } from '../wallets/requests';
-import { enforceRoutePolicy } from '@seams/wallet-server/cloud-host';
-import type { NormalizedRouterLogger } from '@seams/wallet-server/cloud-host';
-import { resolveSecretKeyApiCredentialAuth } from '@seams/wallet-server/cloud-host';
+import { enforceRoutePolicy } from '@seams/host/cloud-host';
+import type { NormalizedRouterLogger } from '@seams/host/cloud-host';
+import { resolveSecretKeyApiCredentialAuth } from '@seams/host/cloud-host';
 import type {
   RouterApiKeyAuthAdapter,
   RouterApiKeyPrincipal,
-} from '@seams/wallet-server/cloud-host';
-import type { HeaderRecord, RouteResponse } from '@seams/wallet-server/cloud-host';
-import type { RouteDefinition } from '@seams/wallet-server/cloud-host';
-import { routeJson } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { HeaderRecord, RouteResponse } from '@seams/host/cloud-host';
+import type { RouteDefinition } from '@seams/host/cloud-host';
+import { routeJson } from '@seams/host/cloud-host';
 
 type RouterApiWalletErrorBody = {
   ok: false;

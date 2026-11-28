@@ -1,10 +1,10 @@
-import { base64UrlEncode, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { base64UrlEncode, type D1DatabaseLike } from '@seams/host/cloud-host';
 import {
   decodeTenantRootIdentityWireV1,
   tenantRootDownloadableRecoverySetV1,
   type TenantRootIdentityV1,
 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import { enrollmentBytes, enrollmentSecretHash, enrollmentText } from './cliEnrollmentStore';
 import {
   guardTenantRootSecurityRequestV1,

@@ -1,4 +1,4 @@
-import type { CloudflareD1EmailOtpDeliveryProviderResult } from '@seams/wallet-server/cloud-host';
+import type { CloudflareD1EmailOtpDeliveryProviderResult } from '@seams/host/cloud-host';
 import { createResendConsoleEmailProvider } from '@seams-internal/console-server/email/providers';
 import type {
   ConsoleEmailProvider,

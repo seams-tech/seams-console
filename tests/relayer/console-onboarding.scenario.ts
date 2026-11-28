@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import type { D1DatabaseLike, WalletConsoleServiceBinding } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike, WalletConsoleServiceBinding } from '@seams/host/cloud-host';
 import { consoleIdentityCookie } from '../helpers/consoleWorkerEnvironment';
 
 /** Exercises the hosted entrypoint before any deployment exists in its D1 database. */

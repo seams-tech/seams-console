@@ -1,4 +1,4 @@
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import type { WalletRelocation } from './relocation';
 
 const LEASE_MS = 120_000;

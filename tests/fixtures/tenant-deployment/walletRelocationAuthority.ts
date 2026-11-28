@@ -8,7 +8,7 @@ import {
   relocationFixtureBindings,
   relocationFixtureClock,
 } from './walletRelocationPreparation';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { D1WalletHomeDirectory } from '../../../packages/wallet-console-server-ts/src/walletPlacement/d1';
 import {
   RegistrationSetupAllocation,

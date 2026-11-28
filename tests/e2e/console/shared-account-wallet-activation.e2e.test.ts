@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { Miniflare } from 'miniflare';
 import { createRequire } from 'node:module';
 import { unstable_splitSqlQuery } from 'wrangler';
-import { isD1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isD1DatabaseLike } from '@seams/host/cloud-host';
 import type {
   AcceptedServiceReceiptV1,
   PlatformResult,

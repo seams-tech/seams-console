@@ -1,4 +1,4 @@
-import type { CloudflareD1EmailOtpDeliveryProvider } from '@seams/wallet-server/cloud-host';
+import type { CloudflareD1EmailOtpDeliveryProvider } from '@seams/host/cloud-host';
 import {
   createAmazonSesEmailOtpDeliveryProvider,
   parseAmazonSesEmailOtpProviderConfig,

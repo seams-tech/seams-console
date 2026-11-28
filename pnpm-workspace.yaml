@@ -19,9 +19,10 @@ allowBuilds:
   utf-8-validate: true
   workerd: true
 minimumReleaseAgeExclude:
-  - '@seams/wallet-server@0.76.0'
-  - '@seams/wallet@0.76.0'
-  - '@seams/voiceid@0.76.0'
+  - '@seams/host@0.77.0'
+  - '@seams/mpc-wallet@0.77.0'
+  - '@seams/wallet-connect@0.77.0'
+  - '@seams/sayso-verdict@0.2.0'
   - '@seams/voice-capture@0.72.0'
   - '@seams/voice-verdict@0.72.0'
   - '@seams/voice-sign@0.72.0'

@@ -239,7 +239,7 @@ export default defineConfig(() => {
   // The homepage showcase renders the installed SDK release's own wallet
   // surfaces, which the package does not export.
   const packageRequire = createRequire(import.meta.url);
-  const walletUi = `${dirname(packageRequire.resolve('@seams/wallet/package.json'))}/dist/esm`;
+  const walletUi = `${dirname(packageRequire.resolve('@seams/mpc-wallet/package.json'))}/dist/esm`;
   return {
     base,
     plugins: [react(), walletLanguagePages, voiceGlowOnPreact],

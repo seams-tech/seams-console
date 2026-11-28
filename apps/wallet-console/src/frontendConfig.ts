@@ -1,5 +1,5 @@
-import type { SeamsConfigsInput } from '@seams/wallet/react';
-import { voiceIdAuthMethod } from '@seams/voiceid';
+import type { SeamsConfigsInput } from '@seams/mpc-wallet/react';
+import { voiceIdAuthMethod } from '@seams/mpc-wallet/voiceid';
 import {
   decodeTenantDeploymentPublicProjectionV1,
   type TenantDeploymentPublicProjectionV1,
@@ -9,7 +9,7 @@ import {
   DEFAULT_WALLET_SESSION_TTL_MS,
   MAX_WALLET_SESSION_REMAINING_USES,
   MAX_WALLET_SESSION_TTL_MS,
-} from '@seams/wallet/advanced';
+} from '@seams/mpc-wallet/client';
 
 const DEFAULT_NEAR_RPC_URL = 'https://rpc.testnet.fastnear.com';
 const DEFAULT_NEAR_EXPLORER_URL = 'https://testnet.nearblocks.io';

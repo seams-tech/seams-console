@@ -1,4 +1,4 @@
-import { secureRandomBase36 } from '@seams/wallet-server/cloud-host';
+import { secureRandomBase36 } from '@seams/host/cloud-host';
 import { ConsoleSponsorshipSpendCapError } from './errors';
 import {
   buildConsoleSponsorshipSpendCapWindowKey,

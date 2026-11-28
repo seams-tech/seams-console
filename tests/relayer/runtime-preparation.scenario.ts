@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { readFile } from 'node:fs/promises';
 import { unstable_splitSqlQuery } from 'wrangler';
 import { handleRuntimeRelocationPreparation } from '../../packages/wallet-console-server-ts/src/walletPlacement/runtimePreparation';

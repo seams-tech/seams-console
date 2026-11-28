@@ -1,4 +1,4 @@
-import { isPlainObject, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import type { WalletOwnershipKey } from './home';
 import type { WalletRelocation } from './relocation';
 import type { NativeRelocationSnapshots } from './relocationManifest';

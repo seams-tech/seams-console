@@ -1,11 +1,11 @@
-import { secureRandomBase36 } from '@seams/wallet-server/cloud-host';
+import { secureRandomBase36 } from '@seams/host/cloud-host';
 import {
   d1Number as toNumber,
   queryD1All,
   queryD1One,
   type D1Row,
-} from '@seams/wallet-server/cloud-host';
-import type { D1DatabaseLike, D1PreparedStatementLike } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { D1DatabaseLike, D1PreparedStatementLike } from '@seams/host/cloud-host';
 import { ConsoleSponsoredCallError } from './errors';
 import type {
   ConsoleSponsoredCallApiKeyKind,

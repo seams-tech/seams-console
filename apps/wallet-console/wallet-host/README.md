@@ -9,7 +9,7 @@ An unavailable mainnet lane displays an error; it never opens the testnet wallet
 `/sdk/*` remains the exact installed SDK's embedded runtime and assets. The
 frontend build copies `/wallet-service/index.html` unchanged. The application
 supplies its relayer URL through SDK configuration.
-The build composes the optional `@seams/voiceid` host assets into the Wallet host.
+The build composes the optional VoiceID host assets of `@seams/host` into the Wallet host.
 Customer applications embed the shared wallet origin of their network and deploy
 no wallet host of their own. The settings app connects
 to the same-origin wallet service.
@@ -17,7 +17,7 @@ to the same-origin wallet service.
 Build and deploy through the existing frontend workflow with `surface: wallet-host`
 (or `all`). Before deployment, publish the SDK release containing
 `WalletSettingsPage` and `TransactionReviewHost`, then update the exact
-`@seams/wallet` dependency pins and lockfile in this repository. Version 0.5.33
+`@seams/mpc-wallet` dependency pins and lockfile in this repository. Version 0.5.33
 does not contain these exports. The build rejects it explicitly.
 
 Validation includes root/settings HTML smoke checks alongside the existing SDK

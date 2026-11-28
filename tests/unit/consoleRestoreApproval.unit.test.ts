@@ -5,7 +5,7 @@ import path from 'node:path';
 import { SqliteCliD1Database } from '../helpers/sqliteD1';
 import { consoleRestoreApprovalFixture } from './helpers/consoleRestoreApproval.fixtures';
 import { createRestoreAccessRoute } from '../../packages/wallet-console-server-ts/src/tenantRootSecurity/restoreAccessRoute';
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
 
 const base = 'https://console.example/console/tenant-root/security/restore-access';
 const destination = 'https://replacement.example';

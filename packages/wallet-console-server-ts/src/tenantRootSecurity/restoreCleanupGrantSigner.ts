@@ -1,4 +1,4 @@
-import { base64UrlDecode, base64UrlEncode } from '@seams/wallet-server/cloud-host';
+import { base64UrlDecode, base64UrlEncode } from '@seams/host/cloud-host';
 
 const GRANT_DOMAIN = new TextEncoder().encode('seams/tenant-root-restore-cleanup-grant/v1');
 const GRANT_OPERATION = new TextEncoder().encode('tenant_root_restore_cleanup_v1');

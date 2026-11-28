@@ -2,7 +2,7 @@ import {
   base64UrlDecode,
   deriveRecoveryCodeLocatorV1FromBytes,
   parseWalletId,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { ConsoleRegistrationHomeAdmission } from './registrationAdmission';
 import { WalletRouteLocator } from './walletRouteLocators';
 import type { WalletHomeAssignment } from './home';

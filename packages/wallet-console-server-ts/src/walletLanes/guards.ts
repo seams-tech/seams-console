@@ -3,7 +3,7 @@ import type {
   RouterApiProjectEnvironmentResolver,
   RouterApiPublishableKeyAuthAdapter,
   RouterApiUsageMeterAdapter,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { TenantRootIdentityV1 } from '@seams-internal/wallet-console-shared/tenant-root';
 import type { ConsoleWalletEnvironmentService } from '../environments/service';
 import type { LaneEnvironmentKeys } from './environmentKeys';

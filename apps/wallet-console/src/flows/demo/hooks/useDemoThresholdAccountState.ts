@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSeams } from '@seams/wallet/react';
+import { useSeams } from '@seams/mpc-wallet/react';
 import { toast } from 'sonner';
 
 import { FRONTEND_CONFIG } from '@/config';

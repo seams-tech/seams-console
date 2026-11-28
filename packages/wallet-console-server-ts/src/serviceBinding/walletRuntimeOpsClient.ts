@@ -10,7 +10,7 @@ import {
   type WalletRuntimeServiceBinding,
   type WalletRuntimeWalletIdentitiesResult,
   type WalletRuntimeWalletIdentityRequest,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 
 async function postJson(
   binding: WalletRuntimeServiceBinding,

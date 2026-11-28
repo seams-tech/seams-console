@@ -7,7 +7,7 @@ import {
   parseWalletRuntimeExecuteSignedDelegateRequest,
   type WalletRuntimeExecuteSignedDelegateResult,
   type WalletRuntimeExecuteSignedDelegateRequest,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { SponsoredNearDelegateRejectedError } from './executionFailure';
 
 export interface SponsoredNearDelegateAuthService {

@@ -1,4 +1,4 @@
-import { isPlainObject, sha256Bytes, type WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, sha256Bytes, type WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import { WalletPlacementError, type WalletHome } from './home';
 import { relocationTimestamp } from './relocation';
 import { preparationEvidenceDigest, type WalletRelocationParticipants } from './relocationPreparation';

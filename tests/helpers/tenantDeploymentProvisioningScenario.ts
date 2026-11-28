@@ -1,5 +1,5 @@
 import type { RegionalDeploymentInstaller } from '../../packages/wallet-console-server-ts/src/tenantDeployment/regionalAdmission';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { createHash } from 'node:crypto';
 import { createD1ConsoleApiKeyService } from '../../packages/wallet-console-server-ts/src/apiKeys/d1';
 import { createCloudflareD1AccountServiceBundle } from '../../packages/console-server-ts/src/router/cloudflare/d1AccountServices';

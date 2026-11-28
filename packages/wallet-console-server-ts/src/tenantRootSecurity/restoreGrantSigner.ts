@@ -1,4 +1,4 @@
-import { base64UrlDecode, base64UrlEncode } from '@seams/wallet-server/cloud-host';
+import { base64UrlDecode, base64UrlEncode } from '@seams/host/cloud-host';
 import type { TenantRootDeriverRoleV1 } from '@seams-internal/wallet-console-shared/tenant-root';
 
 const GRANT_DOMAIN = new TextEncoder().encode('seams/tenant-root-restore-role-import-grant/v1');

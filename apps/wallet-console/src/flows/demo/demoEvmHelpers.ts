@@ -8,7 +8,7 @@ import {
   normalizeLowercaseString,
   normalizeTrimmedString,
   type EvmClient,
-} from '@seams/wallet/advanced';
+} from '@seams/mpc-wallet/client';
 
 import faucetAbi from '@/assets/abis/Faucet.json';
 

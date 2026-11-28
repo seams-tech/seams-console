@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
 import { Miniflare } from 'miniflare';
-import { isD1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isD1DatabaseLike } from '@seams/host/cloud-host';
 import { createD1ConsoleSponsorshipSpendCapService } from '../../../packages/wallet-console-server-ts/src/sponsorshipSpendCaps/d1';
 import type { ConsoleSponsorshipSpendCapService } from '../../../packages/wallet-console-server-ts/src/sponsorshipSpendCaps/service';
 import {

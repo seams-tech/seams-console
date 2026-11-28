@@ -203,12 +203,12 @@ Run the Wallet scenario from the private repository:
 ```sh
 python3 tests/e2e/celld/packaged-wallet.e2e.py \
   /absolute/path/to/candidate \
-  /absolute/path/to/installed/@seams/wallet-server \
+  /absolute/path/to/installed/@seams/host \
   /tmp/celld-storage-test/bin/python \
   /absolute/path/to/esbuild \
   /absolute/path/to/private-celld-0.6.2-seams.4 \
   /absolute/path/to/seams-wallet-checkout \
-  /absolute/path/to/installed/@seams/wallet
+  /absolute/path/to/installed/@seams/mpc-wallet
 ```
 
 The preceding `.4` private version is reproducible from commit `4aaeb6bc` and its build command.
@@ -366,7 +366,7 @@ Run the shared mixed Ed25519/ECDSA scenario with real celld custody Workers:
 ```sh
 python3 tests/e2e/celld/relocation.e2e.py \
   /path/to/celld /path/to/moto-venv/bin/python \
-  /path/to/seams-wallet /path/to/packed/@seams/wallet-server
+  /path/to/seams-wallet /path/to/packed/@seams/host
 ```
 
 The runner requires release Worker builds that match the supplied package manifest.

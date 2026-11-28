@@ -3,7 +3,7 @@ import type {
   ConsoleAuthClaims,
 } from '../../packages/console-server-ts/src/router/consoleAuth';
 import type { SessionAdapter } from '../../packages/console-server-ts/src/boundary/session';
-import type { CfEnv, CfExecutionContext } from '@seams/wallet-server/cloud-host';
+import type { CfEnv, CfExecutionContext } from '@seams/host/cloud-host';
 
 const SESSION_COOKIE_NAME =
   String(process.env.SESSION_COOKIE_NAME || 'seams-jwt').trim() || 'seams-jwt';

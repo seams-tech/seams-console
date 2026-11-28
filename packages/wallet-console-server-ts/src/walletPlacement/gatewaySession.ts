@@ -1,5 +1,5 @@
 import type { LocalGatewaySession } from './localSessionRouting';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { decodeTenantDeploymentBindingV1 } from '@seams-internal/wallet-console-shared/tenant-deployment';
 import type { TenantDeploymentBindingV1 } from '../tenantDeployment/types';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';

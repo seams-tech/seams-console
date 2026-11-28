@@ -8,7 +8,7 @@ import {
   isPlainObject,
   parseWalletRegistrationSetupRequest,
   type D1DatabaseLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { createHash } from 'node:crypto';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { once } from 'node:events';

@@ -39,10 +39,10 @@ import {
   reserveSponsoredPrepaidBalance,
 } from '../sponsorship/prepaidBalance';
 import { executeSponsorshipAdapter } from '../sponsorship/executionAdapter';
-import { enforceRoutePolicy } from '@seams/wallet-server/cloud-host';
-import type { NormalizedRouterLogger } from '@seams/wallet-server/cloud-host';
-import { resolvePublishableKeyApiCredentialAuth } from '@seams/wallet-server/cloud-host';
-import { extractRouterApiEnvironmentId } from '@seams/wallet-server/cloud-host';
+import { enforceRoutePolicy } from '@seams/host/cloud-host';
+import type { NormalizedRouterLogger } from '@seams/host/cloud-host';
+import { resolvePublishableKeyApiCredentialAuth } from '@seams/host/cloud-host';
+import { extractRouterApiEnvironmentId } from '@seams/host/cloud-host';
 import {
   recordSponsoredExecution,
   runSponsorshipExecution,
@@ -52,7 +52,7 @@ import {
   emitSponsorshipBlockedObservabilityEvent,
   readSponsorshipBillingBalanceSnapshot,
 } from './sponsorshipBillingEvents';
-import type { RouterApiPublishableKeyAuthAdapter } from '@seams/wallet-server/cloud-host';
+import type { RouterApiPublishableKeyAuthAdapter } from '@seams/host/cloud-host';
 import {
   buildSponsorshipRoutePolicyFailureResponse,
   resolveSponsorshipReplayOrMatch,
@@ -63,12 +63,12 @@ import {
   logSponsorshipSpendCapReserved,
   logSponsorshipSpendCapSettled,
 } from './sponsorshipSpendCapObservability';
-import type { HeaderRecord, RouteResponse } from '@seams/wallet-server/cloud-host';
-import type { RouteDefinition } from '@seams/wallet-server/cloud-host';
-import type { RouteErrorBody } from '@seams/wallet-server/cloud-host';
-import { routeJson } from '@seams/wallet-server/cloud-host';
+import type { HeaderRecord, RouteResponse } from '@seams/host/cloud-host';
+import type { RouteDefinition } from '@seams/host/cloud-host';
+import type { RouteErrorBody } from '@seams/host/cloud-host';
+import { routeJson } from '@seams/host/cloud-host';
 import type { ConsoleWebhookService } from '@seams-internal/console-server/webhooks/index';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
 import { SponsoredEvmExecutionError } from '../sponsorship/executionFailure';
 import { assertNever } from '@seams-internal/console-shared/accountPlatform/boundary';
 

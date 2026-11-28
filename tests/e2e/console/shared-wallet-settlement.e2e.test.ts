@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { Miniflare } from 'miniflare';
 import { unstable_splitSqlQuery } from 'wrangler';
 import { keccak256 } from 'viem';
-import { isD1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isD1DatabaseLike } from '@seams/host/cloud-host';
 import {
   PlatformUsageEventV1,
   ServiceProvisionCommandV1,
@@ -28,9 +28,9 @@ import { executeSponsorshipAdapter } from '../../../packages/wallet-console-serv
 import { assessFailedSponsoredEvmExecution } from '../../../packages/wallet-console-server-ts/src/router/routerApiSponsoredEvmCall';
 import { assessThrownSignedDelegateExecution } from '../../../packages/wallet-console-server-ts/src/router/routerApiSignedDelegate';
 import { resolveSponsorshipReplayOrMatch } from '../../../packages/wallet-console-server-ts/src/router/sponsorshipRuntime';
-import { routeJson } from '@seams/wallet-server/cloud-host';
+import { routeJson } from '@seams/host/cloud-host';
 import type { ConsoleSponsoredCallRecord } from '../../../packages/wallet-console-server-ts/src/sponsoredCalls/types';
-import type { WalletRuntimeExecuteSignedDelegateRequest } from '@seams/wallet-server/cloud-host';
+import type { WalletRuntimeExecuteSignedDelegateRequest } from '@seams/host/cloud-host';
 import { createStaticSponsoredExecutionPricingService } from '../../../packages/wallet-console-server-ts/src/sponsorship/pricing';
 import {
   reserveSponsoredPrepaidBalance,

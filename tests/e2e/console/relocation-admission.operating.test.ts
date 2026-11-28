@@ -9,7 +9,7 @@ import {
   isD1DatabaseLike,
   isPlainObject,
   type D1DatabaseLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   activateConsoleDeploymentFixture,
   fourRegionBinding,

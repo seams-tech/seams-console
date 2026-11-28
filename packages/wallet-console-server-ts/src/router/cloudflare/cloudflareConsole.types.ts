@@ -1,8 +1,8 @@
 import type {
   RouterApiCloudflareSignerWorkerEnv,
   SeamsD1SignerTenantStorageWorkerEnv,
-} from '@seams/wallet-server/cloud-host';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 
 export interface RouterApiCloudflareConsoleWorkerEnv {
   BILLING_FINALIZATION_ENABLED?: string;

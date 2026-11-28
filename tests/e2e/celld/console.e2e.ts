@@ -9,7 +9,7 @@ import type {
   D1PreparedStatementLike,
   D1ResultLike,
   WalletConsoleServiceBinding,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { consoleWorkerEnvironment } from '../../helpers/consoleWorkerEnvironment';
 import { verifyUnactivatedConsoleOnboarding } from '../../relayer/console-onboarding.scenario';
 
@@ -143,9 +143,9 @@ async function prepare(): Promise<void> {
     tsconfig: path.join(repository, 'tests/tsconfig.playwright.json'),
     alias: process.env.SEAMS_WALLET_SERVER_CANDIDATE
       ? {
-          '@seams/wallet-server/cloud-host': createRequire(
+          '@seams/host/cloud-host': createRequire(
             path.resolve(process.env.SEAMS_WALLET_SERVER_CANDIDATE, 'package.json'),
-          ).resolve('@seams/wallet-server/cloud-host'),
+          ).resolve('@seams/host/cloud-host'),
         }
       : {},
   });

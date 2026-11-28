@@ -1,4 +1,4 @@
-import type { WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import type { WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import type { TenantDeploymentCandidateSurfacesV1 } from '../../tenantDeployment/productionReadiness';
 import { WalletHomeCatalog, type WalletRegion } from '../../walletPlacement/home';
 

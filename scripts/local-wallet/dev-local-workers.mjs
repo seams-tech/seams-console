@@ -13,13 +13,13 @@ import dotenv from 'dotenv';
 
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const walletServerRoot = dirname(require.resolve('@seams/wallet-server/package.json'));
+const walletServerRoot = dirname(require.resolve('@seams/host/package.json'));
 
 import {
   bindRouterAbD1LocalGatewayAuthSecrets,
   prepareRouterAbD1LocalRuntimeConfig,
 } from './d1-local-runtime-config.mjs';
-import { prepareRouterAbStrictLocalRuntimeConfigs } from '@seams/wallet-server/local-runtime';
+import { prepareRouterAbStrictLocalRuntimeConfigs } from '@seams/host/local-runtime';
 
 const repoRoot = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -233,7 +233,7 @@ function ensureLocalEnv() {
 
   mkdirSync(root, { recursive: true });
   const args = [
-    require.resolve('@seams/wallet-server/local-runtime/initialize-local-wallet.mjs'),
+    require.resolve('@seams/host/local-runtime/initialize-local-wallet.mjs'),
     '--root',
     root,
     '--force',

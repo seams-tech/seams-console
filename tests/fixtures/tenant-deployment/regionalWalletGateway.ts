@@ -1,5 +1,5 @@
 /// <reference types="@cloudflare/workers-types" />
-import { parseWalletId, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { parseWalletId, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { ConsoleRegistrationHomeAdmission } from '../../../packages/wallet-console-server-ts/src/walletPlacement/registrationAdmission';
 import {
   ConsoleRegistrationSetupDispatcher,

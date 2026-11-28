@@ -10,7 +10,7 @@ import {
   isD1DatabaseLike,
   WALLET_CONSOLE_OP_PATHS_V1,
   WALLET_CONSOLE_SERVICE_ORIGIN_V1,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { D1DatabaseLike } from '../../../packages/console-server-ts/src/boundary/d1';
 import { createCloudflareD1AccountServiceBundle } from '../../../packages/console-server-ts/src/router/cloudflare/d1AccountServices';
 import { createHmacSessionAdapter } from '../../../packages/wallet-console-server-ts/src/router/cloudflare/d1StagingSession';

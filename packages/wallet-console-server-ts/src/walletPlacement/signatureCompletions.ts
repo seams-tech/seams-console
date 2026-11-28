@@ -1,5 +1,5 @@
 import { parseSignatureFunding, type SignatureOutcome } from './signatureOutcome';
-import { queryD1All, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { queryD1All, type D1DatabaseLike } from '@seams/host/cloud-host';
 import type { TenantDeploymentBindingV1 } from '../tenantDeployment/types';
 import type { ConsoleRegistrationHomeAdmission } from './registrationAdmission';
 

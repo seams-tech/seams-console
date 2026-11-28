@@ -1,7 +1,7 @@
 import React from 'react';
 import NavbarProfileOverlay from './Navbar/NavbarProfileOverlay';
 import type { SettingsPresentation } from './SeamsProfileSettingsButton';
-import { useSeams, useTheme, type HostedAuthMenuMode } from '@seams/wallet/react';
+import { useSeams, useTheme, type HostedAuthMenuMode } from '@seams/mpc-wallet/react';
 
 import { GlassBorder } from './GlassBorder';
 import { DemoTxCardSkeleton } from './DemoTxCardSkeleton';

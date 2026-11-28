@@ -5,7 +5,7 @@ import path from 'node:path';
 export function candidatePackageAliases(packageRoot: string): Record<string, string> {
   const packagePath = path.resolve(packageRoot, 'package.json');
   const definition = JSON.parse(readFileSync(packagePath, 'utf8'));
-  if (definition.name !== '@seams/wallet-server') throw new Error('Wrong candidate package');
+  if (definition.name !== '@seams/host') throw new Error('Wrong candidate package');
   const resolveCandidate = createRequire(packagePath);
   const aliases: Record<string, string> = {};
   for (const key of Object.keys(definition.exports)) {

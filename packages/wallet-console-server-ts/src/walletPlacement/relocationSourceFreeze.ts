@@ -1,4 +1,4 @@
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { WalletAuthorizationRelocation } from './authorizationRelocation';
 import { WalletRelocationReceipt } from './relocation';

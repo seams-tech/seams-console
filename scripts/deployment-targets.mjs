@@ -431,13 +431,17 @@ export function gatewaySecretNames(lane) {
     const capability = lane.capabilities[capabilityName];
     if (capability.enabled && capability.owner === 'gateway') names.push(...capability.secrets);
   }
-  if (
-    lane.provisioning.kind === 'provisioned' &&
-    lane.provisioning.gatewayDeploymentConfig.optional.speakToSignVerifier
-  ) {
-    // The verify route pays OutLayer with the payment key; the summary route of a note asks
-    // NEAR AI with its own key (Wallet 0.69.0).
-    names.push('SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY', 'SPEAK_TO_SIGN_NEAR_AI_API_KEY');
+  const verifier =
+    lane.provisioning.kind === 'provisioned'
+      ? lane.provisioning.gatewayDeploymentConfig.optional.speakToSignVerifier
+      : null;
+  if (verifier) {
+    // The verify route calls SaySo with its API key or pays OutLayer with the payment key; the
+    // summary route of a note asks NEAR AI with its own key.
+    names.push(
+      verifier.backend === 'sayso' ? 'SAYSO_API_KEY' : 'SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY',
+      'SPEAK_TO_SIGN_NEAR_AI_API_KEY',
+    );
   }
   return unique(names, 'gateway secret requirements');
 }
@@ -820,7 +824,8 @@ function assertGatewayDeploymentConfigMatchesLane(lane) {
   if (config.optional.googleOidcClientId !== lane.site.googleOidcClientId) {
     throw new Error('Gateway Google OIDC client does not match frontend site ' + lane.site.id);
   }
-  // Speak-to-Sign is experimental and testnet-only; production lanes must not enable it.
+  // Speak-to-Sign runs on staging-testnet only. A production lane gets a verifier only after
+  // the word, speaker and time gates of the verifier pass on it.
   if (config.optional.speakToSignVerifier && lane.id !== 'staging-testnet') {
     throw new Error('Speak-to-Sign verifier is allowed only on staging-testnet, not ' + lane.id);
   }

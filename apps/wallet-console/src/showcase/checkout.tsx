@@ -1,12 +1,12 @@
 import { t } from '@/marketing/i18n/browser';
 import './embeddedFocus';
-import '@seams/wallet/react/styles';
+import '@seams/mpc-wallet/styles.css';
 import './showcase.css';
 import './checkout.css';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import type { TransactionReviewControls } from '@seams/wallet/react';
+import type { TransactionReviewControls } from '@seams/mpc-wallet/react';
 import { CheckoutSession } from './checkoutSession';
 import {
   cart,

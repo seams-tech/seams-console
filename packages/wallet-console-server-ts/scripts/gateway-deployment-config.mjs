@@ -712,16 +712,54 @@ function parseOptionalConfig(value) {
 }
 
 /**
- * The public settings of the OutLayer verifier behind `POST /speak-to-sign/v1/verify`. Its
- * payment key is the secret SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY; the route needs all six values.
- * `veniceVersionKey` is optional: the WASM hash of the verifier's `venice` build, which the route
- * calls only while NEAR AI Whisper is down (@seams/wallet-server 0.72.0 and later).
+ * The verifier behind `POST /speak-to-sign/v1/verify`. `backend` names the one backend of the
+ * lane, which the Gateway reads as SPEAK_TO_SIGN_BACKEND (@seams/host 0.77.0 and later).
  */
 function parseSpeakToSignVerifier(value) {
   if (value === undefined || value === null) return null;
   const path = 'optional.speakToSignVerifier';
   const verifier = requireObject(value, path);
+  switch (verifier.backend) {
+    case 'sayso':
+      return parseSaySoVerifier(verifier, path);
+    case 'outlayer':
+      return parseOutLayerVerifier(verifier, path);
+    default:
+      throw new Error(`${path}.backend must be sayso or outlayer`);
+  }
+}
+
+/**
+ * SaySo, the Seams operator's Cloudflare verifier. The Gateway calls the lane's SaySo Worker
+ * through the service binding SAYSO with the secret SAYSO_API_KEY; that Worker has no public
+ * route.
+ */
+function parseSaySoVerifier(verifier, path) {
+  requireAllowedAndRequiredKeys(
+    verifier,
+    ['backend', 'saysoWorkerName'],
+    ['backend', 'saysoWorkerName'],
+    path,
+  );
+  return {
+    backend: 'sayso',
+    saysoWorkerName: requirePattern(
+      verifier.saysoWorkerName,
+      RESOURCE_NAME_PATTERN,
+      `${path}.saysoWorkerName`,
+    ),
+  };
+}
+
+/**
+ * The public settings of the OutLayer verifier. Its payment key is the secret
+ * SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY; the route needs all six values. `veniceVersionKey` is
+ * optional: the WASM hash of the verifier's `venice` build, which the route calls only while
+ * NEAR AI Whisper is down.
+ */
+function parseOutLayerVerifier(verifier, path) {
   const required = [
+    'backend',
     'outlayerBaseUrl',
     'project',
     'versionKey',
@@ -741,6 +779,7 @@ function parseSpeakToSignVerifier(value) {
     throw new Error(`${path}.veniceVersionKey must be another WASM hash than versionKey`);
   }
   return {
+    backend: 'outlayer',
     veniceVersionKey,
     outlayerBaseUrl: requireHttpsUrl(verifier.outlayerBaseUrl, `${path}.outlayerBaseUrl`),
     project: requirePattern(verifier.project, OUTLAYER_PROJECT_PATTERN, `${path}.project`),

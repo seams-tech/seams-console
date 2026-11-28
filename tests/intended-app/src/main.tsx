@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { SeamsWebProvider, defineSeamsConfig } from '@seams/wallet/react';
-import '@seams/wallet/react/styles';
+import { SeamsWebProvider, defineSeamsConfig } from '@seams/mpc-wallet/react';
+import '@seams/mpc-wallet/styles.css';
 import { IntendedBehaviourE2EPage } from './page';
 
 function requiredEnvironmentValue(name: string): string {

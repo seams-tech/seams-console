@@ -1,4 +1,4 @@
-import type { SeamsConfigsInput, ThemeProps } from '@seams/wallet/react';
+import type { SeamsConfigsInput, ThemeProps } from '@seams/mpc-wallet/react';
 import { PAPER_LIGHT_COLORS, PAPER_THEME_TOKENS } from './app-themes';
 
 // `satisfies` keeps the exact shape, so the landing preview can use it as a resolved appearance.

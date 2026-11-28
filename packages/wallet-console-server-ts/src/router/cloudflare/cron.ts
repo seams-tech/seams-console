@@ -34,10 +34,10 @@ import type {
   ConsoleEmailDispatchResult,
   ConsoleEmailProvider,
 } from '@seams-internal/console-server/email/types';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
-import type { ScheduledHandler } from '@seams/wallet-server/cloud-host';
-import type { RouterLogger } from '@seams/wallet-server/cloud-host';
-import { base64UrlDecode, coerceRouterLogger } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
+import type { ScheduledHandler } from '@seams/host/cloud-host';
+import type { RouterLogger } from '@seams/host/cloud-host';
+import { base64UrlDecode, coerceRouterLogger } from '@seams/host/cloud-host';
 import type { RouterApiCloudflareConsoleWorkerEnv } from './cloudflareConsole.types';
 import { ConsoleOrganizationAccessError } from '@seams-internal/console-server/teamRbac/errors';
 

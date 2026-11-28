@@ -18,7 +18,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const installedWalletRoot = path.dirname(require.resolve('@seams/wallet/package.json'));
+const installedWalletRoot = path.dirname(require.resolve('@seams/mpc-wallet/package.json'));
 
 import { prepareRouterAbD1LocalRuntimeConfig } from '../../scripts/local-wallet/d1-local-runtime-config.mjs';
 
@@ -351,7 +351,7 @@ function initializeRouterAbLocalEnv() {
   const result = spawnSync(
     process.execPath,
     [
-      require.resolve('@seams/wallet-server/local-runtime/initialize-local-wallet.mjs'),
+      require.resolve('@seams/host/local-runtime/initialize-local-wallet.mjs'),
       '--root',
       routerAbLocalRoot,
     ],

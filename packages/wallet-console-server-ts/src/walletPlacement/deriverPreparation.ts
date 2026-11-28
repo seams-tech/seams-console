@@ -3,7 +3,7 @@ import {
   isPlainObject,
   sha256Bytes,
   type WalletRuntimeServiceBinding,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { WalletPlacementError, type WalletHome } from './home';
 import { relocationTimestamp } from './relocation';
 import { preparationEvidenceDigest, type WalletRelocationParticipants } from './relocationPreparation';

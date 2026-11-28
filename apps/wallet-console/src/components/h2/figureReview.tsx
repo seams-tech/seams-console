@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import '@seams/wallet/react/styles';
+import '@seams/mpc-wallet/styles.css';
 import '@/app.css';
 import '@/styles/h2.css';
 import previousKeychain from '../../../showcase/motion/credentials/index.html?raw';

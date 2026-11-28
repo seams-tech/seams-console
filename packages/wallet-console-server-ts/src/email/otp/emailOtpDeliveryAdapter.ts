@@ -2,8 +2,8 @@ import type {
   CloudflareD1EmailOtpDeliveryProvider,
   CloudflareD1EmailOtpDeliveryProviderInput,
   CloudflareD1EmailOtpDeliveryProviderResult,
-} from '@seams/wallet-server/cloud-host';
-import type { WalletEmailOtpOperation } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { WalletEmailOtpOperation } from '@seams/host/cloud-host';
 import { renderEmailLayoutHtml } from '@seams-internal/console-server/email/layout';
 
 export type EmailOtpMessage = {

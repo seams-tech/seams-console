@@ -232,7 +232,7 @@ def stop(process):
 def prepare(package, directory, prepared):
     manifest = json.loads((package / "artifact-manifest.json").read_text())
     assert manifest["schemaVersion"] == "seams_wallet_server_artifact_manifest_v1"
-    assert manifest["package"]["name"] == "@seams/wallet-server"
+    assert manifest["package"]["name"] == "@seams/host"
     assert set(manifest["workers"]) == ROLES
     configs = {}
     mapping = {}
@@ -438,7 +438,7 @@ def main():
     package = package.resolve()
     sdk_package = sdk_package.resolve()
     sdk_metadata = json.loads((sdk_package / "package.json").read_text())
-    assert sdk_metadata["name"] == "@seams/wallet"
+    assert sdk_metadata["name"] == "@seams/mpc-wallet"
     repository = Path(__file__).resolve().parents[3]
     artifacts = repository / ".artifacts"
     artifacts.mkdir(exist_ok=True)

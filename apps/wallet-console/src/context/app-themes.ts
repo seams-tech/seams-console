@@ -1,6 +1,6 @@
-import { SHAPE_PRESETS } from '@seams/wallet/react';
-import type { WalletLocale } from '@seams/wallet';
-import type { ThemeProps, WalletShapeId } from '@seams/wallet/react';
+import { SHAPE_PRESETS } from '@seams/mpc-wallet/react';
+import type { WalletLocale } from '@seams/mpc-wallet/client';
+import type { ThemeProps, WalletShapeId } from '@seams/mpc-wallet/react';
 // The resolved appearance the presets build. seams.config.setAppearance accepts it, and
 // so do the wallet surfaces the homepage showcase mounts directly.
 import type { AppearanceConfig } from '@wallet-ui/core/types/seams';

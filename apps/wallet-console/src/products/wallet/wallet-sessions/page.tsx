@@ -18,7 +18,7 @@ import {
   DEFAULT_TENANT_WALLET_SESSION_LIMITS,
   MAX_WALLET_SESSION_REMAINING_USES,
   MAX_WALLET_SESSION_TTL_MS,
-} from '@seams/wallet/advanced';
+} from '@seams/mpc-wallet/client';
 import './walletSessions.css';
 
 const DAY_MS = 86_400_000;

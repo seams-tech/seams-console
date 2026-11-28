@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-declare module '@seams/wallet/react/styles';
+declare module '@seams/mpc-wallet/styles.css';
 
 // Project-specific env typings for Vite
 // Note: Keep keys in sync with the root .env.local and CI/Pages envs.

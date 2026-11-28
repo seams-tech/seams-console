@@ -5,8 +5,8 @@ import {
   formatD1ExecStatement,
   parseD1JsonColumn,
   type D1Row,
-} from '@seams/wallet-server/cloud-host';
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { ConsoleWalletError } from './errors';
 import {
   normalizeWalletLimit as normalizeLimit,

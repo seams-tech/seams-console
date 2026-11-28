@@ -1,9 +1,9 @@
 import { locale, t } from '@/marketing/i18n/browser';
-import '@seams/wallet/react/styles';
+import '@seams/mpc-wallet/styles.css';
 import type { MessageKey } from '@/marketing/i18n/catalog';
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Theme, useSeams, type HostedAuthMenuMode } from '@seams/wallet/react';
+import { Theme, useSeams, type HostedAuthMenuMode } from '@seams/mpc-wallet/react';
 import { FrontendRuntimeProvider, FrontendSdkProvider } from '@/context/frontendRuntime';
 import { SITE_APPEARANCE, SITE_THEME_TOKEN_OVERRIDES } from '@/context/siteThemeOverrides';
 import { useSiteTheme } from '@/shared/hooks/useSiteTheme';

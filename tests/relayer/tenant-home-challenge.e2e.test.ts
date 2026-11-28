@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
 import { build } from 'esbuild';
 import { Miniflare } from 'miniflare';
 import { unstable_splitSqlQuery } from 'wrangler';
-import { isD1DatabaseLike, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isD1DatabaseLike, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { randomBytes, createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -450,7 +450,7 @@ test('Console verifies both regional writer bindings against a fresh challenge',
   if (candidatePackageRoot) {
     for (const input of Object.keys(bundle.metafile.inputs)) {
       expect(path.resolve(input)).not.toContain(
-        path.join(root, 'node_modules/@seams/wallet-server/'),
+        path.join(root, 'node_modules/@seams/host/'),
       );
     }
   }

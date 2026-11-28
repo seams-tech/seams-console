@@ -3,7 +3,7 @@ import type {
   RouterApiPublishableKeyAuthAdapter,
   RouterApiProjectEnvironmentResolver,
   RouterApiUsageMeterAdapter,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   isApiCredentialScope,
   type ApiCredentialScope,
@@ -22,7 +22,7 @@ import {
   type WalletConsoleTenantRootActiveLineageResponseV1,
   type WalletConsoleTenantRootActiveLineageV1,
   type WalletConsoleUsageEventV1,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 
 export interface WalletConsoleOpsHandlerServices {
   readonly apiKeyAuth: RouterApiKeyAuthAdapter;

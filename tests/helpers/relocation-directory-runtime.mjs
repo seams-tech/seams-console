@@ -120,7 +120,7 @@ export async function loadRelocationApi({ root, candidate, output }) {
     outfile: bundlePath,
     tsconfig: resolve(candidate, 'tsconfig.json'),
     loader: { '.wasm': 'binary' },
-    alias: { '@seams/wallet-server/cloud-host': resolve(candidate, 'src/cloud-host.ts') },
+    alias: { '@seams/host/cloud-host': resolve(candidate, 'src/cloud-host.ts') },
     stdin: {
       resolveDir: root,
       contents: `

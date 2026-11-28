@@ -24,7 +24,7 @@ import type {
   ConsoleWebhookService,
 } from '@seams-internal/console-server/webhooks/index';
 import type { WalletConsoleAuthClaims as ConsoleAuthClaims } from './walletConsoleAuth';
-import type { NormalizedRouterLogger } from '@seams/wallet-server/cloud-host';
+import type { NormalizedRouterLogger } from '@seams/host/cloud-host';
 
 type ConsoleOpsCockpitSectionState = 'ok' | 'not_configured' | 'forbidden' | 'error';
 

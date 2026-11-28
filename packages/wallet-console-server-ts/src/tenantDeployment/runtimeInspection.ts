@@ -1,5 +1,5 @@
-import type { D1DatabaseLike, D1Row } from '@seams/wallet-server/cloud-host';
-import type { WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike, D1Row } from '@seams/host/cloud-host';
+import type { WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import {
   decodeTenantDeploymentD1ResourcesV1,
   type TenantDeploymentD1ResourcesV1,

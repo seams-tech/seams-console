@@ -1,5 +1,5 @@
-import { D1WalletObjectAddresses, walletObjectIdentity } from '@seams/wallet-server/cloud-host';
-import { isPlainObject, queryD1One, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/wallet-server/cloud-host';
+import { D1WalletObjectAddresses, walletObjectIdentity } from '@seams/host/cloud-host';
+import { isPlainObject, queryD1One, type D1DatabaseLike, type WalletRuntimeServiceBinding } from '@seams/host/cloud-host';
 import type { TenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { WalletPlacementError } from './home';
 import { WalletRelocationRequest, relocationTimestamp } from './relocation';

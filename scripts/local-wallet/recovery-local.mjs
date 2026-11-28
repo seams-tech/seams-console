@@ -26,7 +26,7 @@ import {
   bindRouterAbD1LocalGatewayAuthSecrets,
   prepareRouterAbD1LocalRuntimeConfig,
 } from './d1-local-runtime-config.mjs';
-import { prepareRouterAbStrictLocalRuntimeConfigs } from '@seams/wallet-server/local-runtime';
+import { prepareRouterAbStrictLocalRuntimeConfigs } from '@seams/host/local-runtime';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 
@@ -111,7 +111,7 @@ function runLogged(command, args, logPath) {
 }
 
 function ensureWorkers() {
-  const manifest = JSON.parse(readFileSync(require.resolve('@seams/wallet-server/artifact-manifest.json'), 'utf8'));
+  const manifest = JSON.parse(readFileSync(require.resolve('@seams/host/artifact-manifest.json'), 'utf8'));
   if (!manifest.workers['tenant-root-control-plane']) {
     throw new Error('Install a Wallet release containing the tenant-root control-plane Worker.');
   }

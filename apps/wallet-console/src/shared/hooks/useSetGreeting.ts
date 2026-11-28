@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { DEMO_CONTRACT_ID } from '@/shared/types';
-import { useNearClient } from '@seams/wallet/react';
+import { useNearClient } from '@seams/mpc-wallet/react';
 
 export interface GreetingResult {
   success: boolean;

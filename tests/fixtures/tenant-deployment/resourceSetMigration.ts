@@ -1,4 +1,4 @@
-import type { D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import type { D1DatabaseLike } from '@seams/host/cloud-host';
 import { encodeTenantDeploymentJsonValueV1 } from '../../../packages/wallet-console-shared-ts/src/tenant-deployment';
 import { TenantResourceVerificationV1 } from '../../../packages/wallet-console-server-ts/src/tenantDeployment/resourceVerification';
 import { developmentBindingBody, deploymentResource } from '../../helpers/tenantDeploymentFixtures';

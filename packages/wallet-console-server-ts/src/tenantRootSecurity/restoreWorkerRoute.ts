@@ -2,10 +2,10 @@ import {
   base64UrlDecode,
   base64UrlEncode,
   type D1DatabaseLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { decodeTenantRootIdentityWireV1 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
 import { createD1TenantRootRestoreStoreV1 } from './restoreD1';
 import { createTenantRootDestinationBootstrapClientV1 } from './destinationBootstrapClient';
 import { createTenantRootRestoreControlPlaneClientV1 } from './tenantRootRestoreControlPlaneClient';

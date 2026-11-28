@@ -1,5 +1,5 @@
-import { base64UrlDecode, base64UrlEncode } from '@seams/wallet-server/tenant-root';
-import { alphabetizeStringify, sha256Bytes } from '@seams/wallet-server/tenant-root';
+import { base64UrlDecode, base64UrlEncode } from '@seams/host/tenant-root';
+import { alphabetizeStringify, sha256Bytes } from '@seams/host/tenant-root';
 import type { TenantRootRecipientPairV1, TenantRootRecoveryGovernanceV1 } from './tenantRootSecurityState';
 
 /**

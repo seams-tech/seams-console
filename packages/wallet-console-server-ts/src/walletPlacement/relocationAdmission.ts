@@ -1,5 +1,5 @@
 import type { RelocationResourceVerification } from '../tenantDeployment/relocationResourceVerification';
-import { isPlainObject, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { isPlainObject, type D1DatabaseLike } from '@seams/host/cloud-host';
 import type {
   TenantRuntimeWriterV1,
 } from '../tenantDeployment/resourceVerification';

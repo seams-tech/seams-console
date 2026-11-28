@@ -1,14 +1,14 @@
 import React from 'react';
 import { toast } from 'sonner';
 import {
+  AccountMenuButton,
   useSeams,
   TouchIcon,
   KeyExportEventPhase,
   LinkDeviceEventPhase,
   type KeyExportFlowEvent,
   type LinkDeviceFlowEvent,
-} from '@seams/wallet/react';
-import { AccountMenuButton } from '@seams/wallet/react/profile';
+} from '@seams/mpc-wallet/react';
 import { t } from '@/marketing/i18n/browser';
 import { useProfileMenuControl } from '@/context/ProfileMenuControl';
 import {

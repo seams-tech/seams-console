@@ -1,4 +1,4 @@
-import type { TenantRootIdentityV1 } from '@seams/wallet-server/tenant-root';
+import type { TenantRootIdentityV1 } from '@seams/host/tenant-root';
 
 /**
  * Console-facing state for one tenant derivation root (Refactor 121).

@@ -28,14 +28,14 @@ import {
 } from '@seams-internal/wallet-console-shared/tenant-root';
 import { createComposedConsoleRouteDefinitions } from '../router/walletConsoleRouteDefinitions';
 import { authorizeConsoleRouteRequest } from '@seams-internal/console-server/router/consoleRoutePolicy';
-import { headersToRecord } from '@seams/wallet-server/cloud-host';
+import { headersToRecord } from '@seams/host/cloud-host';
 import { buildTenantRootIdentityFromAuthenticatedDeploymentV1 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { ROUTER_AB_MPC_ROUTER_ORIGIN } from '@seams/wallet-server/cloud-host';
+import { ROUTER_AB_MPC_ROUTER_ORIGIN } from '@seams/host/cloud-host';
 import {
   randomTenantRootCreationGrantBytesV1,
   signTenantRootCreationGrantV1,
   tenantRootIdentityDigestB64uV1,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { isTenantRootCreationGrantStoreError } from './service';
 import type { TenantRootCreationGrantServiceV1 } from './service';
 import type { TenantRootCreationGrantRecordV1, TenantRootIdentityV1 } from './types';

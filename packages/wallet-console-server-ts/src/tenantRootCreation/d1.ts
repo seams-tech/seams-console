@@ -3,7 +3,7 @@ import {
   queryD1One,
   type D1DatabaseLike,
   type D1Row,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import { decodeTenantRootIdentityWireV1 } from '@seams-internal/wallet-console-shared/tenant-root';
 import {
   TenantRootCreationGrantStoreError,

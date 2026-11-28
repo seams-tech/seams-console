@@ -1,6 +1,6 @@
 import { readStoredCustodyNamespaces } from '../tenantDeployment/custodyResourceVerification';
 import { CustodyTargetInspector } from './custodyTargets';
-import { base64UrlEncode, isPlainObject, queryD1All, queryD1One, type D1DatabaseLike } from '@seams/wallet-server/cloud-host';
+import { base64UrlEncode, isPlainObject, queryD1All, queryD1One, type D1DatabaseLike } from '@seams/host/cloud-host';
 import { parseTenantRuntimeWriterV1 } from '../tenantDeployment/resourceVerification';
 import { WalletHomeCatalog, WalletPlacementError, type WalletHome, type WalletOwnershipKey } from './home';
 import { WalletRelocationLocator, WalletRelocationRequest, WalletRelocation } from './relocation';

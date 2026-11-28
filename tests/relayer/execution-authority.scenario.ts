@@ -1,4 +1,4 @@
-import { parseWalletId } from '@seams/wallet-server/cloud-host';
+import { parseWalletId } from '@seams/host/cloud-host';
 import { ConsoleRegistrationHomeAdmission } from '../../packages/wallet-console-server-ts/src/walletPlacement/registrationAdmission';
 import { expect } from '@playwright/test';
 import type { Miniflare } from 'miniflare';

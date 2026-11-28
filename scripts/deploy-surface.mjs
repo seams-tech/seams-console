@@ -697,7 +697,7 @@ export async function walletManifestMatchesPackageVersion(response, expectedVers
     const manifest = await response.json();
     if (!isRecord(manifest) || !isRecord(manifest.versionSkewContract)) return false;
     return (
-      manifest.packageName === '@seams/wallet' &&
+      manifest.packageName === '@seams/mpc-wallet' &&
       manifest.packageVersion === expectedVersion &&
       manifest.versionSkewContract.packageVersion === expectedVersion
     );
@@ -736,7 +736,7 @@ function assertWalletSettingsExport() {
   const entry = path.join(resolveInstalledWalletRoot(), 'dist', 'esm', 'react', 'index.js');
   if (!fs.readFileSync(entry, 'utf8').includes('WalletSettingsPage')) {
     throw new Error(
-      'The pinned @seams/wallet release does not export WalletSettingsPage. Publish the settings SDK release and update the exact package pins and lockfile before deploying wallet-host.',
+      'The pinned @seams/mpc-wallet release does not export WalletSettingsPage. Publish the settings SDK release and update the exact package pins and lockfile before deploying wallet-host.',
     );
   }
 }
@@ -756,7 +756,7 @@ function readPackageVersion(packagePath) {
 
 function resolveInstalledWalletRoot() {
   const requireFromWalletSite = createRequire(path.join(WALLET_SITE_ROOT, 'package.json'));
-  return path.dirname(requireFromWalletSite.resolve('@seams/wallet/package.json'));
+  return path.dirname(requireFromWalletSite.resolve('@seams/mpc-wallet/package.json'));
 }
 
 function isRecord(value) {

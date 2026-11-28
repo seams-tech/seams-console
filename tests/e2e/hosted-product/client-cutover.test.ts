@@ -79,7 +79,7 @@ test('published client is rejected by hosted Gateway and reload completes candid
   await mkdir(packageDirectory, { recursive: true });
   await run('npm', [
     'pack',
-    '@seams/wallet@0.7.3',
+    '@seams/mpc-wallet@0.7.3',
     '--ignore-scripts',
     '--pack-destination',
     packageDirectory,

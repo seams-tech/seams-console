@@ -15,7 +15,7 @@ import {
   SlidersHorizontal,
   Timer,
 } from 'lucide-react';
-import type { HostedAuthMenuMode } from '@seams/wallet/react';
+import type { HostedAuthMenuMode } from '@seams/mpc-wallet/react';
 import { WalletDemoSlot } from './WalletDemoSlot';
 import SeamsWordmark from '@/components/icons/SeamsWordmark';
 import { ArrowRightAnim } from '@/components/ArrowRightAnim';
@@ -701,13 +701,13 @@ export function H2Start(): React.JSX.Element {
               ))}
             </div>
           </div>
-          {/* the documented registration call of @seams/wallet
+          {/* the documented registration call of @seams/mpc-wallet
               (seams-wallet apps/docs/src/examples/registration-input.ts) */}
           <div className="h2-code h2-code--lg" aria-label={t('registrationCode')}>
             <span className="tok-kw">import</span>
             {' { useSeams } '}
             <span className="tok-kw">from</span>{' '}
-            <span className="tok-str">'@seams/wallet/react'</span>
+            <span className="tok-str">'@seams/mpc-wallet/react'</span>
             {';\n\n'}
             <span className="tok-kw">const</span>
             {' { registerWallet } = useSeams();\n\n'}
@@ -741,14 +741,14 @@ export function H2Start(): React.JSX.Element {
               ))}
             </div>
           </div>
-          {/* the public unlock option and NEAR transaction call of @seams/wallet
+          {/* the public unlock option and NEAR transaction call of @seams/mpc-wallet
               (seams-wallet core/types/sdkSentEvents.ts and
               apps/docs/src/examples/transaction-review.tsx) */}
           <div className="h2-code h2-code--lg" aria-label={t('signingCode')}>
             <span className="tok-kw">import</span>
             {' { transfer, useSeams } '}
             <span className="tok-kw">from</span>{' '}
-            <span className="tok-str">'@seams/wallet/react'</span>
+            <span className="tok-str">'@seams/mpc-wallet/react'</span>
             {';\n\n'}
             <span className="tok-kw">const</span>
             {' { unlock, seams } = useSeams();\n\n'}

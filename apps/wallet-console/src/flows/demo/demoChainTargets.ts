@@ -1,4 +1,4 @@
-import type { EvmEip155ChainTarget, TempoChainTarget } from '@seams/wallet/react';
+import type { EvmEip155ChainTarget, TempoChainTarget } from '@seams/mpc-wallet/react';
 
 import { FRONTEND_CONFIG, type FrontendConfig } from '@/config';
 

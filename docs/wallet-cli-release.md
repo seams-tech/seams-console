@@ -1,6 +1,6 @@
 # Wallet CLI release
 
-The `@seams/wallet-cli` launcher runs only when two things exist: the GitHub release
+The `@seams/cli` launcher runs only when two things exist: the GitHub release
 `seams-cli-v<version>` in `seams-tech/seams-wallet`, and the npm package. The launcher
 downloads `seams-release-manifest.json` and the native binary from that release and
 verifies the manifest signature against the release root compiled into the binary
@@ -23,7 +23,7 @@ SHA-256 in the job summary. Artifact delivery avoids GitHub's log secret masking
 
 ## Steps
 
-1. Bump `packages/seams-cli/package.json` and `crates/seams-cli/Cargo.toml` (and
+1. Bump `packages/cli/package.json` and `crates/seams-cli/Cargo.toml` (and
    `Cargo.lock`) in `seams-wallet`, merge to `main`, and wait for `Build seams CLI` to pass.
 2. Dispatch the private workflow on `main`:
    `gh workflow run release-seams-cli.yml --ref main -f release_version=<v> -f public_revision=<sha> -f public_build_run_id=<run>`.
@@ -37,11 +37,11 @@ SHA-256 in the job summary. Artifact delivery avoids GitHub's log secret masking
    `gh release create seams-cli-v<v> --repo seams-tech/seams-wallet --target <sha>` with the
    three binaries, `seams-release-manifest.json`, `seams-sbom.txt` and
    `THIRD_PARTY_NOTICES.md`.
-6. Pack the launcher at the same public revision (`npm pack` in `packages/seams-cli`; the
+6. Pack the launcher at the same public revision (`npm pack` in `packages/cli`; the
    `prepack` script copies the release root), compare its `release-root.json` with the
    pinned one, and run `npm publish <tgz> --access public`. npm prints a browser link; the
    owner approves there.
-7. Check: `npm exec --yes --package=@seams/wallet-cli@<v> -- seams-wallet version`.
+7. Check: `npm exec --yes --package=@seams/cli@<v> -- seams-wallet version`.
 8. Move `WALLET_CLI_PACKAGE` in
    `apps/wallet-console/src/products/wallet/derivation-root/recoveryKeySetupCommand.ts` and
    the public `recovery-cli.md` to the new version, then deploy the Console frontend.

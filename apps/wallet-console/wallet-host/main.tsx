@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
-import { SeamsWebProvider, WalletSettingsPage, TransactionReviewHost } from '@seams/wallet/react';
-import '@seams/wallet/react/styles';
+import { SeamsWebProvider, WalletSettingsPage, TransactionReviewHost } from '@seams/mpc-wallet/react';
+import '@seams/mpc-wallet/styles.css';
 import '@fontsource/hanken-grotesk/400.css';
 import '@fontsource/hanken-grotesk/500.css';
 import '@fontsource/hanken-grotesk/600.css';

@@ -2,7 +2,7 @@ import type {
   D1DatabaseLike,
   D1PreparedStatementLike,
   D1ResultLike,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { TenantDeploymentBindingV1 } from './types';
 import type { TenantRuntimeWriterV1 } from './resourceVerification';
 import type { WalletHomeCatalog, WalletOwnershipKey } from '../walletPlacement/home';

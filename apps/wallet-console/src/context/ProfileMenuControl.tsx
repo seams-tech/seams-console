@@ -1,5 +1,5 @@
 import React from 'react';
-import type { HighlightedProfileMenuItem } from '@seams/wallet/react';
+import type { HighlightedProfileMenuItem } from '@seams/mpc-wallet/react';
 
 export interface ProfileMenuControlValue {
   isMenuOpen: boolean;

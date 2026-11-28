@@ -7,13 +7,13 @@ import {
   TxExecutionStatus,
   useSeams,
   type SigningFlowEvent,
-} from '@seams/wallet/react';
+} from '@seams/mpc-wallet/react';
 import {
   MinimalNearClient,
   nearAccountRefFromAccountId,
   walletSessionRefFromSession,
-} from '@seams/wallet/advanced';
-import type { ActionArgs, FunctionCallAction } from '@seams/wallet/react';
+} from '@seams/mpc-wallet/client';
+import type { ActionArgs, FunctionCallAction } from '@seams/mpc-wallet/react';
 
 import { FRONTEND_CONFIG } from '@/config';
 import { DEMO_CONTRACT_ID, NEAR_EXPLORER_BASE_URL } from '@/shared/types';

@@ -7,7 +7,7 @@ import {
   parseSessionJwt,
   sessionJwtTimeClaims,
   toSessionArrayBufferCopy,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import {
   ConsoleSessionService,
   type ConsoleSessionRevocationStore,
@@ -21,8 +21,8 @@ import type {
   ConsoleAuthAdapterResult,
   HeaderRecord,
 } from '@seams-internal/console-server/router/consoleAuth';
-import type { SessionAdapter } from '@seams/wallet-server/cloud-host';
-import { readEnvironmentCsv, requireEnvironmentString } from '@seams/wallet-server/cloud-host';
+import type { SessionAdapter } from '@seams/host/cloud-host';
+import { readEnvironmentCsv, requireEnvironmentString } from '@seams/host/cloud-host';
 
 class ConsoleSessionCookieAdapter {
   constructor(

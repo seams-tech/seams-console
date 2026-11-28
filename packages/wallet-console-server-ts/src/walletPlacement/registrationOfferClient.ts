@@ -1,7 +1,7 @@
 import {
   parseGoogleEmailOtpRegistrationAttemptRecord,
   type GoogleEmailOtpRegistrationAttemptStore,
-} from '@seams/wallet-server/cloud-host';
+} from '@seams/host/cloud-host';
 import type { WalletHomeServiceClient } from './serviceClient';
 
 type Input<Method extends keyof GoogleEmailOtpRegistrationAttemptStore> = Parameters<

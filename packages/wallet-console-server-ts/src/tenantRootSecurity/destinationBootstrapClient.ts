@@ -1,11 +1,11 @@
-import { base64UrlDecode, base64UrlEncode } from '@seams/wallet-server/cloud-host';
+import { base64UrlDecode, base64UrlEncode } from '@seams/host/cloud-host';
 import {
   encodeTenantRootIdentityV1,
   type TenantRootIdentityV1,
 } from '@seams-internal/wallet-console-shared/tenant-root';
-import { isPlainObject } from '@seams/wallet-server/cloud-host';
-import { tenantRootIdentityDigestB64uV1 } from '@seams/wallet-server/cloud-host';
-import { ROUTER_AB_MPC_ROUTER_ORIGIN } from '@seams/wallet-server/cloud-host';
+import { isPlainObject } from '@seams/host/cloud-host';
+import { tenantRootIdentityDigestB64uV1 } from '@seams/host/cloud-host';
+import { ROUTER_AB_MPC_ROUTER_ORIGIN } from '@seams/host/cloud-host';
 import type { TenantRootBootstrapAuthenticatorV1 } from './restoreRoute';
 import type { TenantRootDestinationStateV1 } from './restoreService';
 

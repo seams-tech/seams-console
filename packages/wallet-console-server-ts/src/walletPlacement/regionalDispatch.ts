@@ -2,8 +2,8 @@ import { isWalletPlacementRequest, walletPlacementRequestWalletId } from './plac
 import { authenticationHome } from './authenticationDispatch';
 import { WalletRouteLocator } from './walletRouteLocators';
 import { recoveryHome } from './recoveryDispatch';
-import type { WalletRegistrationSetupDispatcher } from '@seams/wallet-server/cloud-host';
-import { digestOpaqueValue, parseWalletId } from '@seams/wallet-server/cloud-host';
+import type { WalletRegistrationSetupDispatcher } from '@seams/host/cloud-host';
+import { digestOpaqueValue, parseWalletId } from '@seams/host/cloud-host';
 import { SessionLocator } from './sessionLocators';
 import { WalletOwnershipKey, type WalletHomeAssignment } from './home';
 import type { WalletHome } from './home';
