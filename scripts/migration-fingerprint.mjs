@@ -80,9 +80,14 @@ export function assertAppliedMigrationSourcesUnchanged({
 function replacesAppliedHistory(appliedMigrationNames, migrations) {
   return (
     migrations.length > 0 &&
-    baselineNamePattern.test(migrations[0].name) &&
+    isBaselineMigrationName(migrations[0].name) &&
     migrations.every((migration) => !appliedMigrationNames.has(migration.name))
   );
+}
+
+/** A baseline holds a whole schema, and each of its statements is idempotent. */
+export function isBaselineMigrationName(name) {
+  return baselineNamePattern.test(name);
 }
 
 function isMigrationName(name) {

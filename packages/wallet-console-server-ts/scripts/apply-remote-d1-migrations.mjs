@@ -7,6 +7,7 @@ import {
   digestMigrations,
   readMigrationFiles,
 } from '../../../scripts/migration-fingerprint.mjs';
+import { migrationCalls, sqlText } from '../../../scripts/d1-sql-parts.mjs';
 
 function main() {
   const options = parseArgs(process.argv.slice(2));
@@ -123,11 +124,8 @@ function readAppliedMigrationNames(options) {
 }
 
 function applyMigration(options, migration) {
-  const historyStatement = `\nINSERT INTO d1_migrations (name) VALUES (${sqlText(migration.name)});\n`;
-  const sql = `${migration.source.trimEnd()}\n${historyStatement}`;
   process.stdout.write(`Applying ${migration.name}\n`);
-  // The query API keeps table rebuilds and their history in one transaction.
-  runWrangler(options, [`--command=${sql}`]);
+  for (const sql of migrationCalls(migration)) runWrangler(options, [`--command=${sql}`]);
 }
 
 function verifyAppliedMigrations(options, migrations) {
@@ -210,10 +208,6 @@ function readSingleResultRows(output, label) {
     throw new Error(`D1 ${label} results must be an array`);
   }
   return batch.results;
-}
-
-function sqlText(value) {
-  return `'${value.replaceAll("'", "''")}'`;
 }
 
 try {
