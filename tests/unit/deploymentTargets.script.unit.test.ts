@@ -105,6 +105,7 @@ type DeploymentTargetsModule = {
   readonly readBackendLane: (laneId: string, targetsPath?: string) => BackendLane;
   readonly readFrontendSite: (siteId: string, targetsPath?: string) => FrontendSite;
   readonly componentSecretNames: (lane: BackendLane, component: string) => readonly string[];
+  readonly retiredGatewaySecretNames: (lane: BackendLane) => readonly string[];
 };
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -339,6 +340,15 @@ test('the Speak-to-Sign verifier names one backend and its secret', async () => 
   const names = module.componentSecretNames(outlayer, 'gateway');
   expect(names).toContain('SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY');
   expect(names).not.toContain('SAYSO_API_KEY');
+  // A deploy deletes the secret of the backend that a lane left: Workers keep secrets.
+  expect(module.retiredGatewaySecretNames(outlayer)).toEqual(['SAYSO_API_KEY']);
+  expect(module.retiredGatewaySecretNames(module.readBackendLane('staging-testnet'))).toEqual([
+    'SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY',
+  ]);
+  expect(module.retiredGatewaySecretNames(module.readBackendLane('production-mainnet'))).toEqual([
+    'SAYSO_API_KEY',
+    'SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY',
+  ]);
   expect(() =>
     module.parseDeploymentTargets(withStagingVerifier({ backend: 'venice' })),
   ).toThrow(/backend must be sayso or outlayer/u);

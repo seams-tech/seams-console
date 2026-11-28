@@ -49,7 +49,7 @@ jobs:
       - name: Validate package and binary versions
         run: |
           set -euo pipefail
-          test "$(node -p "require('./wallet-source/packages/seams-cli/package.json').version")" = "$SEAMS_RELEASE_VERSION"
+          test "$(node -p "require('./wallet-source/packages/cli/package.json').version")" = "$SEAMS_RELEASE_VERSION"
           test "$(sed -n 's/^version = "\([^"]*\)"/\1/p' wallet-source/crates/seams-cli/Cargo.toml | head -1)" = "$SEAMS_RELEASE_VERSION"
 
       - name: Refuse repository test trust roots

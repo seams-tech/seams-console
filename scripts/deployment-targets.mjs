@@ -431,19 +431,37 @@ export function gatewaySecretNames(lane) {
     const capability = lane.capabilities[capabilityName];
     if (capability.enabled && capability.owner === 'gateway') names.push(...capability.secrets);
   }
-  const verifier =
-    lane.provisioning.kind === 'provisioned'
-      ? lane.provisioning.gatewayDeploymentConfig.optional.speakToSignVerifier
-      : null;
+  const verifier = speakToSignVerifierOf(lane);
   if (verifier) {
-    // The verify route calls SaySo with its API key or pays OutLayer with the payment key; the
-    // summary route of a note asks NEAR AI with its own key.
-    names.push(
-      verifier.backend === 'sayso' ? 'SAYSO_API_KEY' : 'SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY',
-      'SPEAK_TO_SIGN_NEAR_AI_API_KEY',
-    );
+    // The summary route of a note asks NEAR AI with its own key.
+    names.push(...VERIFIER_BACKEND_SECRET_NAMES[verifier.backend], 'SPEAK_TO_SIGN_NEAR_AI_API_KEY');
   }
   return unique(names, 'gateway secret requirements');
+}
+
+/* The secret of each Speak-to-Sign verifier backend: SaySo's API key, or the key that pays
+   OutLayer. */
+const VERIFIER_BACKEND_SECRET_NAMES = Object.freeze({
+  sayso: Object.freeze(['SAYSO_API_KEY']),
+  outlayer: Object.freeze(['SPEAK_TO_SIGN_OUTLAYER_PAYMENT_KEY']),
+});
+
+/**
+ * The verifier secrets that a Gateway or Wallet Runtime of the lane must not hold: those of the
+ * other backends. A deploy adds secrets and never deletes one, and a Gateway with one backend's
+ * setting beside another's stops at start, so the deploy deletes them first.
+ */
+export function retiredGatewaySecretNames(lane) {
+  const required = new Set(gatewaySecretNames(lane));
+  return Object.values(VERIFIER_BACKEND_SECRET_NAMES)
+    .flat()
+    .filter((name) => !required.has(name));
+}
+
+function speakToSignVerifierOf(lane) {
+  return lane.provisioning.kind === 'provisioned'
+    ? lane.provisioning.gatewayDeploymentConfig.optional.speakToSignVerifier
+    : null;
 }
 
 export function consoleSecretNames(lane) {

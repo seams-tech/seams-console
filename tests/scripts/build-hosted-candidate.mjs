@@ -37,7 +37,7 @@ const result = spawnSync(
       VITE_SEAMS_PROJECT_ENVIRONMENT_ID: projection.environmentId,
       VITE_SEAMS_PUBLISHABLE_KEY: projection.publishableKey,
       VITE_ROUTER_AB_NORMAL_SIGNING_WORKER_ID: lane.resources.signingWorker.workerName,
-      VITE_SEAMS_WALLET_DIST_ROOT: path.join(publicRoot, 'packages/wallet/dist'),
+      VITE_SEAMS_WALLET_DIST_ROOT: path.join(publicRoot, 'packages/mpc-wallet/dist'),
       VITE_SEAMS_WALLET_ASSET_HOST: '1',
       VITE_SIGNING_SESSION_PERSISTENCE_MODE: 'sealed_refresh_v1',
     },

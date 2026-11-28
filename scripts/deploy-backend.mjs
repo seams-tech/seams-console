@@ -12,6 +12,7 @@ import {
   BACKEND_COMPONENTS,
   componentSecretNames,
   readBackendLane,
+  retiredGatewaySecretNames,
   tenantRootManagedBackupConfig,
 } from './deployment-targets.mjs';
 import { readMigrationSet } from './migration-fingerprint.mjs';
@@ -1552,6 +1553,10 @@ function deployRegionalWalletRuntime(lane, region) {
     cwd: GATEWAY_ROOT,
     env: buildEnvironment({ DEPLOYMENT_LANE: lane.id }),
   });
+  deleteRetiredWorkerSecrets(
+    lane,
+    walletRuntimeWorkerNameFor(regionalGatewayWorkerName(lane, region)),
+  );
   runCommand(
     'pnpm',
     [
@@ -1693,6 +1698,7 @@ function deployRegionalGateway(lane, region) {
     cwd: GATEWAY_ROOT,
     env: buildEnvironment({ DEPLOYMENT_LANE: lane.id }),
   });
+  deleteRetiredWorkerSecrets(lane, regionalGatewayWorkerName(lane, region));
   runCommand(
     'pnpm',
     [
@@ -1710,6 +1716,53 @@ function deployRegionalGateway(lane, region) {
     ],
     { cwd: GATEWAY_ROOT },
   );
+}
+
+function regionalGatewayWorkerName(lane, region) {
+  return requireAllocatedWalletRegions(requireProvisionedLane(lane))[region].workerName;
+}
+
+/*
+ * A deploy adds secrets and never deletes one, so the secret of a verifier backend that the lane
+ * left stays on the Worker, and the Gateway then stops at start with one backend's setting beside
+ * another's (staging-testnet, 2026-11-28). Delete such a secret before the new version deploys.
+ */
+function deleteRetiredWorkerSecrets(lane, workerName) {
+  const retired = retiredGatewaySecretNames(lane);
+  if (retired.length === 0) return;
+  const present = workerSecretNames(workerName);
+  for (const name of retired) {
+    if (!present.has(name)) continue;
+    process.stdout.write(`Deleting the retired secret ${name} of ${workerName}\n`);
+    // With no terminal, Wrangler confirms the delete itself.
+    runCommand('pnpm', ['exec', 'wrangler', 'secret', 'delete', name, '--name', workerName], {
+      cwd: GATEWAY_ROOT,
+    });
+  }
+}
+
+/** The secret names of a deployed Worker; none for a Worker that does not exist yet. */
+function workerSecretNames(workerName) {
+  const child = spawnSync(
+    'pnpm',
+    ['exec', 'wrangler', 'secret', 'list', '--name', workerName, '--format', 'json'],
+    {
+      cwd: GATEWAY_ROOT,
+      encoding: 'utf8',
+      maxBuffer: 10 * 1024 * 1024,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    },
+  );
+  if (child.error) throw child.error;
+  if (child.status !== 0) {
+    if (/Worker "[^"]+" not found/u.test(child.stderr)) return new Set();
+    throw new Error(`wrangler secret list --name ${workerName} failed with status ${child.status}`);
+  }
+  const listed = JSON.parse(child.stdout);
+  if (!Array.isArray(listed)) {
+    throw new Error(`wrangler secret list --name ${workerName} is not a list`);
+  }
+  return new Set(listed.map((secret) => secret.name));
 }
 
 function workerDeployArguments(resource, renderedConfigPath) {

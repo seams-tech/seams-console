@@ -128,7 +128,7 @@ jobs:
           import { readFileSync, appendFileSync } from 'node:fs';
           import { execFileSync } from 'node:child_process';
           const installed = JSON.parse(readFileSync('node_modules/@seams/mpc-wallet/package.json', 'utf8'));
-          const source = JSON.parse(readFileSync('.wallet-source/packages/wallet/package.json', 'utf8'));
+          const source = JSON.parse(readFileSync('.wallet-source/packages/mpc-wallet/package.json', 'utf8'));
           if (source.version !== installed.version) {
             throw new Error(`Docs target SDK ${source.version}; this site uses ${installed.version}`);
           }
